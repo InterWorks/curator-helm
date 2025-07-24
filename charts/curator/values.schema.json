@@ -1,0 +1,11 @@
+{
+  "$schema": "http://json-schema.org/schema#",
+  "type": "object",
+  "properties": {
+    "environment": {
+      "type": "string",
+      "enum": ["dev", "qa", "prod"]
+    }
+  },
+  "required": ["environment"]
+}

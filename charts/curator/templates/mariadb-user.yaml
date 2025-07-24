@@ -1,0 +1,16 @@
+apiVersion: k8s.mariadb.com/v1alpha1
+kind: User
+metadata:
+  name: {{ .Values.mariadbOperator.user.username | default "curator" }}
+  namespace: {{ .Release.Namespace }}
+  annotations:
+    "helm.sh/hook": pre-install,pre-upgrade
+    "helm.sh/hook-weight": "40"
+spec:
+  mariaDbRef:
+    name: {{ .Values.mariadbOperator.mariaDbName | default "curator-mariadb" }}
+    namespace: {{ .Release.Namespace }}
+  passwordSecretKeyRef:
+    name: {{ .Values.mariadbOperator.user.userPasswordSecretKeyRef.name }}
+    key: {{ .Values.mariadbOperator.user.userPasswordSecretKeyRef.key }}
+  maxUserConnections: {{ .Values.mariadbOperator.user.maxUserConnections | default 20 }}

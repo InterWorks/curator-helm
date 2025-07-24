@@ -1,0 +1,24 @@
+{{- if .Values.mariadbOperator.enabled -}}
+apiVersion: k8s.mariadb.com/v1alpha1
+kind: Backup
+metadata:
+  name: {{ .Values.mariadbOperator.database.name }}
+  namespace: {{ .Release.Namespace }}
+spec:
+  mariaDbRef:
+    name: {{ .Values.mariadbOperator.mariaDbName | default "curator-mariadb" }}
+  maxRetention: {{ .Values.mariadbOperator.backup.retention | default "168h" }} # 7 days
+  # ignoreGlobalPriv: true
+  compression: gzip
+  databases:
+    - {{ .Values.mariadbOperator.database.name  }}
+  schedule:
+    cron: {{ .Values.mariadbOperator.backup.schedule | default "0 0 * * *" }} # Every day at midnight
+    suspend: {{ .Values.mariadbOperator.backup.suspend | default false }}
+  storage:
+    s3:
+      bucket: {{ .Values.mariadbOperator.backup.bucket | default "curator-mariadb-backup" }}
+      prefix: mariadb
+      region:  {{ .Values.mariadbOperator.backup.region | default "us-east-1" }}
+      endpoint: {{ printf "s3.%s.amazonaws.com" .Values.mariadbOperator.backup.region | default "us-east-1" }}
+{{- end -}}

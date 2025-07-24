@@ -1,0 +1,14 @@
+apiVersion: k8s.mariadb.com/v1alpha1
+kind: Database
+metadata:
+  name: {{ .Values.mariadbOperator.database.name | default "curator" }}
+  namespace: {{ .Release.Namespace }}
+  annotations:
+    "helm.sh/hook": pre-install
+    "helm.sh/hook-weight": "40"
+spec:
+  mariaDbRef:
+    name: {{ .Values.mariadbOperator.mariaDbName | default "curator-mariadb" }}
+    namespace: {{ .Release.Namespace }}
+  characterSet: {{ .Values.mariadbOperator.database.characterSet }}
+  collate: {{ .Values.mariadbOperator.database.collate }}

@@ -1,0 +1,255 @@
+# -- Number of replicas to deploy
+replicaCount: ~
+
+# -- Environment type that this chart is being deployed to
+# -- Required to be either prod, qa, or dev
+environment: ~ # needs to be either dev, qa, or prod
+
+# -- Image configuration
+image:
+  # -- Repository name
+  repository: curator 
+  # -- Registry URL
+  registry: 094093952516.dkr.ecr.us-east-1.amazonaws.com
+  # -- Image Pull Policy
+  pullPolicy: IfNotPresent
+  # -- Tag Name, overrides the default appVersion in Chart.yaml
+  tag: ~
+
+# -- Overrides the chart name, default is the name of the release
+nameOverride: ""
+# -- Overrides the full name of the chart, default is the name of the release
+fullnameOverride: ""
+
+# Service account configuration
+serviceAccount:
+  # -- Specifies whether a ServiceAccount should be created
+  create: true
+  # -- The name of the ServiceAccount to use.
+  # If not set and create is true, a name is generated using the fullname template
+  name: null
+  # -- Image pull secrets for the service account
+  imagePullSecrets: []
+  # -- Annotations for the service account
+  annotations: {}
+  # -- Labels for the service account
+  labels: {}
+  # -- Set this toggle to false to opt out of automounting API credentials for the service account
+  automountServiceAccountToken: false
+
+# Service configuration
+service:
+  # -- Service Type
+  type: ClusterIP
+  # -- Service Port
+  port: 8080
+
+## Curator Ingress Section
+ingress:
+  # -- Control for ingress
+  enabled: true
+  # -- Ingress Class Name
+  className: nginx
+  # -- Ingress hosts configuration
+  hosts: []
+    # - host: curator.example.com
+    #   tls: true
+    #   secretName: &hyphenName curator-example-com 
+    #   paths:
+    #     - path: /
+    #       pathType: ImplementationSpecific
+  # -- TLS config
+  tls: []
+    # - secretName: *hyphenName
+    #   hosts:
+    #   - curator.example.com
+
+# Container Security Context
+securityContext: {}
+#   fsGroup: 3000
+#   fsGroupChangePolicy: OnRootMismatch
+#   runAsGroup: 3000
+#   runAsUser: 33
+
+# Pod Security Context
+podSecurityContext: {}
+#   fsGroup: 3000
+#   fsGroupChangePolicy: OnRootMismatch
+#   runAsGroup: 3000
+#   runAsUser: 33
+
+# Cronjob Configuration
+cronjob:
+  affinity: {}
+  env: {}
+
+# -- Resource configuration, environment will control resources if left blank but can be overridden
+resources: {}
+  # limits:
+  #   cpu: 100m
+  #   memory: 128Mi
+  # requests:
+  #   cpu: 100m
+  #   memory: 128Mi
+
+## Curator Persistence config
+persistence:
+  # -- enable persistence
+  enabled: true
+  s3:
+    # -- enable S3 storage, if disable and peristence.enabled is true, it will use PVC
+    enabled: false
+    # -- bucket to use for storage
+    bucket: some-bucket
+    # -- region bucket is in
+    region: ""
+  
+  # -- existingClaim is the name of an existing persistent volume claim to use for storage
+  existingClaim: ""
+  # -- size of persistent volume claim
+  size: ~
+  # -- persistent volume claim accessMode
+  accessModes: []
+    # - ReadWriteOnce
+  # -- persistent volume claim labels
+  labels: {}
+  # -- persistent volume claim annotations
+  annotations: {}
+  # -- persistent volume claim storageClass
+  storageClass: ""
+  # -- persistent volume claim subpath
+  subPath: ""
+
+autoscaling:
+  # -- enable autoscaling
+  enabled: false
+  # -- minimum number of replicas
+  minReplicas: ~
+  # -- maximum number of replicas
+  maxReplicas: ~
+  # -- scaling metrics
+  metrics: []
+    # - type: Resource
+    #   resource:
+    #     name: cpu
+    #     target:
+    #       type: Utilization
+    #       averageUtilization: 75
+    # - type: Resource
+    #   resource:
+    #     name: memory
+    #     target:
+    #       type: Utilization
+    #       averageUtilization: 75
+  # -- scaling behavior
+  behavior: {}
+
+## -- Pod nodeselector
+nodeSelector: {}
+
+## -- Pod tolerations
+tolerations: []
+
+## -- Pod affinity parameters
+affinity: {}
+
+# -- Pod Topology Spread Constraints
+topologySpreadConstraints: []
+  # - maxSkew:
+  #   minDomains:
+  #   topologyKey:
+  #   whenUnsatisfiable:
+  #   labelSelector:
+  #   matchLabelKeys:
+  #   nodeAffinityPolicy:
+  #   nodeTaintsPolicy:
+
+## Curator Configuration parameters
+curator:
+  # -- read environment variables from a secret
+  envFromSecret: []
+    # - name: ~
+    #   key: ~
+    #   value: ~
+  # -- environment variables to set in the container
+  env: {}
+    # KEY: VALUE
+  cache:
+    # -- cache prefix
+    prefix: ""
+  ## Initial Admin parameters
+  auth:
+    # -- secret to use for initial admin user
+    existingSecret: curator-auth
+  ## Delayed startup probe to allow MariaDB to start
+  startupProbe:
+    ## -- Seconds until initial probe
+    initialDelaySeconds: 10
+    ## -- Period to wait before next check
+    periodSeconds: 10
+    ## -- Number of failures before pod is failed
+    failureThreshold: 10
+    # -- Timeout for probe
+    timeoutSeconds: 5
+  ## Probe to check for pod liveness
+  livenessProbe:
+    # -- Period to wait between checks
+    periodSeconds: 10
+    # -- Number of failures before pod is failed
+    failureThreshold: 3
+    # -- Timeout for probe
+    timeoutSeconds: 15
+  # -- These are used to override default php config files present in the containers. The files are mounted in the config directory and will append .php to the ends of the keys
+  config: {}
+    # app: ""
+    # auth: ""
+    # broadcasting: ""
+    # cache: ""
+    # cms: ""
+    # cookie: ""
+    # database: ""
+    # environment: ""
+    # filesystems: ""
+    # interworks: ""
+    # logging: ""
+    # mail: ""
+    # services: ""
+    # session: ""
+    # view: ""
+
+mariadbOperator:
+  enabled: true
+  # -- Name of existing mariadb resource
+  mariaDbName: "curator-mariadb"
+  ## Database to connect to
+  database:
+    # -- database to create
+    name: "production"
+    # -- character set for the database
+    characterSet: "utf8"
+    # -- collation for the database
+    collate: "utf8_general_ci"
+  user:
+    # -- mariadb user to create
+    username: "curator"
+    # -- secret reference for the created user password
+    userPasswordSecretKeyRef:
+      name: production-mariadb
+      key: password
+    # -- maximum number of connections for the user
+    maxUserConnections: 100
+    # -- grantOption for the user
+    grantOption: false
+    # -- allowable login hosts for the user
+    host: "%"
+  backup:
+    # -- suspend backups, if true, no backups will be created
+    suspend: false
+    # -- schedule to take backups
+    schedule: "0 0 * * *"
+    # -- retention period for backups
+    retention: 168h # 7 days
+    # -- s3 bucket to store backups
+    bucket: ""
+    # -- s3 region for bucket
+    region: ""
