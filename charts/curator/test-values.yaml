@@ -1,0 +1,131 @@
+image:
+  registry: ghcr.io/interworks
+  repository: curator
+  tag: latest
+ingress:
+  enabled: true
+  annotations:
+    cert-manager.io/cluster-issuer: cert-manager-letsencrypt-production-http01
+  hosts:
+    - host: curator.interworks.com
+      tls: true
+      secretName: curator-interworks-com-tls
+      paths:
+        - path: /
+          pathType: ImplementationSpecific
+  tls:
+    - secretName: curator-interworks-com-tls
+      hosts:
+      - curator.interworks.com
+mariadbOperator:
+  enabled: true
+  mariaDbName: "curator-mariadb"
+  ## Database to connect to
+  database: 
+    name: "prod"
+    characterSet: "utf8"
+    collate: "utf8_general_ci"
+  user:
+    username: "prod"
+    userPasswordSecretKeyRef:
+      name: prod-mariadb
+      key: password
+    maxUserConnections: 100
+  backup:
+    suspend: false
+    schedule: "0 0 * * *"
+    retention: 168h # 7 days
+environment: prod
+curator:
+  cache:
+    prefix: prod
+  envFromSecret:
+    - name: IWCURATOR_LICENSE_KEY
+      key: curator-config
+      value: license
+    - name: APP_KEY
+      key: curator-config
+      value: app-key
+  config:
+      database: |-
+        <?php
+        return [
+            'fetch' => PDO::FETCH_CLASS,
+            'default' => 'mysql',
+            'connections' => [
+                'mysql' => [
+                    'driver'     => 'mysql',
+                    'engine'     => 'InnoDB',
+                    'host'       => $_ENV['DB_HOST'] ?? 'mariadb',
+                    'port'       => $_ENV['DB_PORT'] ?? '3306',
+                    'database'   => $_ENV['DB_DATABASE'] ?? 'curator',
+                    'username'   => $_ENV['DB_USERNAME'] ?? 'curator',
+                    'password'   => $_ENV['DB_PASSWORD'],
+                    'charset'    => 'utf8mb4',
+                    'collation'  => 'utf8mb4_unicode_ci',
+                    'prefix'     => '',
+                    'varcharmax' => 191,
+                ],
+            ],
+            'migrations' => 'migrations',
+            'redis' => [
+            'cluster' => false,
+            'default' => [
+                'host'     => '127.0.0.1',
+                'password' => null,
+                'port'     => 6379,
+                'database' => 0,
+            ],
+            ],
+            'useConfigForTesting' => false,
+        ];
+topologySpreadConstraints:
+- maxSkew: 3
+  minDomains: 2
+  topologyKey: topology.kubernetes.io/zone
+  whenUnsatisfiable: DoNotSchedule
+  labelSelector: 
+    matchLabels:
+      app.kubernetes.io/instance: curator-interworks-com
+  matchLabelKeys:
+    - pod-template-hash
+serviceAccount:
+  create: true
+  name: curator-prod
+  automountServiceAccountToken: true
+persistence:
+  enabled: true
+  s3:
+    enabled: true
+    bucket: curator-interworks-com
+    region: us-east-2
+autoscaling:
+  enabled: true
+  minReplicas: 2
+  maxReplicas: 10
+  metrics:
+    - type: Resource
+      resource:
+        name: cpu
+        target:
+          type: Utilization
+          averageUtilization: 75
+    - type: Resource
+      resource:
+        name: memory
+        target:
+          type: Utilization
+          averageUtilization: 75
+  behavior:
+    scaleUp:
+      stabilizationWindowSeconds: 120
+      policies:
+        - type: Percent
+          value: 100
+          periodSeconds: 60
+    scaleDown:
+      stabilizationWindowSeconds: 120
+      policies:
+        - type: Percent
+          value: 100
+          periodSeconds: 60

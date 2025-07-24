@@ -1,0 +1,125 @@
+{{- include "curator.checkImageTag" . }}
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name:  {{ include "curator.fullname" . }}-server
+  labels:
+    {{- include "curator.labels" . | nindent 4 }}
+spec:
+  {{- if not .Values.autoscaling.enabled }}
+  replicas: {{ .Values.replicaCount | default 1}}
+  {{- end }}
+  selector:
+    matchLabels:
+      {{- include "curator.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      {{- with .Values.podAnnotations }}
+      annotations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      labels:
+        {{- include "curator.selectorLabels" . | nindent 8 }}
+    spec:
+      {{- with .Values.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.topologySpreadConstraints }}
+      topologySpreadConstraints:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      serviceAccountName: {{ include "curator.serviceAccountName" . }}
+      securityContext:
+        {{- toYaml .Values.podSecurityContext | nindent 8 }}
+      containers:
+        - name: "curator-server"
+          securityContext:
+            {{- toYaml .Values.securityContext | nindent 12 }}
+          image: "{{ .Values.image.registry }}/{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          command: ["/entrypoint.sh","apache-foreground"]
+          ports:
+            - name: http
+              containerPort: 8080
+              protocol: TCP
+          startupProbe:
+            httpGet:
+              path: /ping
+              port: http
+            initialDelaySeconds: {{ .Values.curator.startupProbe.initialDelaySeconds }}
+            periodSeconds: {{ .Values.curator.startupProbe.periodSeconds }}
+            failureThreshold: {{ .Values.curator.startupProbe.failureThreshold }}
+            timeoutSeconds: {{ .Values.curator.startupProbe.timeoutSeconds }}
+          livenessProbe:
+            failureThreshold: {{ .Values.curator.livenessProbe.failureThreshold }}
+            periodSeconds: {{ .Values.curator.livenessProbe.periodSeconds }}
+            timeoutSeconds: {{ .Values.curator.livenessProbe.timeoutSeconds }}
+            httpGet:
+              path: /ping
+              port: http
+          env:
+            {{- include "env.environment" . | indent 12 }}
+            {{- range $key, $value := .Values.curator.env }}
+            - name: "{{ $key }}"
+              value: "{{ $value }}"
+            {{- end }}
+            {{- range .Values.curator.envFromSecret }}
+            - name: {{ .name }}
+              valueFrom:
+                secretKeyRef:
+                    name: {{ .key }}
+                    key: {{ .value }}
+            {{- end }}
+          resources:
+            {{- include "curator.resources" . | nindent 12 }}
+          volumeMounts:
+            - name: framework
+              mountPath: /var/www/html/storage/framework
+            - name: logs
+              mountPath: /var/www/html/storage/logs
+            - name: temp
+              mountPath: /var/www/html/storage/temp
+            - name: cms
+              mountPath: /var/www/html/storage/cms
+            - name: data
+              mountPath: /var/www/html/storage/app
+              subPath: {{ .Values.persistence.subPath }}
+            {{- if .Values.curator.config }}
+            {{- range $key, $value := .Values.curator.config }}
+            - name: config
+              mountPath: /var/www/html/config/{{ $key }}.php
+              subPath: {{ $key }}.php
+            {{- end }}
+            {{- end }}
+      volumes:
+      - name: framework
+        emptyDir:
+      - name: logs
+        emptyDir:
+      - name: temp
+        emptyDir:
+      - name: cms
+        emptyDir:
+      {{ if (and .Values.persistence.enabled (not .Values.persistence.s3.enabled)) -}}
+      - name: data
+        persistentVolumeClaim:
+          claimName: {{ printf "%s-%s" "data" .Release.Name }}
+      {{- else -}}
+      - name: data
+        emptyDir:
+      {{- end }}
+      {{- if .Values.curator.config }}
+      - name: config
+        configMap:
+          name: {{ include "curator.fullname" . }}-config
+      {{- end }}
+      {{- with .Values.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}

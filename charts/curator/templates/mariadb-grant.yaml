@@ -1,0 +1,20 @@
+apiVersion: k8s.mariadb.com/v1alpha1
+kind: Grant
+metadata:
+  name: {{ .Values.mariadbOperator.database.name | default "curator" }}
+  namespace: {{ .Release.Namespace }}
+  annotations:
+    "helm.sh/hook": pre-install,pre-upgrade
+    "helm.sh/hook-weight": "40"
+spec:
+  mariaDbRef:
+    name: {{ .Values.mariadbOperator.mariaDbName | default "curator-mariadb" }}
+    namespace: {{ .Release.Namespace }}
+    waitForIt: true
+  privileges:
+    - "ALL PRIVILEGES"
+  database: {{ .Values.mariadbOperator.database.name | default "curator" }}
+  table: '*'
+  username: {{ .Values.mariadbOperator.user.username | default "curator" }}
+  grantOption: {{ .Values.mariadbOperator.user.grantOption | default "false" }}
+  host: {{ .Values.mariadbOperator.user.host | quote | default "%" }}

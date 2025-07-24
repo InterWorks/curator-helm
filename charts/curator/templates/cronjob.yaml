@@ -1,0 +1,66 @@
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: {{ include "curator.fullname" . }}-cron
+spec:
+  schedule: "* * * * *"
+  concurrencyPolicy: Forbid
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          {{- with .Values.imagePullSecrets }}
+          imagePullSecrets:
+              {{- toYaml . | nindent 10 }}
+          {{- end }}
+          serviceAccountName: {{ include "curator.serviceAccountName" . }}
+          securityContext:
+            {{- toYaml .Values.podSecurityContext | nindent 12 }}
+          affinity:
+            {{- toYaml .Values.cronjob.affinity | nindent 12 }}
+          containers:
+          - name: schedule-run
+            securityContext:
+              {{- toYaml .Values.securityContext | nindent 14 }}
+            image: "{{ .Values.image.registry }}/{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
+            imagePullPolicy: {{ .Values.image.pullPolicy }}
+            command:
+            - /bin/sh
+            - -c
+            - php /var/www/html/artisan schedule:run
+            volumeMounts:
+            - name: framework
+              mountPath: /var/www/html/storage/framework
+            - name: logs
+              mountPath: /var/www/html/storage/logs
+            - name: temp
+              mountPath: /var/www/html/storage/temp
+            - name: cms
+              mountPath: /var/www/html/storage/cms
+            - name: data
+              mountPath: /var/www/html/storage/app
+              subPath: {{ .Values.persistence.subPath }}
+            env:
+            {{- include "env.environment" . | indent 12 }}
+            {{- range $key, $value := .Values.cronjob.env }}
+            - name: "{{ $key }}"
+              value: "{{ $value }}"
+            {{- end }}
+          restartPolicy: Never
+          volumes:
+            {{ if (and .Values.persistence.enabled (not .Values.persistence.s3.enabled)) -}}
+            - name: data
+              persistentVolumeClaim:
+                claimName: {{ printf "%s-%s" "data" .Release.Name }}
+            {{- else -}}
+            - name: data
+              emptyDir:
+            {{- end }}
+            - name: framework
+              emptyDir:
+            - name: logs
+              emptyDir:
+            - name: temp
+              emptyDir:
+            - name: cms
+              emptyDir:
