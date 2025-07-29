@@ -1,0 +1,79 @@
+name: Check Helm Documentation
+
+on:
+  pull_request:
+    branches: [ main ]
+    paths:
+      - 'charts/**'
+      - '.github/workflows/helm-docs.yml'
+
+jobs:
+  helm-docs-check:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Install helm-docs
+        run: |
+          # Get the latest release version
+          LATEST_VERSION=$(curl -s https://api.github.com/repos/norwoodj/helm-docs/releases/latest | grep '"tag_name":' | sed -E 's/.*"([^"]+)".*/\1/' | sed 's/v//')
+          echo "Installing helm-docs version: $LATEST_VERSION"
+          
+          # Download and install the latest version
+          wget https://github.com/norwoodj/helm-docs/releases/latest/download/helm-docs_${LATEST_VERSION}_Linux_x86_64.tar.gz
+          tar -xzf helm-docs_${LATEST_VERSION}_Linux_x86_64.tar.gz
+          sudo mv helm-docs /usr/local/bin/
+          helm-docs --version
+
+      - name: Generate helm docs
+        run: |
+          helm-docs --chart-search-root=charts
+
+      - name: Check for changes
+        run: |
+          # Find all chart directories that contain Chart.yaml
+          CHART_DIRS=$(find charts -name "Chart.yaml" -exec dirname {} \;)
+          
+          if [ -z "$CHART_DIRS" ]; then
+            echo "No Helm charts found in charts/ directory"
+            exit 0
+          fi
+          
+          CHANGES_FOUND=false
+          
+          for CHART_DIR in $CHART_DIRS; do
+            echo "Checking documentation in $CHART_DIR..."
+            
+            # Check if README.md exists and has changes
+            if [ -f "$CHART_DIR/README.md" ]; then
+              if ! git diff --exit-code "$CHART_DIR/README.md" > /dev/null 2>&1; then
+                echo "❌ Documentation is out of date in $CHART_DIR"
+                CHANGES_FOUND=true
+              else
+                echo "✅ Documentation is up to date in $CHART_DIR"
+              fi
+            else
+              echo "⚠️ No README.md found in $CHART_DIR - this might be expected if it's a new chart"
+            fi
+          done
+          
+          if [ "$CHANGES_FOUND" = true ]; then
+            echo ""
+            echo "❌ Helm documentation is out of date!"
+            echo "Please run 'helm-docs' locally and commit the changes."
+            echo ""
+            echo "Files that need to be updated:"
+            git diff --name-only
+            echo ""
+            echo "Run the following commands to fix this:"
+            echo "  helm-docs --chart-search-root=charts"
+            echo "  git add ."
+            echo "  git commit -m 'Update helm docs'"
+            exit 1
+          else
+            echo ""
+            echo "✅ All Helm documentation is up to date!"
+          fi
