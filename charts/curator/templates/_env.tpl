@@ -26,4 +26,11 @@
 - name: S3_REGION
   value: {{ .Values.persistence.s3.region | default .Values.environment }}
 {{- end }}
+{{- range .Values.curator.envFromSecret }}
+- name: {{ .name }}
+  valueFrom:
+    secretKeyRef:
+        name: {{ .key }}
+        key: {{ .value }}
+{{- end }}
 {{ end }}
