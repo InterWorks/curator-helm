@@ -33,3 +33,5 @@
 .gitignore
 .drone.yml
 .gitlab-ci.yml
+
+*-values.yaml
