@@ -1,0 +1,51 @@
+name: Check Helm Documentation
+
+on:
+  pull_request:
+    branches: [ main ]
+    paths:
+      - 'charts/**'
+      - '.github/workflows/helm-docs.yml'
+
+jobs:
+  helm-docs-check:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Install helm-docs
+        run: |
+          # Get the latest release version
+          LATEST_VERSION=$(curl -s https://api.github.com/repos/norwoodj/helm-docs/releases/latest | grep '"tag_name":' | sed -E 's/.*"([^"]+)".*/\1/' | sed 's/v//')
+          echo "Installing helm-docs version: $LATEST_VERSION"
+          
+          # Download and install the latest version
+          wget https://github.com/norwoodj/helm-docs/releases/latest/download/helm-docs_${LATEST_VERSION}_Linux_x86_64.tar.gz
+          tar -xzf helm-docs_${LATEST_VERSION}_Linux_x86_64.tar.gz
+          sudo mv helm-docs /usr/local/bin/
+          helm-docs --version
+
+      - name: Generate helm docs
+        run: |
+          helm-docs --chart-search-root=charts
+
+      - name: Check for changes
+        run: |
+          if ! git diff --exit-code; then
+            echo "❌ Helm documentation is out of date!"
+            echo "Please run 'helm-docs' locally and commit the changes."
+            echo ""
+            echo "Files that need to be updated:"
+            git diff --name-only
+            echo ""
+            echo "Run the following commands to fix this:"
+            echo "  helm-docs --chart-search-root=charts"
+            echo "  git add ."
+            echo "  git commit -m 'Update helm docs'"
+            exit 1
+          else
+            echo "✅ Helm documentation is up to date!"
+          fi
