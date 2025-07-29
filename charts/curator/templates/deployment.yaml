@@ -65,13 +65,6 @@ spec:
             - name: "{{ $key }}"
               value: "{{ $value }}"
             {{- end }}
-            {{- range .Values.curator.envFromSecret }}
-            - name: {{ .name }}
-              valueFrom:
-                secretKeyRef:
-                    name: {{ .key }}
-                    key: {{ .value }}
-            {{- end }}
           resources:
             {{- include "curator.resources" . | nindent 12 }}
           volumeMounts:
