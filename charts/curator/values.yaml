@@ -78,6 +78,19 @@ podSecurityContext: {}
 #   runAsGroup: 3000
 #   runAsUser: 33
 
+podDisruptionBudget:
+  # -- Enable Pod Disruption Budget
+  enabled: true
+  # -- Max Unavailable pods, default is 1
+  maxUnavailable: ~
+  # -- Min Available pods, default is 1
+  minAvailable: ~
+  # -- Selector for the PDB
+  selector: {}
+    # matchLabels: 
+    #   app.kubernetes.io/name: {{ include "curator.name" . }}
+    #   app.kubernetes.io/instance: {{ .Release.Name }}
+
 # Cronjob Configuration
 cronjob:
   affinity: {}
