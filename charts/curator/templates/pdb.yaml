@@ -4,10 +4,16 @@ kind: PodDisruptionBudget
 metadata:
   name: {{ .Release.Name }}
 spec:
+  {{- if and .Values.podDisruptionBudget.maxUnavailable .Values.podDisruptionBudget.minAvailable }}
+  {{- fail "You must specify either maxUnavailable or minAvailable, not both." }}
+  {{- end }}
+  {{- if not (or .Values.podDisruptionBudget.maxUnavailable .Values.podDisruptionBudget.minAvailable) }}
+  {{- fail "You must specify either maxUnavailable or minAvailable." }}
+  {{- end }}
   {{- if .Values.podDisruptionBudget.maxUnavailable }}
-  maxUnavailable: {{ .Values.podDisruptionBudget.maxUnavailable | default "1" }}
+  maxUnavailable: {{ .Values.podDisruptionBudget.maxUnavailable  }}
   {{- else if .Values.podDisruptionBudget.minAvailable }}
-  minAvailable: {{ .Values.podDisruptionBudget.minAvailable | default "1" }}
+  minAvailable: {{ .Values.podDisruptionBudget.minAvailable }}
   {{- end }}
   {{- if .Values.podDisruptionBudget.selector }}
   selector: {{ .Values.podDisruptionBudget.selector | toYaml | nindent 4 }}
