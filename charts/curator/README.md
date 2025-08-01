@@ -1,6 +1,6 @@
 # curator
 
-![Version: 1.0.2](https://img.shields.io/badge/Version-1.0.2-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: 2025.07-03](https://img.shields.io/badge/AppVersion-2025.07--03-informational?style=flat-square)
+![Version: 1.0.3-rc.1](https://img.shields.io/badge/Version-1.0.3--rc.1-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: 2025.07-03](https://img.shields.io/badge/AppVersion-2025.07--03-informational?style=flat-square)
 
 A Helm chart for Curator in a Container in Kubernetes
 
@@ -28,13 +28,13 @@ A Helm chart for Curator in a Container in Kubernetes
 | curator.startupProbe.initialDelaySeconds | int | `10` |  |
 | curator.startupProbe.periodSeconds | int | `10` |  |
 | curator.startupProbe.timeoutSeconds | int | `5` | Timeout for probe |
-| environment | string | `nil` | Required to be either prod, qa, or dev |
+| environment | string | `"prod"` | Required to be either prod, qa, or dev |
 | fullnameOverride | string | `""` | Overrides the full name of the chart, default is the name of the release |
-| image | object | `{"pullPolicy":"IfNotPresent","registry":"ghcr.io/interworks","repository":"curator","tag":null}` | Image configuration |
+| image | object | `{"pullPolicy":"IfNotPresent","registry":"ghcr.io/interworks","repository":"curator","tag":"latest"}` | Image configuration |
 | image.pullPolicy | string | `"IfNotPresent"` | Image Pull Policy |
 | image.registry | string | `"ghcr.io/interworks"` | Registry URL |
 | image.repository | string | `"curator"` | Repository name |
-| image.tag | string | `nil` | Tag Name, overrides the default appVersion in Chart.yaml |
+| image.tag | string | `"latest"` | Tag Name, overrides the default appVersion in Chart.yaml |
 | ingress.className | string | `"nginx"` | Ingress Class Name |
 | ingress.enabled | bool | `true` | Control for ingress |
 | ingress.hosts | list | `[]` | Ingress hosts configuration |
@@ -64,9 +64,13 @@ A Helm chart for Curator in a Container in Kubernetes
 | persistence.s3.bucket | string | `"some-bucket"` | bucket to use for storage |
 | persistence.s3.enabled | bool | `false` | enable S3 storage, if disable and peristence.enabled is true, it will use PVC |
 | persistence.s3.region | string | `""` | region bucket is in |
-| persistence.size | string | `nil` | size of persistent volume claim |
-| persistence.storageClass | string | `""` | persistent volume claim storageClass |
+| persistence.size | string | `"5Gi"` | size of persistent volume claim |
+| persistence.storageClass | string | `nil` | persistent volume claim storageClass |
 | persistence.subPath | string | `""` | persistent volume claim subpath |
+| podDisruptionBudget.enabled | bool | `true` | Enable Pod Disruption Budget |
+| podDisruptionBudget.maxUnavailable | string | `nil` | Max Unavailable pods, default is 1 |
+| podDisruptionBudget.minAvailable | string | `nil` | Min Available pods, default is 1 |
+| podDisruptionBudget.selector | object | `{}` | Selector for the PDB |
 | podSecurityContext | object | `{}` |  |
 | replicaCount | string | `nil` | Number of replicas to deploy |
 | resources | object | `{}` | Resource configuration, environment will control resources if left blank but can be overridden |

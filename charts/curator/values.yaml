@@ -3,7 +3,7 @@ replicaCount: ~
 
 # -- Environment type that this chart is being deployed to
 # -- Required to be either prod, qa, or dev
-environment: ~ # needs to be either dev, qa, or prod
+environment: prod # needs to be either dev, qa, or prod
 
 # -- Image configuration
 image:
@@ -14,7 +14,7 @@ image:
   # -- Image Pull Policy
   pullPolicy: IfNotPresent
   # -- Tag Name, overrides the default appVersion in Chart.yaml
-  tag: ~
+  tag: latest
 
 # -- Overrides the chart name, default is the name of the release
 nameOverride: ""
@@ -78,6 +78,19 @@ podSecurityContext: {}
 #   runAsGroup: 3000
 #   runAsUser: 33
 
+podDisruptionBudget:
+  # -- Enable Pod Disruption Budget
+  enabled: true
+  # -- Max Unavailable pods, default is 1
+  maxUnavailable: ~
+  # -- Min Available pods, default is 1
+  minAvailable: ~
+  # -- Selector for the PDB
+  selector: {}
+    # matchLabels: 
+    #   app.kubernetes.io/name: {{ include "curator.name" . }}
+    #   app.kubernetes.io/instance: {{ .Release.Name }}
+
 # Cronjob Configuration
 cronjob:
   affinity: {}
@@ -107,7 +120,7 @@ persistence:
   # -- existingClaim is the name of an existing persistent volume claim to use for storage
   existingClaim: ""
   # -- size of persistent volume claim
-  size: ~
+  size: 5Gi
   # -- persistent volume claim accessMode
   accessModes: []
     # - ReadWriteOnce
@@ -116,7 +129,7 @@ persistence:
   # -- persistent volume claim annotations
   annotations: {}
   # -- persistent volume claim storageClass
-  storageClass: ""
+  storageClass: ~
   # -- persistent volume claim subpath
   subPath: ""
 

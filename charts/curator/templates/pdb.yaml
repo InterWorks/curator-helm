@@ -1,0 +1,25 @@
+{{- if .Values.podDisruptionBudget.enabled }}
+apiVersion: policy/v1
+kind: PodDisruptionBudget
+metadata:
+  name: {{ .Release.Name }}
+spec:
+  {{- if and .Values.podDisruptionBudget.maxUnavailable .Values.podDisruptionBudget.minAvailable }}
+  {{- fail "You must specify either maxUnavailable or minAvailable, not both." }}
+  {{- end }}
+  {{- if not (or .Values.podDisruptionBudget.maxUnavailable .Values.podDisruptionBudget.minAvailable) }}
+  {{- fail "You must specify either maxUnavailable or minAvailable." }}
+  {{- end }}
+  {{- if .Values.podDisruptionBudget.maxUnavailable }}
+  maxUnavailable: {{ .Values.podDisruptionBudget.maxUnavailable  }}
+  {{- else if .Values.podDisruptionBudget.minAvailable }}
+  minAvailable: {{ .Values.podDisruptionBudget.minAvailable }}
+  {{- end }}
+  {{- if .Values.podDisruptionBudget.selector }}
+  selector: {{ .Values.podDisruptionBudget.selector | toYaml | nindent 4 }}
+  {{- else }}
+  selector:
+    matchLabels:
+      {{- include "curator.selectorLabels" . | nindent 6 }}
+  {{- end }}
+{{- end }}
