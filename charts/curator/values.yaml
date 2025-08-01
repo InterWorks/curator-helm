@@ -3,7 +3,7 @@ replicaCount: ~
 
 # -- Environment type that this chart is being deployed to
 # -- Required to be either prod, qa, or dev
-environment: ~ # needs to be either dev, qa, or prod
+environment: prod # needs to be either dev, qa, or prod
 
 # -- Image configuration
 image:
@@ -14,7 +14,7 @@ image:
   # -- Image Pull Policy
   pullPolicy: IfNotPresent
   # -- Tag Name, overrides the default appVersion in Chart.yaml
-  tag: ~
+  tag: latest
 
 # -- Overrides the chart name, default is the name of the release
 nameOverride: ""

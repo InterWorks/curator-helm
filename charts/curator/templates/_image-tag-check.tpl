@@ -9,7 +9,7 @@
   {{- fail "ERROR: image.tag is not set." }}
 {{- end }}
 
-{{- if or $override (hasPrefix "dev" $tag) (contains "dev" $tag) }}
+{{- if or $override (hasPrefix "dev" $tag) (contains "dev" $tag) (contains "latest" $tag) }}
   {{- /* Skip version check if override is set or tag contains 'dev' */}}
 {{- else }}
   {{- $tagReplaced := replace "-" "." $tag }}
