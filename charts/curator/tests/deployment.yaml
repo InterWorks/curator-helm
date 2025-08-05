@@ -9,9 +9,9 @@ tests:
     asserts:
       - isKind:
           of: Deployment
-      # - matchRegex:
-      #     path: metadata.name
-      #     pattern: -my-chart$
+      - matchRegex:
+          path: metadata.name
+          pattern: $-server
       - equal:
           path: spec.template.spec.containers[0].image
           value: ghcr.io/interworks/curator:latest
