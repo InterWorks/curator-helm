@@ -266,3 +266,4 @@ mariadbOperator:
     bucket: ""
     # -- s3 region for bucket
     region: ""
+    serviceAccount: ~
