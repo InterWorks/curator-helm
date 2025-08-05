@@ -9,6 +9,9 @@ spec:
     name: {{ .Values.mariadbOperator.mariaDbName | default "curator-mariadb" }}
   maxRetention: {{ .Values.mariadbOperator.backup.retention | default "168h" }} # 7 days
   # ignoreGlobalPriv: true
+  {{- if .Values.mariadbOperator.backup.serviceAccount }}
+  serviceAccountName: {{ .Values.mariadbOperator.backup.serviceAccount }}
+  {{- end }}
   compression: gzip
   databases:
     - {{ .Values.mariadbOperator.database.name  }}

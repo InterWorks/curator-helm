@@ -80,7 +80,7 @@ podSecurityContext: {}
 
 podDisruptionBudget:
   # -- Enable Pod Disruption Budget
-  enabled: true
+  enabled: false
   # -- Max Unavailable pods, default is 1
   maxUnavailable: ~
   # -- Min Available pods, default is 1
@@ -231,7 +231,7 @@ curator:
     # view: ""
 
 mariadbOperator:
-  enabled: true
+  enabled: false
   # -- Name of existing mariadb resource
   mariaDbName: "curator-mariadb"
   ## Database to connect to
@@ -266,3 +266,4 @@ mariadbOperator:
     bucket: ""
     # -- s3 region for bucket
     region: ""
+    serviceAccount: ~

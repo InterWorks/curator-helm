@@ -1,6 +1,6 @@
 # curator
 
-![Version: 1.0.3-rc.1](https://img.shields.io/badge/Version-1.0.3--rc.1-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: 2025.07-03](https://img.shields.io/badge/AppVersion-2025.07--03-informational?style=flat-square)
+![Version: 1.0.4-rc.1](https://img.shields.io/badge/Version-1.0.4--rc.1-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: 2025.07-03](https://img.shields.io/badge/AppVersion-2025.07--03-informational?style=flat-square)
 
 A Helm chart for Curator in a Container in Kubernetes
 
@@ -43,11 +43,12 @@ A Helm chart for Curator in a Container in Kubernetes
 | mariadbOperator.backup.region | string | `""` | s3 region for bucket |
 | mariadbOperator.backup.retention | string | `"168h"` | retention period for backups |
 | mariadbOperator.backup.schedule | string | `"0 0 * * *"` | schedule to take backups |
+| mariadbOperator.backup.serviceAccount | string | `nil` |  |
 | mariadbOperator.backup.suspend | bool | `false` | suspend backups, if true, no backups will be created |
 | mariadbOperator.database.characterSet | string | `"utf8"` | character set for the database |
 | mariadbOperator.database.collate | string | `"utf8_general_ci"` | collation for the database |
 | mariadbOperator.database.name | string | `"production"` | database to create |
-| mariadbOperator.enabled | bool | `true` |  |
+| mariadbOperator.enabled | bool | `false` |  |
 | mariadbOperator.mariaDbName | string | `"curator-mariadb"` | Name of existing mariadb resource |
 | mariadbOperator.user.grantOption | bool | `false` | grantOption for the user |
 | mariadbOperator.user.host | string | `"%"` | allowable login hosts for the user |
@@ -67,7 +68,7 @@ A Helm chart for Curator in a Container in Kubernetes
 | persistence.size | string | `"5Gi"` | size of persistent volume claim |
 | persistence.storageClass | string | `nil` | persistent volume claim storageClass |
 | persistence.subPath | string | `""` | persistent volume claim subpath |
-| podDisruptionBudget.enabled | bool | `true` | Enable Pod Disruption Budget |
+| podDisruptionBudget.enabled | bool | `false` | Enable Pod Disruption Budget |
 | podDisruptionBudget.maxUnavailable | string | `nil` | Max Unavailable pods, default is 1 |
 | podDisruptionBudget.minAvailable | string | `nil` | Min Available pods, default is 1 |
 | podDisruptionBudget.selector | object | `{}` | Selector for the PDB |
