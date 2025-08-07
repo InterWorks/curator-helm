@@ -4,6 +4,8 @@ kind: Backup
 metadata:
   name: {{ .Values.mariadbOperator.database.name }}
   namespace: {{ .Release.Namespace }}
+  annotations:
+    helm.sh/resource-policy: keep
 spec:
   mariaDbRef:
     name: {{ .Values.mariadbOperator.mariaDbName | default "curator-mariadb" }}

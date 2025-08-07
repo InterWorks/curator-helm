@@ -5,6 +5,8 @@ metadata:
   {{- with .Values.persistence.annotations }}
   annotations:
     {{- toYaml . | nindent 4 }}
+    annotations:
+    helm.sh/resource-policy: keep
   {{- end }}
   {{- with .Values.persistence.labels }}
   labels:

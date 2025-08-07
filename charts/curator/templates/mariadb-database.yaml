@@ -6,6 +6,7 @@ metadata:
   annotations:
     "helm.sh/hook": pre-install
     "helm.sh/hook-weight": "40"
+    helm.sh/resource-policy: keep
 spec:
   mariaDbRef:
     name: {{ .Values.mariadbOperator.mariaDbName | default "curator-mariadb" }}
