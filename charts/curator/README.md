@@ -1,6 +1,6 @@
 # curator
 
-![Version: 1.0.3](https://img.shields.io/badge/Version-1.0.3-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: 2025.07-03](https://img.shields.io/badge/AppVersion-2025.07--03-informational?style=flat-square)
+![Version: 1.0.4](https://img.shields.io/badge/Version-1.0.4-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: 2025.08-01](https://img.shields.io/badge/AppVersion-2025.08--01-informational?style=flat-square)
 
 A Helm chart for Curator in a Container in Kubernetes
 
