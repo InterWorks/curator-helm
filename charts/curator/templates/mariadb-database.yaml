@@ -4,9 +4,9 @@ metadata:
   name: {{ .Values.mariadbOperator.database.name | default "curator" }}
   namespace: {{ .Release.Namespace }}
   annotations:
-    "helm.sh/hook": pre-install
+    "helm.sh/hook": pre-install, pre-upgrade
     "helm.sh/hook-weight": "40"
-    helm.sh/resource-policy: keep
+    "helm.sh/resource-policy": keep
 spec:
   mariaDbRef:
     name: {{ .Values.mariadbOperator.mariaDbName | default "curator-mariadb" }}
