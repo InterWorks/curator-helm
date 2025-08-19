@@ -16,6 +16,7 @@ A Helm chart for Curator in a Container in Kubernetes
 | autoscaling.minReplicas | string | `nil` | minimum number of replicas |
 | cronjob.affinity | object | `{}` |  |
 | cronjob.env | object | `{}` |  |
+| cronjob.successfulJobsHistoryLimit | int | `1` |  |
 | curator.auth.existingSecret | string | `"curator-auth"` | secret to use for initial admin user |
 | curator.cache.prefix | string | `""` | cache prefix |
 | curator.config | object | `{}` | These are used to override default php config files present in the containers. The files are mounted in the config directory and will append .php to the ends of the keys |

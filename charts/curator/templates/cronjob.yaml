@@ -5,6 +5,7 @@ metadata:
 spec:
   schedule: "* * * * *"
   concurrencyPolicy: Forbid
+  successfulJobsHistoryLimit: {{ .Values.cronjob.successfulJobsHistoryLimit }}
   jobTemplate:
     spec:
       template:
