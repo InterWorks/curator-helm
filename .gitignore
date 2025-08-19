@@ -1,1 +1,2 @@
 charts/curator/*-values.yaml
+**/node_modules/**
