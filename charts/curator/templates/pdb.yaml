@@ -5,10 +5,10 @@ metadata:
   name: {{ .Release.Name }}
 spec:
   {{- if and .Values.podDisruptionBudget.maxUnavailable .Values.podDisruptionBudget.minAvailable }}
-  {{- fail "You must specify either maxUnavailable or minAvailable, not both." }}
+  {{- fail "You must specify either podDisruptionBudget.maxUnavailable or podDisruptionBudget.minAvailable, not both." }}
   {{- end }}
   {{- if not (or .Values.podDisruptionBudget.maxUnavailable .Values.podDisruptionBudget.minAvailable) }}
-  {{- fail "You must specify either maxUnavailable or minAvailable." }}
+  {{- fail "You must specify either podDisruptionBudget.maxUnavailable or podDisruptionBudget.minAvailable." }}
   {{- end }}
   {{- if .Values.podDisruptionBudget.maxUnavailable }}
   maxUnavailable: {{ .Values.podDisruptionBudget.maxUnavailable  }}
