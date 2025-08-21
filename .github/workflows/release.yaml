@@ -9,6 +9,8 @@ jobs:
   release:
     permissions:
       contents: write
+      issues: write
+      pull-requests: write
     runs-on: us-east-2-development
     steps:
       - name: Checkout
@@ -28,7 +30,7 @@ jobs:
 
       - name: Install dependencies
         run: npm install
-        
+
       - name: Run semantic-release
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

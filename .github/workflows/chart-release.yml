@@ -1,34 +1,27 @@
-# .github/workflows/chart-release.yml
-# name: Release Helm Chart
-
-# on:
-#   release:
-#     types: [created, published, edited]
-
-# jobs:
-#   chart:
-#     runs-on: us-east-2-development
-#     permissions:
-#       contents: write
-#     steps:
-#       - uses: actions/checkout@v4
-
-#       - name: Run chart-releaser
-#         uses: helm/chart-releaser-action@v1.7.0
-#         env:
-#           CR_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-#         with:
-#           charts_dir: charts
-
-name: Debug Release Events
+name: Release Helm Chart
 
 on:
   release:
-    types: [created, published, edited, prereleased]
+    types: [published]
 
 jobs:
-  debug:
-    runs-on: ubuntu-latest
+  chart:
+    runs-on: us-east-2-development
+    permissions:
+      contents: write
     steps:
-      - name: Dump GitHub context
-        run: echo '${{ toJson(github) }}'
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Configure Git
+        run: |
+          git config user.name "$GITHUB_ACTOR"
+          git config user.email "$GITHUB_ACTOR@users.noreply.github.com"
+
+      - name: Run chart-releaser
+        uses: helm/chart-releaser-action@v1.7.0
+        env:
+          CR_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          charts_dir: charts
