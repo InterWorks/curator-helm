@@ -10,6 +10,13 @@ module.exports = {
       {
         "prepare": "yq eval '.version = \"${nextRelease.version}\"' -i Chart.yaml"
       },
+    ],
+    [
+      '@semantic-release/git',
+      {
+        assets: ['Chart.yaml'],
+        message: 'chore(release): ${nextRelease.version} [skip ci]\n\n${nextRelease.notes}'
+      }
     ]
   ],
 };
