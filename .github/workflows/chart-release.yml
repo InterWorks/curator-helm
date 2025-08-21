@@ -3,7 +3,7 @@ name: Release Helm Chart
 
 on:
   release:
-    types: [published]
+    types: [created, published, edited]
 
 jobs:
   chart:
