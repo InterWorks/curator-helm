@@ -1,22 +1,22 @@
 {
-  branches: ['main'],
-  repositoryUrl: 'https://github.com/interworks/curator-helm',
-  plugins: [
-    '@semantic-release/commit-analyzer',
-    '@semantic-release/release-notes-generator',
-    '@semantic-release/github',
+  "branches": ["main"],
+  "repositoryUrl": "https://github.com/interworks/curator-helm",
+  "plugins": [
+    "@semantic-release/commit-analyzer",
+    "@semantic-release/release-notes-generator",
+    "@semantic-release/github",
     [
-      '@semantic-release/exec',
+      "@semantic-release/exec",
       {
         "prepare": "yq eval '.version = \"${nextRelease.version}\"' -i Chart.yaml"
-      },
+      }
     ],
     [
-      '@semantic-release/git',
+      "@semantic-release/git",
       {
-        assets: ['Chart.yaml'],
-        message: 'chore(release): ${nextRelease.version} [skip ci]\n\n${nextRelease.notes}'
+        "assets": ["Chart.yaml"],
+        "message": "chore(release): ${nextRelease.version} [skip ci]\n\n${nextRelease.notes}"
       }
     ]
-  ],
+  ]
 }
