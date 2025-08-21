@@ -43,7 +43,7 @@ spec:
           subPath: {{ $key }}.php
         {{- end }}
         {{- end }}
-        command: [ "php", "artisan", "winter:up"]
+        command: [ "php", "artisan", "portal:migrate"]
         env:
           {{- include "env.environment" . | indent 10 -}}
           {{ range $key, $value := .Values.curator.env }}
@@ -72,3 +72,4 @@ spec:
         configMap:
           name: {{ include "curator.fullname" . }}-config
       {{- end }}
+
