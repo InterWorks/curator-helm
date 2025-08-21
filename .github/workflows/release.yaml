@@ -30,8 +30,8 @@ jobs:
       
       - name: install yq
         run: |
-          curl https://github.com/mikefarah/yq/releases/latest/download/yq_linux_amd64 -o /usr/local/bin/yq
-          chmod +x /usr/local/bin/yq
+          sudo curl https://github.com/mikefarah/yq/releases/latest/download/yq_linux_amd64 -o /usr/local/bin/yq
+          sudo chmod +x /usr/local/bin/yq
 
       - name: Install dependencies
         run: npm install
