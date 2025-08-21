@@ -8,13 +8,13 @@
     [
       "@semantic-release/exec",
       {
-        "prepare": "yq eval '.version = \"${nextRelease.version}\"' -i Chart.yaml"
+        "prepare": "yq eval '.version = \"${nextRelease.version}\"' -i charts/curator/Chart.yaml"
       }
     ],
     [
       "@semantic-release/git",
       {
-        "assets": ["Chart.yaml"],
+        "assets": ["charts/curator/Chart.yaml"],
         "message": "chore(release): ${nextRelease.version} [skip ci]\n\n${nextRelease.notes}"
       }
     ]
