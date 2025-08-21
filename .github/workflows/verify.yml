@@ -1,3 +1,5 @@
+name: Verify Changes
+
 on:
   pull_request:
 
