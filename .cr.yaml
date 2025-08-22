@@ -1,0 +1,4 @@
+owner: interworks
+git-repo: https://github.com/interworks/curator-helm
+charts-dir: charts
+index-path: index.yaml
