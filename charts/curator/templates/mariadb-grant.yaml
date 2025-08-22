@@ -12,9 +12,9 @@ spec:
     namespace: {{ .Release.Namespace }}
     waitForIt: true
   privileges:
-    - "ALL PRIVILEGES"
+    - ALL PRIVILEGES
   database: {{ .Values.mariadbOperator.database.name | default "curator" }}
   table: '*'
   username: {{ .Values.mariadbOperator.user.username | default "curator" }}
   grantOption: {{ .Values.mariadbOperator.user.grantOption | default "false" }}
-  host: {{ .Values.mariadbOperator.user.host | quote | default "%" }}
+  host: {{ .Values.mariadbOperator.user.host | squote | default "%" }}
