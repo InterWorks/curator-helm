@@ -8,7 +8,8 @@
       "semantic-release-helm3",
       {
         "chartPath": "charts/curator",
-        "crPublish": true
+        "crPublish": true,
+        "crConfigPath": ".cr.yaml"
       }
     ],
     [
