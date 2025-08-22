@@ -8,8 +8,7 @@
       "semantic-release-helm3",
       {
         "chartPath": "charts/curator",
-        "onlyUpdateVersion": "true",
-        "crPublish": "false"
+        "onlyUpdateVersion": "true"
       }
     ],
     "@semantic-release/github"
