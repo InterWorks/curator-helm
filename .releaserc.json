@@ -5,16 +5,11 @@
     "@semantic-release/commit-analyzer",
     "@semantic-release/release-notes-generator",
     [
-      "@semantic-release/exec",
+      "semantic-release-helm",
       {
-        "prepare": "yq eval '.version = \"${nextRelease.version}\"' -i charts/curator/Chart.yaml"
-      }
-    ],
-    [
-      "@semantic-release/git",
-      {
-        "assets": ["charts/curator/Chart.yaml"],
-        "message": "chore(release): ${nextRelease.version} [skip ci]\n\n${nextRelease.notes}"
+        "chartPath": "charts/curator",
+        "onlyUpdateVersion": "true",
+        "crPublish": "false"
       }
     ],
     "@semantic-release/github"

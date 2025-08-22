@@ -2,13 +2,7 @@ name: Release Helm Chart
 
 on:
   release:
-    types: [published, created, released]
-  workflow_dispatch:
-    inputs:
-      version:
-        description: 'Release version to package'
-        required: false
-        default: 'latest'
+    types: [published]
 
 jobs:
   chart:
