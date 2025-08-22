@@ -10,13 +10,6 @@
         "chartPath": "charts/curator"
       }
     ],
-    [
-      "@semantic-release/git",
-      {
-        "assets": ["charts/curator/Chart.yaml"],
-        "message": "chore(release): ${nextRelease.version} [skip ci]\n\n${nextRelease.notes}"
-      }
-    ],
     "@semantic-release/github"
   ]
 }
