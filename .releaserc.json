@@ -7,7 +7,15 @@
     [
       "semantic-release-helm3",
       {
-        "chartPath": "charts/curator"
+        "chartPath": "charts/curator",
+        "crPublish": true
+      }
+    ],
+    [
+      "@semantic-release/git",
+      {
+        "assets": ["charts/curator/Chart.yaml"],
+        "message": "chore(release): ${nextRelease.version} [skip ci]\n\n${nextRelease.notes}"
       }
     ],
     "@semantic-release/github"
