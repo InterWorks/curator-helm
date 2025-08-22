@@ -35,32 +35,12 @@ jobs:
         uses: actions/setup-node@v2
         with:
           node-version: '22'
-      
-      - name: install yq
-        run: |
-          sudo curl https://github.com/mikefarah/yq/releases/latest/download/yq_linux_amd64 -o /usr/local/bin/yq
-          sudo chmod +x /usr/local/bin/yq
-
 
       - name: Install dependencies
         run: npm install
-
-      - name: Debug yq and Chart.yaml before release
-        run: |
-          echo "=== YQ Version ==="
-          yq --version
-          echo "=== Chart.yaml before ==="
-          cat charts/curator/Chart.yaml
-          echo "=== Test yq command ==="
-          yq eval '.version' charts/curator/Chart.yaml
 
       - name: Run semantic-release
         env:
           GITHUB_TOKEN: ${{ steps.checkout-token.outputs.token }}
           DEBUG: semantic-release:*
         run: npx semantic-release
-
-      - name: Debug Chart.yaml after release
-        run: |
-          echo "=== Chart.yaml after ==="
-          cat charts/curator/Chart.yaml
