@@ -1,3 +1,15 @@
+# [2.0.0](https://github.com/interworks/curator-helm/compare/v1.4.3...v2.0.0) (2025-08-26)
+
+
+### chore
+
+* bump to new version after debugging release workflow ([c5dd780](https://github.com/interworks/curator-helm/commit/c5dd7807b72f91cc32054c35eb5adcaa8f874253))
+
+
+### BREAKING CHANGES
+
+* Start actual releases from here
+
 ## [1.4.3](https://github.com/interworks/curator-helm/compare/v1.4.2...v1.4.3) (2025-08-26)
 
 
