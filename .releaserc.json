@@ -8,7 +8,7 @@
       "semantic-release-helm3",
       {
         "chartPath": "charts/curator",
-        "registry": "https://interworks.github.io/curator-helm/",
+        "registry": "interworks.github.io/curator-helm/",
         "crPublish": true,
         "crConfigPath": ".cr.yaml"
       }
