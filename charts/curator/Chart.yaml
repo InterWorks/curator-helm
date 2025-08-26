@@ -5,5 +5,5 @@ description: A Helm chart for Curator in a Container in Kubernetes
 type: application
 icon: https://curator.interworks.com/storage/app/uploads/public/5f4/2f8/79d/thumb_464_32_32_0_0_crop.png
 
-version: 1.3.2
-appVersion: "1.3.2"
+version: 1.3.3
+appVersion: "1.3.3"
