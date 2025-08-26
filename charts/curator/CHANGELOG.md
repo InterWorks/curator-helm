@@ -1,3 +1,10 @@
+## [1.4.2](https://github.com/interworks/curator-helm/compare/v1.4.1...v1.4.2) (2025-08-26)
+
+
+### Bug Fixes
+
+* **cicd:** give absolute path to changelog ([f427044](https://github.com/interworks/curator-helm/commit/f4270444b6f56945f5d87d8ae0857f21dacc60fc))
+
 ## [1.4.1](https://github.com/interworks/curator-helm/compare/v1.4.0...v1.4.1) (2025-08-26)
 
 
