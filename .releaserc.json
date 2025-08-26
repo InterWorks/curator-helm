@@ -23,12 +23,6 @@
         "assets": ["charts/curator/Chart.yaml", "charts/curator/CHANGELOG.md"],
         "message": "chore(release): ${nextRelease.version} [skip ci]\n\n${nextRelease.notes}"
       }
-    ],
-    [
-      "@semantic-release/exec",
-      {
-        "prepareCmd": "echo \"release_notes_file=charts/curator/CHANGELOG.md\" >> \"${GITHUB_OUTPUT}\""
-      }
     ]
   ]
 }

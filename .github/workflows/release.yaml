@@ -44,7 +44,10 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ steps.checkout-token.outputs.token }}
           DEBUG: semantic-release:*
-        run: npx semantic-release
+        run: |
+          npx semantic-release
+          echo "version=$VERSION" >> $GITHUB_OUTPUT
+          echo "release_notes_file=charts/curator/CHANGELOG.md" >> $GITHUB_OUTPUT
 
       - name: Run chart-releaser
         uses: helm/chart-releaser-action@v1.7.0
