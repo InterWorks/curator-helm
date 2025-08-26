@@ -1,3 +1,12 @@
+## [1.4.1](https://github.com/interworks/curator-helm/compare/v1.4.0...v1.4.1) (2025-08-26)
+
+
+### Bug Fixes
+
+* **cicd:** fix release notes file location ([c60e8e0](https://github.com/interworks/curator-helm/commit/c60e8e0cb17295bea5c9501abd78eed418aa3fcd))
+* **cicd:** only update version ([d1c306c](https://github.com/interworks/curator-helm/commit/d1c306cc344bc788f7748e96c2bd4ea367a414f6))
+* **versioning:** update appVersion ([a2d40b3](https://github.com/interworks/curator-helm/commit/a2d40b3aea45392e0833cfb6c984094865113822))
+
 # [1.4.0](https://github.com/interworks/curator-helm/compare/v1.3.4...v1.4.0) (2025-08-26)
 
 
