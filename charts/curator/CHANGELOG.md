@@ -1,3 +1,10 @@
+## [1.4.3](https://github.com/interworks/curator-helm/compare/v1.4.2...v1.4.3) (2025-08-26)
+
+
+### Bug Fixes
+
+* **cicd:** last test of changelog location ([8c36804](https://github.com/interworks/curator-helm/commit/8c368046b666fb265ec023d9f9697ce92f4aa539))
+
 ## [1.4.2](https://github.com/interworks/curator-helm/compare/v1.4.1...v1.4.2) (2025-08-26)
 
 
