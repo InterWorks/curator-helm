@@ -235,6 +235,8 @@ mariadbOperator:
   enabled: true
   # -- Name of existing mariadb resource
   mariaDbName: "curator-mariadb"
+  # -- Endpoint to connect to mariadb, if not set it will use the mariaDbName as the hostname
+  mariadbEndpoint: ""
   ## Database to connect to
   database:
     # -- database to create
