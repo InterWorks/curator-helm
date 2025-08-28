@@ -1,3 +1,10 @@
+# [2.1.0](https://github.com/interworks/curator-helm/compare/v2.0.0...v2.1.0) (2025-08-28)
+
+
+### Features
+
+* **curator:** add mariadbEndpoint to config to allow for specific endpoints if required ([34979f3](https://github.com/interworks/curator-helm/commit/34979f314d88085d62eb8678f67e7eaac240c9c1))
+
 # [2.0.0](https://github.com/interworks/curator-helm/compare/v1.4.3...v2.0.0) (2025-08-26)
 
 
