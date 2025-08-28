@@ -1,6 +1,6 @@
 {{ define "env.environment" }}
 - name: DB_HOST
-  value: {{ .Values.mariadbOperator.mariaDbName | default "curator-mariadb" }}-primary
+  value: {{ .Values.mariadbOperator.mariadbEndpoint | default .Values.mariadbOperator.mariaDbName }}
 - name: DB_DATABASE
   value: {{ .Values.mariadbOperator.database.name | default .Values.environment }}
 - name: DB_USERNAME

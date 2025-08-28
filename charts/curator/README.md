@@ -1,6 +1,6 @@
 # curator
 
-![Version: 1.1.1](https://img.shields.io/badge/Version-1.1.1-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: 2025.08-01](https://img.shields.io/badge/AppVersion-2025.08--01-informational?style=flat-square)
+![Version: 2.0.0](https://img.shields.io/badge/Version-2.0.0-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: 2025.08-03](https://img.shields.io/badge/AppVersion-2025.08--03-informational?style=flat-square)
 
 A Helm chart for Curator in a Container in Kubernetes
 
@@ -50,6 +50,7 @@ A Helm chart for Curator in a Container in Kubernetes
 | mariadbOperator.database.name | string | `"production"` | database to create |
 | mariadbOperator.enabled | bool | `true` |  |
 | mariadbOperator.mariaDbName | string | `"curator-mariadb"` | Name of existing mariadb resource |
+| mariadbOperator.mariadbEndpoint | string | `""` | Endpoint to connect to mariadb, if not set it will use the mariaDbName as the hostname |
 | mariadbOperator.user.grantOption | bool | `false` | grantOption for the user |
 | mariadbOperator.user.host | string | `"%"` | allowable login hosts for the user |
 | mariadbOperator.user.maxUserConnections | int | `100` | maximum number of connections for the user |
