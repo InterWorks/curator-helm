@@ -1,6 +1,6 @@
 # curator
 
-![Version: 2.0.0](https://img.shields.io/badge/Version-2.0.0-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: 2025.08-03](https://img.shields.io/badge/AppVersion-2025.08--03-informational?style=flat-square)
+![Version: 2.1.0](https://img.shields.io/badge/Version-2.1.0-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: 2025.08-03](https://img.shields.io/badge/AppVersion-2025.08--03-informational?style=flat-square)
 
 A Helm chart for Curator in a Container in Kubernetes
 
@@ -85,6 +85,7 @@ A Helm chart for Curator in a Container in Kubernetes
 | serviceAccount.imagePullSecrets | list | `[]` | Image pull secrets for the service account |
 | serviceAccount.labels | object | `{}` | Labels for the service account |
 | serviceAccount.name | string | `nil` | The name of the ServiceAccount to use. If not set and create is true, a name is generated using the fullname template |
+| siteIdentifier | string | `""` | When not set (default), uses existing {environment}-admin naming pattern |
 | tolerations | list | `[]` |  |
 | topologySpreadConstraints | list | `[]` | Pod Topology Spread Constraints |
 

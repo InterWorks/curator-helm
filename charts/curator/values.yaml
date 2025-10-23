@@ -5,6 +5,12 @@ replicaCount: ~
 # -- Required to be either prod, qa, or dev
 environment: prod # needs to be either dev, qa, or prod
 
+# -- Site identifier for multi-site deployments in the same namespace
+# -- This is used to create unique ExternalSecret names to avoid conflicts
+# -- When set, creates {environment}-{siteIdentifier}-admin naming pattern
+# -- When not set (default), uses existing {environment}-admin naming pattern
+siteIdentifier: ""
+
 # -- Image configuration
 image:
   # -- Repository name

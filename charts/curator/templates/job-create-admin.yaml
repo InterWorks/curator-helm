@@ -49,12 +49,12 @@ spec:
           - name: WEBADMIN_PASSWORD
             valueFrom:
               secretKeyRef:
-                name: {{ printf "%s-%s" .Values.environment "admin" }}
+                name: {{ include "curator.adminSecretName" . }}
                 key: admin-password
           - name: WEBADMIN_USER
             valueFrom:
               secretKeyRef:
-                name: {{ printf "%s-%s" .Values.environment "admin" }}
+                name: {{ include "curator.adminSecretName" . }}
                 key: admin-user
           {{ range $key, $value := .Values.curator.env }}
           - name: "{{ $key }}"
