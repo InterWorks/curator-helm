@@ -53,8 +53,6 @@ ingress:
   # -- Ingress hosts configuration
   hosts: []
     # - host: curator.example.com
-    #   tls: true
-    #   secretName: &hyphenName curator-example-com 
     #   paths:
     #     - path: /
     #       pathType: ImplementationSpecific
