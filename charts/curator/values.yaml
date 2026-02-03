@@ -49,7 +49,7 @@ ingress:
   # -- Control for ingress
   enabled: true
   # -- Ingress Class Name
-  className: ~
+  className: nginx
   # -- Ingress hosts configuration
   hosts: []
     # - host: curator.example.com
