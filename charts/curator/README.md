@@ -1,6 +1,6 @@
 # curator
 
-![Version: 2.0.0](https://img.shields.io/badge/Version-2.0.0-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: 2025.08-03](https://img.shields.io/badge/AppVersion-2025.08--03-informational?style=flat-square)
+![Version: 2.1.0](https://img.shields.io/badge/Version-2.1.0-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: 2025.08-03](https://img.shields.io/badge/AppVersion-2025.08--03-informational?style=flat-square)
 
 A Helm chart for Curator in a Container in Kubernetes
 
@@ -36,7 +36,7 @@ A Helm chart for Curator in a Container in Kubernetes
 | image.registry | string | `"ghcr.io/interworks"` | Registry URL |
 | image.repository | string | `"curator"` | Repository name |
 | image.tag | string | `"latest"` | Tag Name, overrides the default appVersion in Chart.yaml |
-| ingress.className | string | `"nginx"` | Ingress Class Name |
+| ingress.className | string | `nil` | Ingress Class Name |
 | ingress.enabled | bool | `true` | Control for ingress |
 | ingress.hosts | list | `[]` | Ingress hosts configuration |
 | ingress.tls | list | `[]` | TLS config |
