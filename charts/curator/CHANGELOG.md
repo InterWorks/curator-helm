@@ -1,3 +1,10 @@
+# [2.2.0](https://github.com/interworks/curator-helm/compare/v2.1.0...v2.2.0) (2026-02-03)
+
+
+### Features
+
+* **curator:** remove excess example value configuration ([4702536](https://github.com/interworks/curator-helm/commit/47025360cd296ebe1c0c7c1b6ae0fbfc5a788031))
+
 # [2.1.0](https://github.com/interworks/curator-helm/compare/v2.0.0...v2.1.0) (2025-08-28)
 
 
