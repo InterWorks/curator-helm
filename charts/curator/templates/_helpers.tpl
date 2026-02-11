@@ -134,3 +134,10 @@ limits:
 {{- end -}}
 {{- end -}}
 {{- end -}}
+
+{{/*
+Create the admin secret name based on environment and optional siteIdentifier
+*/}}
+{{- define "curator.adminSecretName" -}}
+{{- .Values.environment }}{{- if .Values.siteIdentifier }}-{{ .Values.siteIdentifier }}{{- end }}-admin
+{{- end -}}

@@ -85,6 +85,7 @@ A Helm chart for Curator in a Container in Kubernetes
 | serviceAccount.imagePullSecrets | list | `[]` | Image pull secrets for the service account |
 | serviceAccount.labels | object | `{}` | Labels for the service account |
 | serviceAccount.name | string | `nil` | The name of the ServiceAccount to use. If not set and create is true, a name is generated using the fullname template |
+| siteIdentifier | string | `""` | When not set (default), uses existing {environment}-admin naming pattern |
 | tolerations | list | `[]` |  |
 | topologySpreadConstraints | list | `[]` | Pod Topology Spread Constraints |
 
