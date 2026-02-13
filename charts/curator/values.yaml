@@ -186,9 +186,30 @@ curator:
   # -- environment variables to set in the container
   env: {}
     # KEY: VALUE
+  # -- environment variables to pass into app.php
+  app:
+    debug: ~
+    appKeySecret:
+      name: ~
+      key: ~
+  # -- environment variables to pass into cache.php
   cache:
+    # -- cache type, possible values apc, array, database, file, memcached, redis
+    type: ~
+    # -- cache host
+    host: ~
+    # -- cache port
+    port: ~
     # -- cache prefix
-    prefix: ""
+    prefix: ~
+  # -- environment variables to pass into cms.php
+  cms:
+    routesCache: ~
+    assetCache: ~
+    assetMinify: ~
+  appKeySecret:
+    name: ~
+    key: ~
   ## Initial Admin parameters
   auth:
     # -- secret to use for initial admin user
@@ -212,6 +233,7 @@ curator:
     # -- Timeout for probe
     timeoutSeconds: 15
   # -- These are used to override default php config files present in the containers. The files are mounted in the config directory and will append .php to the ends of the keys
+  # -- If one of these is defined the above config section will no longer be applicable if the new config doesn't utilze environment variables
   config: {}
     # app: ""
     # auth: ""
