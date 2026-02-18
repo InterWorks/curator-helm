@@ -1,6 +1,6 @@
 # curator
 
-![Version: 2.1.0](https://img.shields.io/badge/Version-2.1.0-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: 2025.08-03](https://img.shields.io/badge/AppVersion-2025.08--03-informational?style=flat-square)
+![Version: 2.2.0](https://img.shields.io/badge/Version-2.2.0-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: 2025.08-03](https://img.shields.io/badge/AppVersion-2025.08--03-informational?style=flat-square)
 
 A Helm chart for Curator in a Container in Kubernetes
 
@@ -16,6 +16,7 @@ A Helm chart for Curator in a Container in Kubernetes
 | autoscaling.minReplicas | string | `nil` | minimum number of replicas |
 | cronjob.affinity | object | `{}` |  |
 | cronjob.env | object | `{}` |  |
+| cronjob.nodeSelector | object | `{}` |  |
 | cronjob.successfulJobsHistoryLimit | int | `1` |  |
 | curator.auth.existingSecret | string | `"curator-auth"` | secret to use for initial admin user |
 | curator.cache.prefix | string | `""` | cache prefix |
