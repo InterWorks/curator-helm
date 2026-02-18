@@ -93,6 +93,7 @@ podDisruptionBudget:
 cronjob:
   affinity: {}
   env: {}
+  nodeSelector: {}
   successfulJobsHistoryLimit: 1
 
 # -- Resource configuration, environment will control resources if left blank but can be overridden

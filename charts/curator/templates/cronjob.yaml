@@ -19,6 +19,10 @@ spec:
             {{- toYaml .Values.podSecurityContext | nindent 12 }}
           affinity:
             {{- toYaml .Values.cronjob.affinity | nindent 12 }}
+          {{- with .Values.cronjob.nodeSelector }}
+          nodeSelector:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
           containers:
           - name: schedule-run
             securityContext:
