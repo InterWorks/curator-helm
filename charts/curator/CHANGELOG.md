@@ -1,3 +1,10 @@
+# [2.3.0](https://github.com/interworks/curator-helm/compare/v2.2.0...v2.3.0) (2026-02-18)
+
+
+### Features
+
+* **scheduling:** add nodeSelector to deployment, jobs and cronjob ([c405dae](https://github.com/interworks/curator-helm/commit/c405daea5746cf44c889ec32b10f1a05a8014dd5))
+
 # [2.2.0](https://github.com/interworks/curator-helm/compare/v2.1.0...v2.2.0) (2026-02-03)
 
 
