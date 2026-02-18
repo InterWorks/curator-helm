@@ -1,3 +1,10 @@
+# [2.4.0](https://github.com/interworks/curator-helm/compare/v2.3.1...v2.4.0) (2026-02-18)
+
+
+### Features
+
+* **mariadb:** increase maxUserConnections ([581a32c](https://github.com/interworks/curator-helm/commit/581a32c8b951c6f8e9e3c2e5422cd3b071b1cb9b))
+
 ## [2.3.1](https://github.com/interworks/curator-helm/compare/v2.3.0...v2.3.1) (2026-02-18)
 
 
