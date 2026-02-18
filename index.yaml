@@ -3,6 +3,17 @@ entries:
   curator:
   - apiVersion: v2
     appVersion: 2025.08-03
+    created: "2026-02-18T20:44:07.062073743Z"
+    description: A Helm chart for Curator in a Container in Kubernetes
+    digest: be8ac7129c4936a5d79ca4833e9b6324462019717537a8444e60f205847c5633
+    icon: https://curator.interworks.com/storage/app/uploads/public/5f4/2f8/79d/thumb_464_32_32_0_0_crop.png
+    name: curator
+    type: application
+    urls:
+    - https://github.com/InterWorks/curator-helm/releases/download/curator-2.4.0/curator-2.4.0.tgz
+    version: 2.4.0
+  - apiVersion: v2
+    appVersion: 2025.08-03
     created: "2026-02-18T18:20:19.290552802Z"
     description: A Helm chart for Curator in a Container in Kubernetes
     digest: f655979597da03f78bdb6d24a1865f2b9922f45606ba0a30d273de346d0dadd2
@@ -177,4 +188,4 @@ entries:
     urls:
     - https://github.com/InterWorks/curator-helm/releases/download/curator-1.0.0/curator-1.0.0.tgz
     version: 1.0.0
-generated: "2026-02-18T18:20:19.290660274Z"
+generated: "2026-02-18T20:44:07.062207495Z"
