@@ -5,6 +5,10 @@ replicaCount: ~
 # -- Required to be either prod, qa, or dev
 environment: prod # needs to be either dev, qa, or prod
 
+global:
+  environment: ~
+  region: ~
+
 # -- Image configuration
 image:
   # -- Repository name

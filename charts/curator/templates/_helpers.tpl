@@ -134,3 +134,11 @@ limits:
 {{- end -}}
 {{- end -}}
 {{- end -}}
+
+{{- define "curator.region" -}}
+{{ .Values.global.region }}
+{{- end -}}
+
+{{- define "curator.shortRegion" -}}
+{{- substr 0 2 .Values.global.region -}}{{ substr 0 1 (split "-" .Values.global.region)._1 }}{{- (split "-" .Values.global.region)._2 -}}
+{{- end -}}
