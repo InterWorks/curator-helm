@@ -13,4 +13,4 @@ spec:
   passwordSecretKeyRef:
     name: {{ .Values.mariadbOperator.user.userPasswordSecretKeyRef.name }}
     key: {{ .Values.mariadbOperator.user.userPasswordSecretKeyRef.key }}
-  maxUserConnections: {{ .Values.mariadbOperator.user.maxUserConnections | default 20 }}
+  maxUserConnections: {{ .Values.mariadbOperator.user.maxUserConnections | default 151 }}

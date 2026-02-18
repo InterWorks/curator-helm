@@ -1,6 +1,6 @@
 # curator
 
-![Version: 2.3.0](https://img.shields.io/badge/Version-2.3.0-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: 2025.08-03](https://img.shields.io/badge/AppVersion-2025.08--03-informational?style=flat-square)
+![Version: 2.3.1](https://img.shields.io/badge/Version-2.3.1-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: 2025.08-03](https://img.shields.io/badge/AppVersion-2025.08--03-informational?style=flat-square)
 
 A Helm chart for Curator in a Container in Kubernetes
 
@@ -54,7 +54,7 @@ A Helm chart for Curator in a Container in Kubernetes
 | mariadbOperator.mariadbEndpoint | string | `""` | Endpoint to connect to mariadb, if not set it will use the mariaDbName as the hostname |
 | mariadbOperator.user.grantOption | bool | `false` | grantOption for the user |
 | mariadbOperator.user.host | string | `"%"` | allowable login hosts for the user |
-| mariadbOperator.user.maxUserConnections | int | `100` | maximum number of connections for the user |
+| mariadbOperator.user.maxUserConnections | int | `151` | maximum number of connections for the user |
 | mariadbOperator.user.userPasswordSecretKeyRef | object | `{"key":"password","name":"production-mariadb"}` | secret reference for the created user password |
 | mariadbOperator.user.username | string | `"curator"` | mariadb user to create |
 | nameOverride | string | `""` | Overrides the chart name, default is the name of the release |
