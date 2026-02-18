@@ -82,3 +82,7 @@ spec:
         configMap:
           name: {{ include "curator.fullname" . }}-config
       {{- end }}
+      {{- with .Values.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
