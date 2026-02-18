@@ -1,3 +1,10 @@
+## [2.3.1](https://github.com/interworks/curator-helm/compare/v2.3.0...v2.3.1) (2026-02-18)
+
+
+### Bug Fixes
+
+* **helm:** add tolerations to cronjob and setup jobs ([d0114e2](https://github.com/interworks/curator-helm/commit/d0114e20118db8128cbb56535e57deffbb1248bb))
+
 # [2.3.0](https://github.com/interworks/curator-helm/compare/v2.2.0...v2.3.0) (2026-02-18)
 
 
