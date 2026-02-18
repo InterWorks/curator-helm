@@ -252,7 +252,7 @@ mariadbOperator:
       name: production-mariadb
       key: password
     # -- maximum number of connections for the user
-    maxUserConnections: 100
+    maxUserConnections: 151
     # -- grantOption for the user
     grantOption: false
     # -- allowable login hosts for the user
