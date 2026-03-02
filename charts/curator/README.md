@@ -1,4 +1,4 @@
-# curator
+# Curator
 
 ![Version: 2.4.0](https://img.shields.io/badge/Version-2.4.0-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: 2025.08-03](https://img.shields.io/badge/AppVersion-2025.08--03-informational?style=flat-square)
 
