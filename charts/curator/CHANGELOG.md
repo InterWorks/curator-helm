@@ -3,6 +3,15 @@
 
 ### Bug Fixes
 
+* **helm-chart:** placeholder pr to bump up version release ([44d16ad](https://github.com/interworks/curator-helm/commit/44d16ad18e50c2a8dbbccf4c22d4c9e710076689))
+* **helm-chart:** run helm-docs ([f11848a](https://github.com/interworks/curator-helm/commit/f11848aa5f6ad65903b7a6a9c29dfc9a117e91ea))
+* **helm-chart:** update the initial admin logic for curator backend administration to use helm release name instead of environment ([e8741cf](https://github.com/interworks/curator-helm/commit/e8741cfd628bbc82685a0b60b68c373ab7be2932))
+
+## [2.4.1](https://github.com/interworks/curator-helm/compare/v2.4.0...v2.4.1) (2026-03-02)
+
+
+### Bug Fixes
+
 * **helm-chart:** run helm-docs ([f11848a](https://github.com/interworks/curator-helm/commit/f11848aa5f6ad65903b7a6a9c29dfc9a117e91ea))
 * **helm-chart:** update the initial admin logic for curator backend administration to use helm release name instead of environment ([e8741cf](https://github.com/interworks/curator-helm/commit/e8741cfd628bbc82685a0b60b68c373ab7be2932))
 
