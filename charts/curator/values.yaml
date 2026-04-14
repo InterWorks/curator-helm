@@ -189,8 +189,8 @@ curator:
   sentry:
     # -- Sentry Laravel DSN for error reporting
     dsn: ""
-    # -- Sentry Laravel environment name
-    environment: {{ .Release.Name }}
+    # -- Sentry Laravel environment name, defaults to the Helm release name if not set
+    environment: ""
   cache:
     # -- cache prefix
     prefix: ""

@@ -27,6 +27,7 @@ A Helm chart for Curator in a Container in Kubernetes
 | curator.livenessProbe.periodSeconds | int | `10` | Period to wait between checks |
 | curator.livenessProbe.timeoutSeconds | int | `15` | Timeout for probe |
 | curator.sentry.dsn | string | `""` | Sentry Laravel DSN for error reporting |
+| curator.sentry.environment | string | `""` | Sentry Laravel environment name, defaults to the Helm release name if not set |
 | curator.startupProbe.failureThreshold | int | `10` |  |
 | curator.startupProbe.initialDelaySeconds | int | `10` |  |
 | curator.startupProbe.periodSeconds | int | `10` |  |
