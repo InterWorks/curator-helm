@@ -31,7 +31,7 @@
   value: {{ .Values.curator.sentry.dsn }}
 {{- end }}
 - name: SENTRY_ENVIRONMENT
-  value: {{ .Values.environment }}
+  value: {{ .Release.Name }}
 {{- range .Values.curator.envFromSecret }}
 - name: {{ .name }}
   valueFrom:

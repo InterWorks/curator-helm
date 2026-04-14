@@ -31,7 +31,7 @@ A Helm chart for Curator in a Container in Kubernetes
 | curator.startupProbe.initialDelaySeconds | int | `10` |  |
 | curator.startupProbe.periodSeconds | int | `10` |  |
 | curator.startupProbe.timeoutSeconds | int | `5` | Timeout for probe |
-| environment | string | `"prod"` | Environment type (prod, qa, or dev). Used for cache prefix, database defaults, resource sizing, and SENTRY_ENVIRONMENT |
+| environment | string | `"prod"` | Environment type (prod, qa, or dev). Used for cache prefix, database defaults, and resource sizing |
 | fullnameOverride | string | `""` | Overrides the full name of the chart, default is the name of the release |
 | image | object | `{"pullPolicy":"IfNotPresent","registry":"ghcr.io/interworks","repository":"curator","tag":"latest"}` | Image configuration |
 | image.pullPolicy | string | `"IfNotPresent"` | Image Pull Policy |

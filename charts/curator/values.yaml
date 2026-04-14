@@ -1,7 +1,7 @@
 # -- Number of replicas to deploy
 replicaCount: ~
 
-# -- Environment type (prod, qa, or dev). Used for cache prefix, database defaults, resource sizing, and SENTRY_ENVIRONMENT
+# -- Environment type (prod, qa, or dev). Used for cache prefix, database defaults, and resource sizing
 environment: prod # needs to be either dev, qa, or prod
 
 # -- Image configuration
