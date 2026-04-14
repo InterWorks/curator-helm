@@ -1,8 +1,7 @@
 # -- Number of replicas to deploy
 replicaCount: ~
 
-# -- Environment type that this chart is being deployed to
-# -- Required to be either prod, qa, or dev
+# -- Environment type (prod, qa, or dev). Used for cache prefix, database defaults, resource sizing, and SENTRY_ENVIRONMENT
 environment: prod # needs to be either dev, qa, or prod
 
 # -- Image configuration
