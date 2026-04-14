@@ -195,7 +195,7 @@ curator:
   # -- environment variables to pass into cache.php
   cache:
     # -- cache type, possible values apc, array, database, file, memcached, redis
-    type: ~
+    driver: ~
     # -- cache host
     host: ~
     # -- cache port
@@ -207,6 +207,63 @@ curator:
     routesCache: ~
     assetCache: ~
     assetMinify: ~
+    filesystemsUploadsPath: ~
+    filesystemsMediaPath: ~
+    enableCSRF: ~
+  database:
+    connection: ~
+    host: ~
+    name: ~
+    username: ~
+    password:
+      secretKeyRef:
+        name: ~
+        key: ~
+  filesystems:
+    driver: ~
+    awsBucket: ~
+  logging:
+    channel: ~
+    deprecationsChannel: ~
+    level: ~
+  mail:
+    host: ~
+    port: ~
+    password:
+      secretKeyRef:
+        name: ~
+        key: ~
+    username: ~
+    fromAddress: ~
+    fromName: ~
+  powerbi:
+    clientIdSecretRef:
+      secretKeyRef:
+        name: ~
+        key: ~
+    clientSecretSecretRef:
+      secretKeyRef:
+        name: ~
+        key: ~
+    adminClientIdSecretRef:
+      secretKeyRef:
+        name: ~
+        key: ~
+    adminClientSecretSecretRef:
+      secretKeyRef:
+        name: ~
+        key: ~
+    redirectURI: ~
+    cacheEnabled: ~
+    cacheExpirySeconds: ~
+  queue:
+    connection: ~
+  session:
+    driver: ~
+    cookie: ~
+    secureCookie: ~
+    
+    
   appKeySecret:
     name: ~
     key: ~
