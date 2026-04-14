@@ -189,6 +189,8 @@ curator:
   sentry:
     # -- Sentry Laravel DSN for error reporting
     dsn: ""
+    # -- Sentry Laravel environment name
+    environment: {{ .Release.Name }}
   cache:
     # -- cache prefix
     prefix: ""
