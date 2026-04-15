@@ -1,8 +1,7 @@
 # -- Number of replicas to deploy
 replicaCount: ~
 
-# -- Environment type that this chart is being deployed to
-# -- Required to be either prod, qa, or dev
+# -- Environment type (prod, qa, or dev). Used for cache prefix, database defaults, and resource sizing
 environment: prod # needs to be either dev, qa, or prod
 
 # -- Image configuration
@@ -187,6 +186,11 @@ curator:
   # -- environment variables to set in the container
   env: {}
     # KEY: VALUE
+  sentry:
+    # -- Sentry Laravel DSN for error reporting
+    dsn: ""
+    # -- Sentry Laravel environment name, defaults to the Helm release name if not set
+    environment: ""
   cache:
     # -- cache prefix
     prefix: ""

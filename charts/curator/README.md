@@ -1,6 +1,6 @@
-# Curator
+# curator
 
-![Version: 2.4.0](https://img.shields.io/badge/Version-2.4.0-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: 2025.08-03](https://img.shields.io/badge/AppVersion-2025.08--03-informational?style=flat-square)
+![Version: 2.4.1](https://img.shields.io/badge/Version-2.4.1-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: 2025.08-03](https://img.shields.io/badge/AppVersion-2025.08--03-informational?style=flat-square)
 
 A Helm chart for Curator in a Container in Kubernetes
 
@@ -26,11 +26,13 @@ A Helm chart for Curator in a Container in Kubernetes
 | curator.livenessProbe.failureThreshold | int | `3` | Number of failures before pod is failed |
 | curator.livenessProbe.periodSeconds | int | `10` | Period to wait between checks |
 | curator.livenessProbe.timeoutSeconds | int | `15` | Timeout for probe |
+| curator.sentry.dsn | string | `""` | Sentry Laravel DSN for error reporting |
+| curator.sentry.environment | string | `""` | Sentry Laravel environment name, defaults to the Helm release name if not set |
 | curator.startupProbe.failureThreshold | int | `10` |  |
 | curator.startupProbe.initialDelaySeconds | int | `10` |  |
 | curator.startupProbe.periodSeconds | int | `10` |  |
 | curator.startupProbe.timeoutSeconds | int | `5` | Timeout for probe |
-| environment | string | `"prod"` | Required to be either prod, qa, or dev |
+| environment | string | `"prod"` | Environment type (prod, qa, or dev). Used for cache prefix, database defaults, and resource sizing |
 | fullnameOverride | string | `""` | Overrides the full name of the chart, default is the name of the release |
 | image | object | `{"pullPolicy":"IfNotPresent","registry":"ghcr.io/interworks","repository":"curator","tag":"latest"}` | Image configuration |
 | image.pullPolicy | string | `"IfNotPresent"` | Image Pull Policy |

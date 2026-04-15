@@ -26,6 +26,12 @@
 - name: S3_REGION
   value: {{ .Values.persistence.s3.region | default .Values.environment }}
 {{- end }}
+{{- if .Values.curator.sentry.dsn }}
+- name: SENTRY_LARAVEL_DSN
+  value: {{ .Values.curator.sentry.dsn }}
+{{- end }}
+- name: SENTRY_ENVIRONMENT
+  value: {{ .Values.curator.sentry.environment | default .Release.Name }}
 {{- range .Values.curator.envFromSecret }}
 - name: {{ .name }}
   valueFrom:
