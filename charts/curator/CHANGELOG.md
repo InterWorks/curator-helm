@@ -1,3 +1,16 @@
+# [2.5.0](https://github.com/interworks/curator-helm/compare/v2.4.1...v2.5.0) (2026-04-15)
+
+
+### Bug Fixes
+
+* **helm-chart:** fix sentry environment value path and default to release name ([6dd614a](https://github.com/interworks/curator-helm/commit/6dd614ab73e2b079165addc83dd2b4e85be897a6))
+* **helm-chart:** use release name for SENTRY_ENVIRONMENT instead of environment value ([88e2bd7](https://github.com/interworks/curator-helm/commit/88e2bd78acdc9d643d8746c829da25efe9445fa4))
+
+
+### Features
+
+* **helm-chart:** add Sentry environment variables to deployments ([2a2d3d3](https://github.com/interworks/curator-helm/commit/2a2d3d3faa8eb1627c7f146063f6cdfc5e214e88))
+
 ## [2.4.1](https://github.com/interworks/curator-helm/compare/v2.4.0...v2.4.1) (2026-03-02)
 
 
