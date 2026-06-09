@@ -160,6 +160,10 @@
 - name: MAIL_FROM_NAME
   value: {{ .Values.curator.mail.fromName }}
 {{ end }}
+{{ if .Values.curator.mail.ehloDomain }}
+- name: MAIL_EHLO_DOMAIN
+  value: {{ .Values.curator.mail.ehloDomain }}
+{{ end }}
 # powerbi.php
 {{ if .Values.curator.powerbi.powerBiTenant }}
 - name: MAIL_FROM_NAME

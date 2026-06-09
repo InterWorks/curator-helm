@@ -236,6 +236,7 @@ curator:
     username: ~
     fromAddress: ~
     fromName: ~
+    ehloDomain: ~
   powerbi:
     clientIdSecretRef:
       secretKeyRef:
