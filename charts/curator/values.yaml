@@ -13,7 +13,7 @@ image:
   # -- Image Pull Policy
   pullPolicy: IfNotPresent
   # -- Tag Name, overrides the default appVersion in Chart.yaml
-  tag: latest
+  tag: latest@sha256:62a73a1cdf7979ba6869fdfe1453f4bcfea95ae5f8b038eac135b2fb3897bd35
 
 # -- Overrides the chart name, default is the name of the release
 nameOverride: ""
