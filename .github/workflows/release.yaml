@@ -4,9 +4,15 @@ on:
   push:
     branches:
       - main
-  # Allows manually re-running the chart publish (e.g. to backfill a release
-  # whose publish step was skipped) from the Actions tab.
+  # Allows manually (re-)publishing a chart release from the Actions tab —
+  # e.g. to backfill a release whose publish step was skipped. Provide the
+  # release tag so chart-releaser packages that exact version.
   workflow_dispatch:
+    inputs:
+      tag:
+        description: "Release tag to publish, e.g. v2.6.0 (leave blank on push-triggered runs)"
+        required: false
+        default: ""
 
 permissions:
   contents: write
@@ -44,10 +50,16 @@ jobs:
     permissions:
       contents: write
     steps:
+      # Check out the release tag so the version-bump commit is HEAD.
+      # chart-releaser diffs HEAD against the previous tag to decide what to
+      # package; running against a later commit hides the bump and produces
+      # "nothing to do". On push this is the tag release-please just created;
+      # on manual runs it is the `tag` input.
       - name: Checkout
         uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
         with:
           fetch-depth: 0
+          ref: ${{ github.event.inputs.tag || needs.release-please.outputs.tag_name }}
           token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Configure Git
@@ -57,6 +69,9 @@ jobs:
 
       - name: Run chart-releaser
         uses: helm/chart-releaser-action@cae68fefc6b5f367a0275617c9f83181ba54714f # v1.7.0
+        with:
+          # Idempotent re-runs: don't fail if curator-<version> already exists.
+          skip_existing: true
         env:
           CR_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
           CR_RELEASE_NOTES_FILE: "CHANGELOG.md"
