@@ -24,21 +24,27 @@ A Helm chart for Curator in a Container in Kubernetes
 | curator.env | object | `{}` | environment variables to set in the container |
 | curator.envFromSecret | list | `[]` | read environment variables from a secret |
 | curator.livenessProbe.failureThreshold | int | `3` | Number of failures before pod is failed |
+| curator.livenessProbe.path | string | `"/ping"` | Endpoint the probe hits; keep it cheap and dependency-free |
 | curator.livenessProbe.periodSeconds | int | `10` | Period to wait between checks |
 | curator.livenessProbe.timeoutSeconds | int | `15` | Timeout for probe |
+| curator.readinessProbe.failureThreshold | int | `3` | Number of failures before the pod is removed from the Service endpoints |
+| curator.readinessProbe.path | string | `"/healthz"` | Endpoint the probe hits; /healthz verifies the database is reachable |
+| curator.readinessProbe.periodSeconds | int | `10` | Period to wait between checks |
+| curator.readinessProbe.timeoutSeconds | int | `15` | Timeout for probe |
 | curator.sentry.dsn | string | `""` | Sentry Laravel DSN for error reporting |
 | curator.sentry.environment | string | `""` | Sentry Laravel environment name, defaults to the Helm release name if not set |
 | curator.startupProbe.failureThreshold | int | `10` |  |
 | curator.startupProbe.initialDelaySeconds | int | `10` |  |
+| curator.startupProbe.path | string | `"/ping"` | Endpoint the probe hits; keep it cheap and dependency-free |
 | curator.startupProbe.periodSeconds | int | `10` |  |
 | curator.startupProbe.timeoutSeconds | int | `5` | Timeout for probe |
 | environment | string | `"prod"` | Environment type (prod, qa, or dev). Used for cache prefix, database defaults, and resource sizing |
 | fullnameOverride | string | `""` | Overrides the full name of the chart, default is the name of the release |
-| image | object | `{"pullPolicy":"IfNotPresent","registry":"ghcr.io/interworks","repository":"curator","tag":"latest"}` | Image configuration |
+| image | object | `{"pullPolicy":"IfNotPresent","registry":"ghcr.io/interworks","repository":"curator","tag":"latest@sha256:117a4e3b90a012670d36c6fe4c25f14c37d5049aa0d153bbd7c70b134179b53d"}` | Image configuration |
 | image.pullPolicy | string | `"IfNotPresent"` | Image Pull Policy |
 | image.registry | string | `"ghcr.io/interworks"` | Registry URL |
 | image.repository | string | `"curator"` | Repository name |
-| image.tag | string | `"latest"` | Tag Name, overrides the default appVersion in Chart.yaml |
+| image.tag | string | `"latest@sha256:117a4e3b90a012670d36c6fe4c25f14c37d5049aa0d153bbd7c70b134179b53d"` | Tag Name, overrides the default appVersion in Chart.yaml |
 | ingress.className | string | `nil` | Ingress Class Name |
 | ingress.enabled | bool | `true` | Control for ingress |
 | ingress.hosts | list | `[]` | Ingress hosts configuration |
