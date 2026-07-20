@@ -46,7 +46,7 @@ spec:
               protocol: TCP
           startupProbe:
             httpGet:
-              path: /ping
+              path: {{ .Values.curator.startupProbe.path | default "/ping" }}
               port: http
             initialDelaySeconds: {{ .Values.curator.startupProbe.initialDelaySeconds }}
             periodSeconds: {{ .Values.curator.startupProbe.periodSeconds }}
@@ -57,8 +57,15 @@ spec:
             periodSeconds: {{ .Values.curator.livenessProbe.periodSeconds }}
             timeoutSeconds: {{ .Values.curator.livenessProbe.timeoutSeconds }}
             httpGet:
-              path: /ping
+              path: {{ .Values.curator.livenessProbe.path | default "/ping" }}
               port: http
+          readinessProbe:
+            httpGet:
+              path: {{ .Values.curator.readinessProbe.path | default "/healthz" }}
+              port: http
+            failureThreshold: {{ .Values.curator.readinessProbe.failureThreshold }}
+            periodSeconds: {{ .Values.curator.readinessProbe.periodSeconds }}
+            timeoutSeconds: {{ .Values.curator.readinessProbe.timeoutSeconds }}
           env:
             {{- include "env.environment" . | indent 12 }}
             {{- range $key, $value := .Values.curator.env }}
