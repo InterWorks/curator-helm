@@ -200,6 +200,8 @@ curator:
     existingSecret: curator-auth
   ## Delayed startup probe to allow MariaDB to start
   startupProbe:
+    # -- Endpoint the probe hits; keep it cheap and dependency-free
+    path: /ping
     ## -- Seconds until initial probe
     initialDelaySeconds: 10
     ## -- Period to wait before next check
@@ -208,11 +210,26 @@ curator:
     failureThreshold: 10
     # -- Timeout for probe
     timeoutSeconds: 5
-  ## Probe to check for pod liveness
+  ## Probe to check for pod liveness. Keep this dependency-free (/ping) -- a database-aware
+  ## endpoint here would fail every pod at once during a DB blip and trigger mass restarts.
   livenessProbe:
+    # -- Endpoint the probe hits; keep it cheap and dependency-free
+    path: /ping
     # -- Period to wait between checks
     periodSeconds: 10
     # -- Number of failures before pod is failed
+    failureThreshold: 3
+    # -- Timeout for probe
+    timeoutSeconds: 15
+  ## Probe to gate traffic on real readiness. /healthz verifies database connectivity and
+  ## returns 503 when the DB is unreachable, so a failing pod is pulled from the Service
+  ## endpoints (traffic stops) rather than restarted.
+  readinessProbe:
+    # -- Endpoint the probe hits; /healthz verifies the database is reachable
+    path: /healthz
+    # -- Period to wait between checks
+    periodSeconds: 10
+    # -- Number of failures before the pod is removed from the Service endpoints
     failureThreshold: 3
     # -- Timeout for probe
     timeoutSeconds: 15

@@ -15,3 +15,9 @@ tests:
       - equal:
           path: spec.template.spec.containers[0].image
           value: ghcr.io/interworks/curator:latest
+      - equal:
+          path: spec.template.spec.containers[0].readinessProbe.httpGet.path
+          value: /healthz
+      - equal:
+          path: spec.template.spec.containers[0].livenessProbe.httpGet.path
+          value: /ping
