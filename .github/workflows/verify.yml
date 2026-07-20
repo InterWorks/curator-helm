@@ -4,12 +4,10 @@ on:
   pull_request:
 
 jobs:
-  semantic-check:
+  commitlint:
     runs-on: us-east-2-development
     permissions:
       contents: read
-      pull-requests: write
-      issues: write
     steps:
       - uses: actions/checkout@v4
         with:
@@ -19,9 +17,14 @@ jobs:
         with:
           node-version: 22
 
-      - run: npm ci
+      - name: Install commitlint
+        run: npm install --no-save @commitlint/cli @commitlint/config-conventional
 
-      - name: Semantic release (dry run)
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: npx semantic-release --dry-run
+      # release-please derives versions and the changelog from conventional
+      # commits, so every commit in the PR must follow that format.
+      - name: Lint PR commits
+        run: >
+          npx commitlint
+          --from ${{ github.event.pull_request.base.sha }}
+          --to ${{ github.event.pull_request.head.sha }}
+          --verbose

@@ -5,15 +5,39 @@ on:
     branches:
       - main
 
+permissions:
+  contents: write
+  pull-requests: write
+  issues: write
+
 jobs:
-  release:
+  # Maintains a release PR that bumps charts/curator/Chart.yaml and the
+  # CHANGELOG from conventional commits. Merging that PR tags v<version>
+  # and creates the GitHub release.
+  release-please:
+    runs-on: us-east-2-development-docker
+    outputs:
+      release_created: ${{ steps.release.outputs.release_created }}
+      tag_name: ${{ steps.release.outputs.tag_name }}
+    steps:
+      - name: Run release-please
+        id: release
+        uses: googleapis/release-please-action@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          config-file: release-please-config.json
+          manifest-file: .release-please-manifest.json
+
+  # Only runs once a release PR is merged. Packages the chart, publishes the
+  # curator-<version> GitHub release with the .tgz, and updates index.yaml on
+  # the gh-pages Helm repository.
+  publish-chart:
+    needs: release-please
+    if: needs.release-please.outputs.release_created == 'true'
+    runs-on: us-east-2-development-docker
     permissions:
       contents: write
-      issues: write
-      pull-requests: write
-    runs-on: us-east-2-development-docker
     steps:
-      
       - name: Checkout
         uses: actions/checkout@v4
         with:
@@ -24,23 +48,6 @@ jobs:
         run: |
           git config user.name "$GITHUB_ACTOR"
           git config user.email "$GITHUB_ACTOR@users.noreply.github.com"
-
-      - name: Set up Node.js
-        uses: actions/setup-node@v2
-        with:
-          node-version: '22'
-
-      - name: Install dependencies
-        run: npm install
-
-      - name: Run semantic-release
-        id: semantic-release
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: |
-          npx semantic-release
-          echo "version=$VERSION" >> $GITHUB_OUTPUT
-          echo "release_notes_file=curator/CHANGELOG.md" >> $GITHUB_OUTPUT
 
       - name: Run chart-releaser
         uses: helm/chart-releaser-action@v1.7.0
