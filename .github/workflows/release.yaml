@@ -4,6 +4,9 @@ on:
   push:
     branches:
       - main
+  # Allows manually re-running the chart publish (e.g. to backfill a release
+  # whose publish step was skipped) from the Actions tab.
+  workflow_dispatch:
 
 permissions:
   contents: write
@@ -17,8 +20,11 @@ jobs:
   release-please:
     runs-on: us-east-2-development-docker
     outputs:
-      release_created: ${{ steps.release.outputs.release_created }}
-      tag_name: ${{ steps.release.outputs.tag_name }}
+      # release-please prefixes per-package outputs with the package path, so
+      # the un-prefixed `release_created` is never set here. `releases_created`
+      # (aggregate, always set) is the correct gate for a single-package repo.
+      releases_created: ${{ steps.release.outputs.releases_created }}
+      tag_name: ${{ steps.release.outputs['charts/curator--tag_name'] }}
     steps:
       - name: Run release-please
         id: release
@@ -28,12 +34,12 @@ jobs:
           config-file: release-please-config.json
           manifest-file: .release-please-manifest.json
 
-  # Only runs once a release PR is merged. Packages the chart, publishes the
-  # curator-<version> GitHub release with the .tgz, and updates index.yaml on
-  # the gh-pages Helm repository.
+  # Runs when a release PR is merged (release created) or when triggered
+  # manually. Packages the chart, publishes the curator-<version> GitHub
+  # release with the .tgz, and updates index.yaml on the gh-pages Helm repo.
   publish-chart:
     needs: release-please
-    if: needs.release-please.outputs.release_created == 'true'
+    if: needs.release-please.outputs.releases_created == 'true' || github.event_name == 'workflow_dispatch'
     runs-on: us-east-2-development-docker
     permissions:
       contents: write
