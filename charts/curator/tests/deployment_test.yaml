@@ -1,0 +1,54 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/helm-unittest/helm-unittest/main/schema/helm-testsuite.json
+suite: test deployment
+templates:
+  - deployment.yaml
+tests:
+  - it: should work
+    set:
+      image.tag: latest
+    asserts:
+      - isKind:
+          of: Deployment
+      - matchRegex:
+          path: metadata.name
+          pattern: -server$
+      - equal:
+          path: spec.template.spec.containers[0].image
+          value: ghcr.io/interworks/curator:latest
+      - equal:
+          path: spec.template.spec.containers[0].readinessProbe.httpGet.path
+          value: /healthz
+      - equal:
+          path: spec.template.spec.containers[0].livenessProbe.httpGet.path
+          value: /ping
+
+  - it: honours image registry, repository, tag and pullPolicy overrides
+    set:
+      image.registry: registry.example.com
+      image.repository: curator-custom
+      image.tag: latest
+      image.pullPolicy: Always
+    asserts:
+      - equal:
+          path: spec.template.spec.containers[0].image
+          value: registry.example.com/curator-custom:latest
+      - equal:
+          path: spec.template.spec.containers[0].imagePullPolicy
+          value: Always
+
+  - it: sets replicas from replicaCount when autoscaling is disabled
+    set:
+      image.tag: latest
+      replicaCount: 4
+    asserts:
+      - equal:
+          path: spec.replicas
+          value: 4
+
+  - it: omits replicas when autoscaling is enabled
+    set:
+      image.tag: latest
+      autoscaling.enabled: true
+    asserts:
+      - notExists:
+          path: spec.replicas
