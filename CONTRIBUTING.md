@@ -46,10 +46,10 @@ Do not hand-edit it.
   README doesn't match freshly generated output.
 
 - **The version badge is handled for you at release time.** When release-please
-  bumps `Chart.yaml`, the **Update Release Docs** workflow regenerates the
-  README on the release PR branch and commits it back, so the badge tracks the
-  new version without any manual step. That is why you never bump the version
-  in the README yourself.
+  bumps `Chart.yaml`, the **Release Charts** workflow regenerates the README on
+  the release PR branch and commits it back, so the badge tracks the new version
+  without any manual step. That is why you never bump the version in the README
+  yourself.
 
 ## Tests
 
