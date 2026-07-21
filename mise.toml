@@ -1,4 +1,4 @@
 [tools]
 helm-docs = "1.14.2"
-helm = "3.21.3"
+helm = "4.2.3"
 node = "24.18.0"
