@@ -1,0 +1,63 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/helm-unittest/helm-unittest/main/schema/helm-testsuite.json
+suite: test ingress
+templates:
+  - ingress.yaml
+release:
+  name: curator
+capabilities:
+  majorVersion: 1
+  minorVersion: 21
+tests:
+  - it: renders a networking.k8s.io/v1 Ingress by default
+    asserts:
+      - isKind:
+          of: Ingress
+      - equal:
+          path: apiVersion
+          value: networking.k8s.io/v1
+
+  - it: is not rendered when disabled
+    set:
+      ingress.enabled: false
+    asserts:
+      - hasDocuments:
+          count: 0
+
+  - it: sets ingressClassName when className is provided
+    set:
+      ingress.className: nginx
+    asserts:
+      - equal:
+          path: spec.ingressClassName
+          value: nginx
+
+  - it: renders host rules and tls
+    set:
+      ingress.hosts:
+        - host: curator.example.com
+          paths:
+            - path: /
+              pathType: Prefix
+      ingress.tls:
+        - secretName: curator-tls
+          hosts:
+            - curator.example.com
+    asserts:
+      - equal:
+          path: spec.rules[0].host
+          value: curator.example.com
+      - equal:
+          path: spec.rules[0].http.paths[0].path
+          value: /
+      - equal:
+          path: spec.rules[0].http.paths[0].backend.service.name
+          value: curator-server
+      - equal:
+          path: spec.rules[0].http.paths[0].backend.service.port.number
+          value: 8080
+      - equal:
+          path: spec.tls[0].secretName
+          value: curator-tls
+      - equal:
+          path: spec.tls[0].hosts[0]
+          value: curator.example.com

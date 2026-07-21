@@ -1,0 +1,44 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/helm-unittest/helm-unittest/main/schema/helm-testsuite.json
+suite: test poddisruptionbudget
+templates:
+  - pdb.yaml
+release:
+  name: curator
+tests:
+  - it: renders with maxUnavailable
+    set:
+      podDisruptionBudget.maxUnavailable: 1
+    asserts:
+      - isKind:
+          of: PodDisruptionBudget
+      - equal:
+          path: spec.maxUnavailable
+          value: 1
+
+  - it: renders with minAvailable
+    set:
+      podDisruptionBudget.minAvailable: 2
+    asserts:
+      - equal:
+          path: spec.minAvailable
+          value: 2
+
+  - it: fails when neither maxUnavailable nor minAvailable is set
+    asserts:
+      - failedTemplate:
+          errorMessage: You must specify either podDisruptionBudget.maxUnavailable or podDisruptionBudget.minAvailable.
+
+  - it: fails when both maxUnavailable and minAvailable are set
+    set:
+      podDisruptionBudget.maxUnavailable: 1
+      podDisruptionBudget.minAvailable: 1
+    asserts:
+      - failedTemplate:
+          errorMessage: You must specify either podDisruptionBudget.maxUnavailable or podDisruptionBudget.minAvailable, not both.
+
+  - it: does not render when disabled
+    set:
+      podDisruptionBudget.enabled: false
+    asserts:
+      - hasDocuments:
+          count: 0
