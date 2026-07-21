@@ -10,21 +10,18 @@ jobs:
     runs-on: us-east-2-development
     steps:
       - name: Checkout
-        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7
+        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
         with:
           fetch-depth: 0
 
-      - name: Install helm-docs
-        run: |
-          # Get the latest release version
-          LATEST_VERSION=$(curl -s https://api.github.com/repos/norwoodj/helm-docs/releases/latest | grep '"tag_name":' | sed -E 's/.*"([^"]+)".*/\1/' | sed 's/v//')
-          echo "Installing helm-docs version: $LATEST_VERSION"
-          
-          # Download and install the latest version
-          curl -LO https://github.com/norwoodj/helm-docs/releases/latest/download/helm-docs_${LATEST_VERSION}_Linux_x86_64.tar.gz
-          tar -xzf helm-docs_${LATEST_VERSION}_Linux_x86_64.tar.gz
-          sudo mv helm-docs /usr/local/bin/
-          helm-docs --version
+      # Install helm-docs at the version pinned in mise.toml so the check uses
+      # the exact same generator as `Update Release Docs` and local dev — a
+      # version mismatch would reformat the README and fail this check.
+      - name: Set up tools via mise
+        uses: jdx/mise-action@dad1bfd3df957f44999b559dd69dc1671cb4e9ea # v4.2.1
+
+      - name: Show helm-docs version
+        run: helm-docs --version
 
       - name: Generate helm docs
         run: |
