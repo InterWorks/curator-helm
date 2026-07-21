@@ -18,9 +18,9 @@ jobs:
 
       - name: Confirm Helm install
         run: helm version --short
-        
+
       - name: Install helm-unittest plugin
-        run: helm plugin install --verify=false https://github.com/helm-unittest/helm-unittest --version v1.1.1
+        run: helm plugin install https://github.com/helm-unittest/helm-unittest --version v1.1.1
 
       - name: Run helm unit tests
         run: helm unittest charts/curator
