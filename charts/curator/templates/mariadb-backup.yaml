@@ -9,6 +9,7 @@ metadata:
 spec:
   mariaDbRef:
     name: {{ .Values.mariadbOperator.mariaDbName | default "curator-mariadb" }}
+    namespace: {{ .Values.mariadbOperator.mariaDbNamespace | default .Release.namespace }}
   maxRetention: {{ .Values.mariadbOperator.backup.retention | default "168h" }} # 7 days
   # ignoreGlobalPriv: true
   compression: gzip

@@ -9,7 +9,7 @@ metadata:
 spec:
   mariaDbRef:
     name: {{ .Values.mariadbOperator.mariaDbName | default "curator-mariadb" }}
-    namespace: {{ .Release.Namespace }}
+    namespace: {{ .Values.mariadbOperator.mariaDbNamespace | default .Release.Namespace }}
   passwordSecretKeyRef:
     name: {{ .Values.mariadbOperator.user.userPasswordSecretKeyRef.name }}
     key: {{ .Values.mariadbOperator.user.userPasswordSecretKeyRef.key }}

@@ -9,7 +9,7 @@ metadata:
 spec:
   mariaDbRef:
     name: {{ .Values.mariadbOperator.mariaDbName | default "curator-mariadb" }}
-    namespace: {{ .Release.Namespace }}
+    namespace: {{ .Values.mariadbOperator.mariaDbNamespace | default .Release.Namespace }}
     waitForIt: true
   privileges:
     - ALL PRIVILEGES

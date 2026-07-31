@@ -10,6 +10,6 @@ metadata:
 spec:
   mariaDbRef:
     name: {{ .Values.mariadbOperator.mariaDbName | default "curator-mariadb" }}
-    namespace: {{ .Release.Namespace }}
+    namespace: {{ .Values.mariadbOperator.mariaDbNamespace | default .Release.Namespace }}
   characterSet: {{ .Values.mariadbOperator.database.characterSet }}
   collate: {{ .Values.mariadbOperator.database.collate }}
