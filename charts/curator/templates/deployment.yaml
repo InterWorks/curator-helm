@@ -87,7 +87,9 @@ spec:
               mountPath: /var/www/html/storage/cms
             - name: data
               mountPath: /var/www/html/storage/app
+              {{- if .Values.persistence.subPath}}
               subPath: {{ .Values.persistence.subPath }}
+              {{- end }}
             {{- if .Values.curator.config }}
             {{- range $key, $value := .Values.curator.config }}
             - name: config
