@@ -11,6 +11,14 @@
 
 * **helm-chart:** add Sentry environment variables to deployments ([2a2d3d3](https://github.com/interworks/curator-helm/commit/2a2d3d3faa8eb1627c7f146063f6cdfc5e214e88))
 
+## [2.7.0](https://github.com/InterWorks/curator-helm/compare/v2.6.0...v2.7.0) (2026-08-03)
+
+
+### Features
+
+* **curator:** add support for external mariadb cluster ([#69](https://github.com/InterWorks/curator-helm/issues/69)) ([fea41d6](https://github.com/InterWorks/curator-helm/commit/fea41d6edaf9e95de722f38bfc5b60ba50a9fc70))
+* **curator:** External namespace mariadb cluster ([#66](https://github.com/InterWorks/curator-helm/issues/66)) ([b8cf953](https://github.com/InterWorks/curator-helm/commit/b8cf953362d64053b9b369d1b985393baf695c96))
+
 ## [2.6.0](https://github.com/InterWorks/curator-helm/compare/v2.5.0...v2.6.0) (2026-07-20)
 
 
