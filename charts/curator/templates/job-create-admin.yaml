@@ -45,7 +45,7 @@ spec:
         {{- end }}
         command: [ "php", "artisan", "backenduser:create", "$(WEBADMIN_USER)", "$(WEBADMIN_PASSWORD)", "$(WEBADMIN_USER)@no-reply.interworks.com"]
         env:
-          {{- include "env.environment" . | indent 10 -}}
+          {{- include "env.environment" . | nindent 10 }}
           - name: WEBADMIN_PASSWORD
             valueFrom:
               secretKeyRef:
@@ -56,7 +56,9 @@ spec:
               secretKeyRef:
                 name: {{ .Release.Name }}-admin
                 key: admin-user
-          {{ range $key, $value := .Values.curator.env }}
+          - name: DB_HOST
+            value: {{ .Values.mariadbOperator.mariadbName }}.{{ .Values.mariadbOperator.mariadbNamespace | default .Release.Namespace }}
+          {{- range $key, $value := .Values.curator.env }}
           - name: "{{ $key }}"
             value: "{{ $value }}"
           {{- end }}

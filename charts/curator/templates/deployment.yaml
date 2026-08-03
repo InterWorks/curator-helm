@@ -67,7 +67,9 @@ spec:
             periodSeconds: {{ .Values.curator.readinessProbe.periodSeconds }}
             timeoutSeconds: {{ .Values.curator.readinessProbe.timeoutSeconds }}
           env:
-            {{- include "env.environment" . | indent 12 }}
+            {{- include "env.environment" . | nindent 12 }}
+            - name: DB_HOST
+              value: {{ include "curatorDbEndpoint" . }}
             {{- range $key, $value := .Values.curator.env }}
             - name: "{{ $key }}"
               value: "{{ $value }}"

@@ -1,6 +1,4 @@
-{{ define "env.environment" }}
-- name: DB_HOST
-  value: {{ .Values.mariadbOperator.mariadbEndpoint | default .Values.mariadbOperator.mariaDbName }}
+{{- define "env.environment" -}}
 - name: DB_DATABASE
   value: {{ .Values.mariadbOperator.database.name | default .Values.environment }}
 - name: DB_USERNAME
@@ -39,4 +37,4 @@
         name: {{ .key }}
         key: {{ .value }}
 {{- end }}
-{{ end }}
+{{- end -}}
