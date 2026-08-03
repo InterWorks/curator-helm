@@ -58,9 +58,10 @@ A Helm chart for Curator in a Container in Kubernetes
 | mariadbOperator.database.collate | string | `"utf8_general_ci"` | collation for the database |
 | mariadbOperator.database.name | string | `"production"` | database to create |
 | mariadbOperator.enabled | bool | `true` |  |
-| mariadbOperator.mariaDbName | string | `"curator-mariadb"` | Name of existing mariadb resource |
-| mariadbOperator.mariaDbNamespace | string | `nil` | Namespace of existing mariadb resource |
 | mariadbOperator.mariadbEndpoint | string | `""` | Endpoint to connect to mariadb, if not set it will use the mariaDbName as the hostname |
+| mariadbOperator.mariadbName | string | `"curator-mariadb"` | Name of existing mariadb resource |
+| mariadbOperator.mariadbNamespace | string | `nil` | Namespace of existing mariadb resource |
+| mariadbOperator.maxscaleEndpoint | string | `nil` | Endpoint to connect to maxscale, if not set it will default to mariadbEndpoint |
 | mariadbOperator.user.grantOption | bool | `false` | grantOption for the user |
 | mariadbOperator.user.host | string | `"%"` | allowable login hosts for the user |
 | mariadbOperator.user.maxUserConnections | int | `151` | maximum number of connections for the user |

@@ -254,11 +254,14 @@ curator:
 mariadbOperator:
   enabled: true
   # -- Name of existing mariadb resource
-  mariaDbName: "curator-mariadb"
-  # -- Namespace of existing mariadb resource
-  mariaDbNamespace: ~
+  mariadbName: "curator-mariadb"
   # -- Endpoint to connect to mariadb, if not set it will use the mariaDbName as the hostname
   mariadbEndpoint: ""
+  # -- Namespace of existing mariadb resource
+  mariadbNamespace: ~
+  # -- Endpoint to connect to maxscale, if not set it will default to mariadbEndpoint
+  maxscaleEndpoint: ~
+
   ## Database to connect to
   database:
     # -- database to create

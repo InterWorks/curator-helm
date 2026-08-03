@@ -115,7 +115,7 @@ Create the resource blocks based on environment sizing or allow for overrides
 */}}
 {{- define "curator.resources" -}}
 {{- if .Values.resources -}}
-{{- toYaml .Values.resources | nindent 4 -}}
+{{- toYaml .Values.resources -}}
 {{- else -}}
 {{- if eq .Values.environment "production" -}}
 requests:
@@ -132,5 +132,24 @@ limits:
   cpu: 500m
   memory: 512Mi
 {{- end -}}
+{{- end -}}
+{{- end -}}
+{{/*
+Determines which mariadb endpoint to use
+Determination order:
+Maxscale -> mariadbEndpoint -> mariadb
+*/}}
+{{- define "curatorDbEndpoint" -}}
+{{/* Use maxscale for db endpoint */}}
+{{- if (and .Values.mariadbOperator.maxscaleEndpoint .Values.mariadbOperator.mariadbNamespace) -}}
+{{ .Values.mariadbOperator.maxscaleEndpoint }}.{{ .Values.mariadbOperator.mariadbNamespace }}
+{{- /* Use mariadbEndpoint for db endpoint */ -}}
+{{- else if (and .Values.mariadbOperator.mariadbEndpoint .Values.mariadbOperator.mariadbNamespace) -}}
+{{ .Values.mariadbOperator.mariadbEndpoint }}.{{ .Values.mariadbOperator.mariadbNamespace }}
+{{- else if .Values.mariadbOperator.mariadbEndpoint -}}
+{{ .Values.mariadbOperator.mariadbEndpoint }}.{{ .Release.Namespace }}
+{{- else -}}
+{{- /* DEFAULT Use mariadb for db endpoint */ -}}
+{{ .Values.mariadbOperator.mariaDbName }}.{{ .Release.Namespace }}
 {{- end -}}
 {{- end -}}
