@@ -8,8 +8,8 @@ metadata:
     "helm.sh/resource-policy": keep
 spec:
   mariaDbRef:
-    name: {{ .Values.mariadbOperator.mariaDbName | default "curator-mariadb" }}
-    namespace: {{ .Values.mariadbOperator.mariaDbNamespace | default .Release.Namespace }}
+    name: {{ .Values.mariadbOperator.mariadbName | default "curator-mariadb" }}
+    namespace: {{ .Values.mariadbOperator.mariadbNamespace | default .Release.Namespace }}
   maxRetention: {{ .Values.mariadbOperator.backup.retention | default "168h" }} # 7 days
   # ignoreGlobalPriv: true
   compression: gzip

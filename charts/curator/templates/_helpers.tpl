@@ -150,6 +150,6 @@ Maxscale -> mariadbEndpoint -> mariadb
 {{ .Values.mariadbOperator.mariadbEndpoint }}.{{ .Release.Namespace }}
 {{- else -}}
 {{- /* DEFAULT Use mariadb for db endpoint */ -}}
-{{ .Values.mariadbOperator.mariaDbName }}.{{ .Release.Namespace }}
+{{ .Values.mariadbOperator.mariadbName }}.{{ .Release.Namespace }}
 {{- end -}}
 {{- end -}}

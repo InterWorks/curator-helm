@@ -8,8 +8,8 @@ metadata:
     "helm.sh/hook-weight": "40"
 spec:
   mariaDbRef:
-    name: {{ .Values.mariadbOperator.mariaDbName | default "curator-mariadb" }}
-    namespace: {{ .Values.mariadbOperator.mariaDbNamespace | default .Release.Namespace }}
+    name: {{ .Values.mariadbOperator.mariadbName | default "curator-mariadb" }}
+    namespace: {{ .Values.mariadbOperator.mariadbNamespace | default .Release.Namespace }}
     waitForIt: true
   privileges:
     - ALL PRIVILEGES
