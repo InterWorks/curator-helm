@@ -11,6 +11,13 @@
 
 * **helm-chart:** add Sentry environment variables to deployments ([2a2d3d3](https://github.com/interworks/curator-helm/commit/2a2d3d3faa8eb1627c7f146063f6cdfc5e214e88))
 
+## [2.7.2](https://github.com/InterWorks/curator-helm/compare/v2.7.1...v2.7.2) (2026-08-04)
+
+
+### Bug Fixes
+
+* **curator:** fix last case mariadbEndpoint ([#73](https://github.com/InterWorks/curator-helm/issues/73)) ([9e29c21](https://github.com/InterWorks/curator-helm/commit/9e29c2174e14165bf9662f56ac4aa2633af6f4ad))
+
 ## [2.7.1](https://github.com/InterWorks/curator-helm/compare/v2.7.0...v2.7.1) (2026-08-03)
 
 
