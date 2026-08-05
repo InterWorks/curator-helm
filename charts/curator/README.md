@@ -40,11 +40,11 @@ A Helm chart for Curator in a Container in Kubernetes
 | curator.startupProbe.timeoutSeconds | int | `5` | Timeout for probe |
 | environment | string | `"prod"` | Environment type (prod, qa, or dev). Used for cache prefix, database defaults, and resource sizing |
 | fullnameOverride | string | `""` | Overrides the full name of the chart, default is the name of the release |
-| image | object | `{"pullPolicy":"IfNotPresent","registry":"ghcr.io/interworks","repository":"curator","tag":"latest@sha256:286144d7472af79745f48f685e80aa40f14608940b51d959830f374edf7410bd"}` | Image configuration |
+| image | object | `{"pullPolicy":"IfNotPresent","registry":"ghcr.io/interworks","repository":"curator","tag":"latest@sha256:6a664746f21dd27c448f7909a6a0fb526f1448f103d65ee8d0cd1725f11579d0"}` | Image configuration |
 | image.pullPolicy | string | `"IfNotPresent"` | Image Pull Policy |
 | image.registry | string | `"ghcr.io/interworks"` | Registry URL |
 | image.repository | string | `"curator"` | Repository name |
-| image.tag | string | `"latest@sha256:286144d7472af79745f48f685e80aa40f14608940b51d959830f374edf7410bd"` | Tag Name, overrides the default appVersion in Chart.yaml |
+| image.tag | string | `"latest@sha256:6a664746f21dd27c448f7909a6a0fb526f1448f103d65ee8d0cd1725f11579d0"` | Tag Name, overrides the default appVersion in Chart.yaml |
 | ingress.className | string | `nil` | Ingress Class Name |
 | ingress.enabled | bool | `true` | Control for ingress |
 | ingress.hosts | list | `[]` | Ingress hosts configuration |
