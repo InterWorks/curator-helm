@@ -57,7 +57,7 @@ spec:
                 name: {{ .Release.Name }}-admin
                 key: admin-user
           - name: DB_HOST
-            value: {{ .Values.mariadbOperator.mariadbName }}.{{ .Values.mariadbOperator.mariadbNamespace | default .Release.Namespace }}
+            value: {{ .Values.mariadbOperator.mariadbName }}-primary.{{ .Values.mariadbOperator.mariadbNamespace | default .Release.Namespace }}
           {{- range $key, $value := .Values.curator.env }}
           - name: "{{ $key }}"
             value: "{{ $value }}"
