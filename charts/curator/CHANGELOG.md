@@ -11,6 +11,13 @@
 
 * **helm-chart:** add Sentry environment variables to deployments ([2a2d3d3](https://github.com/interworks/curator-helm/commit/2a2d3d3faa8eb1627c7f146063f6cdfc5e214e88))
 
+## [2.7.3](https://github.com/InterWorks/curator-helm/compare/v2.7.2...v2.7.3) (2026-08-05)
+
+
+### Bug Fixes
+
+* **curator:** adds `-primary` to db_host to avoid read-only replicas ([#75](https://github.com/InterWorks/curator-helm/issues/75)) ([9c9aba9](https://github.com/InterWorks/curator-helm/commit/9c9aba95354e0a759766f8b76379a3e6e8aed57a))
+
 ## [2.7.2](https://github.com/InterWorks/curator-helm/compare/v2.7.1...v2.7.2) (2026-08-04)
 
 
