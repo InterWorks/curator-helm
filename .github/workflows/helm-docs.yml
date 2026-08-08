@@ -18,7 +18,7 @@ jobs:
       # the exact same generator as `Update Release Docs` and local dev — a
       # version mismatch would reformat the README and fail this check.
       - name: Set up tools via mise
-        uses: jdx/mise-action@dad1bfd3df957f44999b559dd69dc1671cb4e9ea # v4.2.1
+        uses: jdx/mise-action@7e36c90d9ab29c415a2384db3006f3ec8a8cc654 # v4.2.4
 
       - name: Show helm-docs version
         run: helm-docs --version
