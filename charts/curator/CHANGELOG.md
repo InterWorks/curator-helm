@@ -1,3 +1,97 @@
+# [2.5.0](https://github.com/interworks/curator-helm/compare/v2.4.1...v2.5.0) (2026-04-15)
+
+
+### Bug Fixes
+
+* **helm-chart:** fix sentry environment value path and default to release name ([6dd614a](https://github.com/interworks/curator-helm/commit/6dd614ab73e2b079165addc83dd2b4e85be897a6))
+* **helm-chart:** use release name for SENTRY_ENVIRONMENT instead of environment value ([88e2bd7](https://github.com/interworks/curator-helm/commit/88e2bd78acdc9d643d8746c829da25efe9445fa4))
+
+
+### Features
+
+* **helm-chart:** add Sentry environment variables to deployments ([2a2d3d3](https://github.com/interworks/curator-helm/commit/2a2d3d3faa8eb1627c7f146063f6cdfc5e214e88))
+
+## [2.7.3](https://github.com/InterWorks/curator-helm/compare/v2.7.2...v2.7.3) (2026-08-05)
+
+
+### Bug Fixes
+
+* **curator:** adds `-primary` to db_host to avoid read-only replicas ([#75](https://github.com/InterWorks/curator-helm/issues/75)) ([9c9aba9](https://github.com/InterWorks/curator-helm/commit/9c9aba95354e0a759766f8b76379a3e6e8aed57a))
+
+## [2.7.2](https://github.com/InterWorks/curator-helm/compare/v2.7.1...v2.7.2) (2026-08-04)
+
+
+### Bug Fixes
+
+* **curator:** fix last case mariadbEndpoint ([#73](https://github.com/InterWorks/curator-helm/issues/73)) ([9e29c21](https://github.com/InterWorks/curator-helm/commit/9e29c2174e14165bf9662f56ac4aa2633af6f4ad))
+
+## [2.7.1](https://github.com/InterWorks/curator-helm/compare/v2.7.0...v2.7.1) (2026-08-03)
+
+
+### Bug Fixes
+
+* **curator:** add DB_HOST to cronjob ([#70](https://github.com/InterWorks/curator-helm/issues/70)) ([93ee2e6](https://github.com/InterWorks/curator-helm/commit/93ee2e6cb06772a04259c6dc3ab9364d8b388912))
+
+## [2.7.0](https://github.com/InterWorks/curator-helm/compare/v2.6.0...v2.7.0) (2026-08-03)
+
+
+### Features
+
+* **curator:** add support for external mariadb cluster ([#69](https://github.com/InterWorks/curator-helm/issues/69)) ([fea41d6](https://github.com/InterWorks/curator-helm/commit/fea41d6edaf9e95de722f38bfc5b60ba50a9fc70))
+* **curator:** External namespace mariadb cluster ([#66](https://github.com/InterWorks/curator-helm/issues/66)) ([b8cf953](https://github.com/InterWorks/curator-helm/commit/b8cf953362d64053b9b369d1b985393baf695c96))
+
+## [2.6.0](https://github.com/InterWorks/curator-helm/compare/v2.5.0...v2.6.0) (2026-07-20)
+
+
+### Features
+
+* **helm/curator:** add /healthz readiness probe for Curator pods ([e0c982c](https://github.com/InterWorks/curator-helm/commit/e0c982c1c6b68890f1cda90ebb1edf9637c7399a))
+* **helm/curator:** add /healthz readiness probe for Curator pods ([e0c982c](https://github.com/InterWorks/curator-helm/commit/e0c982c1c6b68890f1cda90ebb1edf9637c7399a))
+* **helm/curator:** add /healthz readiness probe for Curator pods ([8cf220e](https://github.com/InterWorks/curator-helm/commit/8cf220e0b86fb0a91556eb3b140f4ecc740cc88b))
+
+
+### Bug Fixes
+
+* update README ([197f780](https://github.com/InterWorks/curator-helm/commit/197f780214c75e5cc6f8433afbde189dde72dae1))
+
+## [2.4.1](https://github.com/interworks/curator-helm/compare/v2.4.0...v2.4.1) (2026-03-02)
+
+
+### Bug Fixes
+
+* **helm-chart:** placeholder pr to bump up version release ([44d16ad](https://github.com/interworks/curator-helm/commit/44d16ad18e50c2a8dbbccf4c22d4c9e710076689))
+* **helm-chart:** run helm-docs ([f11848a](https://github.com/interworks/curator-helm/commit/f11848aa5f6ad65903b7a6a9c29dfc9a117e91ea))
+* **helm-chart:** update the initial admin logic for curator backend administration to use helm release name instead of environment ([e8741cf](https://github.com/interworks/curator-helm/commit/e8741cfd628bbc82685a0b60b68c373ab7be2932))
+
+## [2.4.1](https://github.com/interworks/curator-helm/compare/v2.4.0...v2.4.1) (2026-03-02)
+
+
+### Bug Fixes
+
+* **helm-chart:** run helm-docs ([f11848a](https://github.com/interworks/curator-helm/commit/f11848aa5f6ad65903b7a6a9c29dfc9a117e91ea))
+* **helm-chart:** update the initial admin logic for curator backend administration to use helm release name instead of environment ([e8741cf](https://github.com/interworks/curator-helm/commit/e8741cfd628bbc82685a0b60b68c373ab7be2932))
+
+# [2.4.0](https://github.com/interworks/curator-helm/compare/v2.3.1...v2.4.0) (2026-02-18)
+
+
+### Features
+
+* **mariadb:** increase maxUserConnections ([581a32c](https://github.com/interworks/curator-helm/commit/581a32c8b951c6f8e9e3c2e5422cd3b071b1cb9b))
+
+## [2.3.1](https://github.com/interworks/curator-helm/compare/v2.3.0...v2.3.1) (2026-02-18)
+
+
+### Bug Fixes
+
+* **helm:** add tolerations to cronjob and setup jobs ([d0114e2](https://github.com/interworks/curator-helm/commit/d0114e20118db8128cbb56535e57deffbb1248bb))
+
+# [2.3.0](https://github.com/interworks/curator-helm/compare/v2.2.0...v2.3.0) (2026-02-18)
+
+
+### Features
+
+* **scheduling:** add nodeSelector to deployment, jobs and cronjob ([c405dae](https://github.com/interworks/curator-helm/commit/c405daea5746cf44c889ec32b10f1a05a8014dd5))
+
 # [2.2.0](https://github.com/interworks/curator-helm/compare/v2.1.0...v2.2.0) (2026-02-03)
 
 

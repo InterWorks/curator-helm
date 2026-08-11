@@ -19,6 +19,14 @@ spec:
             {{- toYaml .Values.podSecurityContext | nindent 12 }}
           affinity:
             {{- toYaml .Values.cronjob.affinity | nindent 12 }}
+          {{- with .Values.cronjob.nodeSelector }}
+          nodeSelector:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+          {{- with .Values.cronjob.tolerations }}
+          tolerations:
+            {{- toYaml . | nindent 8 }}
+          {{- end }}
           containers:
           - name: schedule-run
             securityContext:
@@ -40,9 +48,13 @@ spec:
               mountPath: /var/www/html/storage/cms
             - name: data
               mountPath: /var/www/html/storage/app
+              {{- if .Values.persistence.subPath}}
               subPath: {{ .Values.persistence.subPath }}
+              {{- end }}
             env:
-            {{- include "env.environment" . | indent 12 }}
+            {{- include "env.environment" . | nindent 12 }}
+            - name: DB_HOST
+              value: {{ include "curatorDbEndpoint" . }}
             {{- range $key, $value := .Values.cronjob.env }}
             - name: "{{ $key }}"
               value: "{{ $value }}"

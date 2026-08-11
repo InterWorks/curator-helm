@@ -9,7 +9,7 @@ metadata:
     "helm.sh/resource-policy": keep
 spec:
   mariaDbRef:
-    name: {{ .Values.mariadbOperator.mariaDbName | default "curator-mariadb" }}
-    namespace: {{ .Release.Namespace }}
+    name: {{ .Values.mariadbOperator.mariadbName | default "curator-mariadb" }}
+    namespace: {{ .Values.mariadbOperator.mariadbNamespace | default .Release.Namespace }}
   characterSet: {{ .Values.mariadbOperator.database.characterSet }}
   collate: {{ .Values.mariadbOperator.database.collate }}

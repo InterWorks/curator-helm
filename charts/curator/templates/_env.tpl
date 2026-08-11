@@ -59,13 +59,6 @@
 - name: DB_CONNECTION
   value: {{ .Values.curator.database.connection }}
 {{ end }}
-{{ if .Values.curator.database.host }}
-- name: DB_HOST
-  value: {{ .Values.curator.database.host }}
-{{ else }}
-- name: DB_HOST
-  value: {{ .Values.mariadbOperator.mariadbEndpoint | default .Values.mariadbOperator.mariaDbName }}
-{{ end }}
 {{ if .Values.curator.database.databaseName }}
 - name: DB_DATABASE
   value: {{ .Values.curator.database.databaseName}}
@@ -238,8 +231,12 @@
 ###
 # No configurable items in view
 ###
-
-
+{{- if .Values.curator.sentry.dsn }}
+- name: SENTRY_LARAVEL_DSN
+  value: {{ .Values.curator.sentry.dsn }}
+{{- end }}
+- name: SENTRY_ENVIRONMENT
+  value: {{ .Values.curator.sentry.environment | default .Release.Name }}
 {{- range .Values.curator.envFromSecret }}
 - name: {{ .name }}
   valueFrom:
@@ -247,4 +244,4 @@
         name: {{ .key }}
         key: {{ .value }}
 {{- end }}
-{{ end }}
+{{- end -}}

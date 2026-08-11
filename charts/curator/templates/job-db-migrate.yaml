@@ -43,10 +43,12 @@ spec:
           subPath: {{ $key }}.php
         {{- end }}
         {{- end }}
-        command: [ "php", "artisan", "portal:migrate"]
+        command: [ "php", "artisan", "portal:migrate" ]
         env:
-          {{- include "env.environment" . | indent 10 -}}
-          {{ range $key, $value := .Values.curator.env }}
+          {{- include "env.environment" . | nindent 10 }}
+          - name: DB_HOST
+            value: {{ .Values.curator.database.host | default (printf "%s-primary.%s" .Values.mariadbOperator.mariadbName (.Values.mariadbOperator.mariadbNamespace | default .Release.Namespace)) }}
+          {{- range $key, $value := .Values.curator.env }}
           - name: "{{ $key }}"
             value: "{{ $value }}"
           {{- end }}
@@ -72,4 +74,11 @@ spec:
         configMap:
           name: {{ include "curator.fullname" . }}-config
       {{- end }}
-
+      {{- with .Values.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}

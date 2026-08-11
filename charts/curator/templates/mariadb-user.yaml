@@ -8,9 +8,9 @@ metadata:
     "helm.sh/hook-weight": "40"
 spec:
   mariaDbRef:
-    name: {{ .Values.mariadbOperator.mariaDbName | default "curator-mariadb" }}
-    namespace: {{ .Release.Namespace }}
+    name: {{ .Values.mariadbOperator.mariadbName | default "curator-mariadb" }}
+    namespace: {{ .Values.mariadbOperator.mariadbNamespace | default .Release.Namespace }}
   passwordSecretKeyRef:
     name: {{ .Values.mariadbOperator.user.userPasswordSecretKeyRef.name }}
     key: {{ .Values.mariadbOperator.user.userPasswordSecretKeyRef.key }}
-  maxUserConnections: {{ .Values.mariadbOperator.user.maxUserConnections | default 20 }}
+  maxUserConnections: {{ .Values.mariadbOperator.user.maxUserConnections | default 151 }}

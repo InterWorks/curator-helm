@@ -1,6 +1,6 @@
 # curator
 
-![Version: 2.2.0](https://img.shields.io/badge/Version-2.2.0-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: 2025.08-03](https://img.shields.io/badge/AppVersion-2025.08--03-informational?style=flat-square)
+![Version: 2.7.3](https://img.shields.io/badge/Version-2.7.3-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: 2025.08-03](https://img.shields.io/badge/AppVersion-2025.08--03-informational?style=flat-square)
 
 A Helm chart for Curator in a Container in Kubernetes
 
@@ -16,6 +16,7 @@ A Helm chart for Curator in a Container in Kubernetes
 | autoscaling.minReplicas | string | `nil` | minimum number of replicas |
 | cronjob.affinity | object | `{}` |  |
 | cronjob.env | object | `{}` |  |
+| cronjob.nodeSelector | object | `{}` |  |
 | cronjob.successfulJobsHistoryLimit | int | `1` |  |
 | curator.app | object | `{"appKeySecret":{"key":null,"name":null},"debug":null}` | environment variables to pass into app.php |
 | curator.auth.existingSecret | string | `"curator-auth"` | secret to use for initial admin user |
@@ -38,6 +39,7 @@ A Helm chart for Curator in a Container in Kubernetes
 | curator.filesystems | object | `{"disk":null}` | environment variables to pass into filesystems.php |
 | curator.filesystems.disk | string | `nil` | default filesystem disk, defaults to "s3" if persistence.s3.enabled else "local" |
 | curator.livenessProbe.failureThreshold | int | `3` | Number of failures before pod is failed |
+| curator.livenessProbe.path | string | `"/ping"` | Endpoint the probe hits; keep it cheap and dependency-free |
 | curator.livenessProbe.periodSeconds | int | `10` | Period to wait between checks |
 | curator.livenessProbe.timeoutSeconds | int | `15` | Timeout for probe |
 | curator.logging.channel | string | `nil` |  |
@@ -64,20 +66,27 @@ A Helm chart for Curator in a Container in Kubernetes
 | curator.powerbi.redirectURI | string | `nil` |  |
 | curator.powerbi.tenant | string | `nil` |  |
 | curator.queue.connection | string | `nil` |  |
+| curator.readinessProbe.failureThreshold | int | `3` | Number of failures before the pod is removed from the Service endpoints |
+| curator.readinessProbe.path | string | `"/healthz"` | Endpoint the probe hits; /healthz verifies the database is reachable |
+| curator.readinessProbe.periodSeconds | int | `10` | Period to wait between checks |
+| curator.readinessProbe.timeoutSeconds | int | `15` | Timeout for probe |
+| curator.sentry.dsn | string | `""` | Sentry Laravel DSN for error reporting |
+| curator.sentry.environment | string | `""` | Sentry Laravel environment name, defaults to the Helm release name if not set |
 | curator.session.cookie | string | `nil` |  |
 | curator.session.driver | string | `nil` |  |
 | curator.session.secureCookie | string | `nil` |  |
 | curator.startupProbe.failureThreshold | int | `10` |  |
 | curator.startupProbe.initialDelaySeconds | int | `10` |  |
+| curator.startupProbe.path | string | `"/ping"` | Endpoint the probe hits; keep it cheap and dependency-free |
 | curator.startupProbe.periodSeconds | int | `10` |  |
 | curator.startupProbe.timeoutSeconds | int | `5` | Timeout for probe |
-| environment | string | `"prod"` | Required to be either prod, qa, or dev |
+| environment | string | `"prod"` | Environment type (prod, qa, or dev). Used for cache prefix, database defaults, and resource sizing |
 | fullnameOverride | string | `""` | Overrides the full name of the chart, default is the name of the release |
-| image | object | `{"pullPolicy":"IfNotPresent","registry":"ghcr.io/interworks","repository":"curator","tag":"latest"}` | Image configuration |
+| image | object | `{"pullPolicy":"IfNotPresent","registry":"ghcr.io/interworks","repository":"curator","tag":"latest@sha256:6a664746f21dd27c448f7909a6a0fb526f1448f103d65ee8d0cd1725f11579d0"}` | Image configuration |
 | image.pullPolicy | string | `"IfNotPresent"` | Image Pull Policy |
 | image.registry | string | `"ghcr.io/interworks"` | Registry URL |
 | image.repository | string | `"curator"` | Repository name |
-| image.tag | string | `"latest"` | Tag Name, overrides the default appVersion in Chart.yaml |
+| image.tag | string | `"latest@sha256:6a664746f21dd27c448f7909a6a0fb526f1448f103d65ee8d0cd1725f11579d0"` | Tag Name, overrides the default appVersion in Chart.yaml |
 | ingress.className | string | `nil` | Ingress Class Name |
 | ingress.enabled | bool | `true` | Control for ingress |
 | ingress.hosts | list | `[]` | Ingress hosts configuration |
@@ -91,11 +100,13 @@ A Helm chart for Curator in a Container in Kubernetes
 | mariadbOperator.database.collate | string | `"utf8_general_ci"` | collation for the database |
 | mariadbOperator.database.name | string | `"production"` | database to create |
 | mariadbOperator.enabled | bool | `true` |  |
-| mariadbOperator.mariaDbName | string | `"curator-mariadb"` | Name of existing mariadb resource |
-| mariadbOperator.mariadbEndpoint | string | `""` | Endpoint to connect to mariadb, if not set it will use the mariaDbName as the hostname |
+| mariadbOperator.mariadbEndpoint | string | `""` | Endpoint to connect to mariadb, if not set it will use the mariadbName as the hostname |
+| mariadbOperator.mariadbName | string | `"curator-mariadb"` | Name of existing mariadb resource |
+| mariadbOperator.mariadbNamespace | string | `nil` | Namespace of existing mariadb resource |
+| mariadbOperator.maxscaleEndpoint | string | `nil` | Endpoint to connect to maxscale, if not set it will default to mariadbEndpoint |
 | mariadbOperator.user.grantOption | bool | `false` | grantOption for the user |
 | mariadbOperator.user.host | string | `"%"` | allowable login hosts for the user |
-| mariadbOperator.user.maxUserConnections | int | `100` | maximum number of connections for the user |
+| mariadbOperator.user.maxUserConnections | int | `151` | maximum number of connections for the user |
 | mariadbOperator.user.userPasswordSecretKeyRef | object | `{"key":"password","name":"production-mariadb"}` | secret reference for the created user password |
 | mariadbOperator.user.username | string | `"curator"` | mariadb user to create |
 | nameOverride | string | `""` | Overrides the chart name, default is the name of the release |
