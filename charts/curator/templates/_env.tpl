@@ -9,7 +9,7 @@
   value: {{ .host }}
 {{ end -}}
 # TODO account for old value location
-{{ if .Values.curator.app.appKeySecret }}
+{{ if and (.Values.curator.app.appKeySecret.name .Values.curator.app.appKeySecret.key) }}
 - name: APP_KEY
   valueFrom:
     secretKeyRef:
@@ -100,14 +100,14 @@
 - name: AWS_ENDPOINT
   value: {{ .Values.persistence.s3.endpoint }}
 {{ end }}
-{{ if .Values.persistence.s3.accessKeyIdSecret }}
+{{ if and (.Values.persistence.s3.accessKeyIdSecret.name .Values.persistence.s3.accessKeyIdSecret.key)}}
 - name: AWS_ACCESS_KEY_ID
   valueFrom:
     secretKeyRef:
       name: {{ .Values.persistence.s3.accessKeyIdSecret.name }}
       key: {{ .Values.persistence.s3.accessKeyIdSecret.key }}
 {{ end }}
-{{ if .Values.persistence.s3.secretAccessKeySecret }}
+{{ if and (.Values.persistence.s3.secretKeyIdSecret.name .Values.persistence.s3.secretKeyIdSecret.key) }}
 - name: AWS_SECRET_ACCESS_KEY
   valueFrom:
     secretKeyRef:
@@ -142,7 +142,7 @@
 {{ end }}
 {{ if .Values.curator.mail.port }}
 - name: MAIL_PORT
-  value: {{ .Values.curator.mail.port }}
+  value: {{ .Values.curator.mail.port | quote }}
 {{ end }}
 {{ if .Values.curator.mail.username }}
 - name: MAIL_USERNAME
@@ -203,7 +203,7 @@
 {{ end }}
 {{ if .Values.curator.powerbi.cacheExpirySeconds }}
 - name: POWER_BI_CACHE_EXPIRY_SECONDS
-  value: {{ .Values.curator.powerbi.cacheExpirySeconds }}
+  value: {{ .Values.curator.powerbi.cacheExpirySeconds | quote }}
 {{ end }}
 # queue.php
 {{ if .Values.curator.queue.connection }}
@@ -225,7 +225,7 @@
 {{ end }}
 {{ if .Values.curator.session.secureCookie }}
 - name: SESSION_SECURE_COOKIE
-  value: {{ .Values.curator.session.secureCookie }}
+  value: {{ .Values.curator.session.secureCookie | quote }}
 {{ end }}
 # view.php
 ###
