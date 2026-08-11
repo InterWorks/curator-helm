@@ -18,21 +18,63 @@ A Helm chart for Curator in a Container in Kubernetes
 | cronjob.env | object | `{}` |  |
 | cronjob.nodeSelector | object | `{}` |  |
 | cronjob.successfulJobsHistoryLimit | int | `1` |  |
+| curator.app | object | `{"appKeySecret":{"key":null,"name":null},"debug":null}` | environment variables to pass into app.php |
 | curator.auth.existingSecret | string | `"curator-auth"` | secret to use for initial admin user |
-| curator.cache.prefix | string | `""` | cache prefix |
-| curator.config | object | `{}` | These are used to override default php config files present in the containers. The files are mounted in the config directory and will append .php to the ends of the keys |
+| curator.cache | object | `{"driver":null,"host":null,"port":null,"prefix":null}` | environment variables to pass into cache.php |
+| curator.cache.driver | string | `nil` | cache type, possible values apc, array, database, file, memcached, redis |
+| curator.cache.host | string | `nil` | memcached host, only used when driver is memcached |
+| curator.cache.port | string | `nil` | memcached port, only used when driver is memcached |
+| curator.cache.prefix | string | `nil` | cache prefix, defaults to a value derived from APP_NAME if unset |
+| curator.cms | object | `{"assetCache":null,"assetMinify":null,"enableCSRF":null,"filesystemDriver":null,"filesystemMediaPath":null,"filesystemUploadsPath":null,"routesCache":null}` | environment variables to pass into cms.php |
+| curator.cms.filesystemDriver | string | `nil` | disk used for CMS media/uploads storage, defaults to "s3" if persistence.s3.enabled else "local" |
+| curator.config | object | `{}` | If one of these is defined the above config section will no longer be applicable if the new config doesn't utilze environment variables |
+| curator.database.connection | string | `nil` |  |
+| curator.database.databaseName | string | `nil` |  |
+| curator.database.host | string | `nil` |  |
+| curator.database.password.secretKeyRef.key | string | `nil` |  |
+| curator.database.password.secretKeyRef.name | string | `nil` |  |
+| curator.database.username | string | `nil` |  |
 | curator.env | object | `{}` | environment variables to set in the container |
 | curator.envFromSecret | list | `[]` | read environment variables from a secret |
+| curator.filesystems | object | `{"disk":null}` | environment variables to pass into filesystems.php |
+| curator.filesystems.disk | string | `nil` | default filesystem disk, defaults to "s3" if persistence.s3.enabled else "local" |
 | curator.livenessProbe.failureThreshold | int | `3` | Number of failures before pod is failed |
 | curator.livenessProbe.path | string | `"/ping"` | Endpoint the probe hits; keep it cheap and dependency-free |
 | curator.livenessProbe.periodSeconds | int | `10` | Period to wait between checks |
 | curator.livenessProbe.timeoutSeconds | int | `15` | Timeout for probe |
+| curator.logging.channel | string | `nil` |  |
+| curator.logging.deprecationsChannel | string | `nil` |  |
+| curator.logging.level | string | `nil` |  |
+| curator.mail.ehloDomain | string | `nil` |  |
+| curator.mail.fromAddress | string | `nil` |  |
+| curator.mail.fromName | string | `nil` |  |
+| curator.mail.host | string | `nil` |  |
+| curator.mail.passwordSecretRef.key | string | `nil` |  |
+| curator.mail.passwordSecretRef.name | string | `nil` |  |
+| curator.mail.port | string | `nil` |  |
+| curator.mail.username | string | `nil` |  |
+| curator.powerbi.adminClientIdSecretRef.key | string | `nil` |  |
+| curator.powerbi.adminClientIdSecretRef.name | string | `nil` |  |
+| curator.powerbi.adminClientSecretSecretRef.key | string | `nil` |  |
+| curator.powerbi.adminClientSecretSecretRef.name | string | `nil` |  |
+| curator.powerbi.cacheEnabled | string | `nil` |  |
+| curator.powerbi.cacheExpirySeconds | string | `nil` |  |
+| curator.powerbi.clientIdSecretRef.key | string | `nil` |  |
+| curator.powerbi.clientIdSecretRef.name | string | `nil` |  |
+| curator.powerbi.clientSecretSecretRef.key | string | `nil` |  |
+| curator.powerbi.clientSecretSecretRef.name | string | `nil` |  |
+| curator.powerbi.redirectURI | string | `nil` |  |
+| curator.powerbi.tenant | string | `nil` |  |
+| curator.queue.connection | string | `nil` |  |
 | curator.readinessProbe.failureThreshold | int | `3` | Number of failures before the pod is removed from the Service endpoints |
 | curator.readinessProbe.path | string | `"/healthz"` | Endpoint the probe hits; /healthz verifies the database is reachable |
 | curator.readinessProbe.periodSeconds | int | `10` | Period to wait between checks |
 | curator.readinessProbe.timeoutSeconds | int | `15` | Timeout for probe |
 | curator.sentry.dsn | string | `""` | Sentry Laravel DSN for error reporting |
 | curator.sentry.environment | string | `""` | Sentry Laravel environment name, defaults to the Helm release name if not set |
+| curator.session.cookie | string | `nil` |  |
+| curator.session.driver | string | `nil` |  |
+| curator.session.secureCookie | string | `nil` |  |
 | curator.startupProbe.failureThreshold | int | `10` |  |
 | curator.startupProbe.initialDelaySeconds | int | `10` |  |
 | curator.startupProbe.path | string | `"/ping"` | Endpoint the probe hits; keep it cheap and dependency-free |
@@ -74,9 +116,12 @@ A Helm chart for Curator in a Container in Kubernetes
 | persistence.enabled | bool | `true` | enable persistence |
 | persistence.existingClaim | string | `""` | existingClaim is the name of an existing persistent volume claim to use for storage |
 | persistence.labels | object | `{}` | persistent volume claim labels |
+| persistence.s3.accessKeyIdSecret | object | `{"key":null,"name":null}` | secret containing the AWS access key id, leave unset to rely on IRSA/instance role credentials |
 | persistence.s3.bucket | string | `"some-bucket"` | bucket to use for storage |
 | persistence.s3.enabled | bool | `false` | enable S3 storage, if disable and peristence.enabled is true, it will use PVC |
+| persistence.s3.endpoint | string | `nil` | custom S3-compatible endpoint, leave unset to use AWS |
 | persistence.s3.region | string | `""` | region bucket is in |
+| persistence.s3.secretAccessKeySecret | object | `{"key":null,"name":null}` | secret containing the AWS secret access key, leave unset to rely on IRSA/instance role credentials |
 | persistence.size | string | `"5Gi"` | size of persistent volume claim |
 | persistence.storageClass | string | `nil` | persistent volume claim storageClass |
 | persistence.subPath | string | `""` | persistent volume claim subpath |

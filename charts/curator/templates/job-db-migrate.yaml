@@ -47,7 +47,7 @@ spec:
         env:
           {{- include "env.environment" . | nindent 10 }}
           - name: DB_HOST
-            value: {{ .Values.mariadbOperator.mariadbName }}-primary.{{ .Values.mariadbOperator.mariadbNamespace | default .Release.Namespace }}
+            value: {{ .Values.curator.database.host | default (printf "%s-primary.%s" .Values.mariadbOperator.mariadbName (.Values.mariadbOperator.mariadbNamespace | default .Release.Namespace)) }}
           {{- range $key, $value := .Values.curator.env }}
           - name: "{{ $key }}"
             value: "{{ $value }}"

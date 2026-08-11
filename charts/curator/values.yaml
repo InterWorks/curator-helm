@@ -115,7 +115,16 @@ persistence:
     bucket: some-bucket
     # -- region bucket is in
     region: ""
-  
+    # -- custom S3-compatible endpoint, leave unset to use AWS
+    endpoint: ~
+    # -- secret containing the AWS access key id, leave unset to rely on IRSA/instance role credentials
+    accessKeyIdSecret:
+      name: ~
+      key: ~
+    # -- secret containing the AWS secret access key, leave unset to rely on IRSA/instance role credentials
+    secretAccessKeySecret:
+      name: ~
+      key: ~
   # -- existingClaim is the name of an existing persistent volume claim to use for storage
   existingClaim: ""
   # -- size of persistent volume claim
@@ -186,14 +195,87 @@ curator:
   # -- environment variables to set in the container
   env: {}
     # KEY: VALUE
+  # -- environment variables to pass into app.php
+  app:
+    debug: ~
+    appKeySecret:
+      name: ~
+      key: ~
   sentry:
     # -- Sentry Laravel DSN for error reporting
     dsn: ""
     # -- Sentry Laravel environment name, defaults to the Helm release name if not set
     environment: ""
+  # -- environment variables to pass into cache.php
   cache:
-    # -- cache prefix
-    prefix: ""
+    # -- cache type, possible values apc, array, database, file, memcached, redis
+    driver: ~
+    # -- memcached host, only used when driver is memcached
+    host: ~
+    # -- memcached port, only used when driver is memcached
+    port: ~
+    # -- cache prefix, defaults to a value derived from APP_NAME if unset
+    prefix: ~
+  # -- environment variables to pass into cms.php
+  cms:
+    routesCache: ~
+    assetCache: ~
+    assetMinify: ~
+    # -- disk used for CMS media/uploads storage, defaults to "s3" if persistence.s3.enabled else "local"
+    filesystemDriver: ~
+    filesystemUploadsPath: ~
+    filesystemMediaPath: ~
+    enableCSRF: ~
+  database:
+    connection: ~
+    host: ~
+    databaseName: ~
+    username: ~
+    password:
+      secretKeyRef:
+        name: ~
+        key: ~
+  # -- environment variables to pass into filesystems.php
+  filesystems:
+    # -- default filesystem disk, defaults to "s3" if persistence.s3.enabled else "local"
+    disk: ~
+  logging:
+    channel: ~
+    deprecationsChannel: ~
+    level: ~
+  mail:
+    host: ~
+    port: ~
+    passwordSecretRef:
+      name: ~
+      key: ~
+    username: ~
+    fromAddress: ~
+    fromName: ~
+    ehloDomain: ~
+  powerbi:
+    tenant: ~
+    clientIdSecretRef:
+      name: ~
+      key: ~
+    clientSecretSecretRef:
+      name: ~
+      key: ~
+    adminClientIdSecretRef:
+      name: ~
+      key: ~
+    adminClientSecretSecretRef:
+      name: ~
+      key: ~
+    redirectURI: ~
+    cacheEnabled: ~
+    cacheExpirySeconds: ~
+  queue:
+    connection: ~
+  session:
+    driver: ~
+    cookie: ~
+    secureCookie: ~
   ## Initial Admin parameters
   auth:
     # -- secret to use for initial admin user
@@ -234,6 +316,7 @@ curator:
     # -- Timeout for probe
     timeoutSeconds: 15
   # -- These are used to override default php config files present in the containers. The files are mounted in the config directory and will append .php to the ends of the keys
+  # -- If one of these is defined the above config section will no longer be applicable if the new config doesn't utilze environment variables
   config: {}
     # app: ""
     # auth: ""
