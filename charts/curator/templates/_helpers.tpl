@@ -111,13 +111,16 @@ storageClassName: {{ $storageClass | quote }}
 {{- end -}}
 
 {{/*
-Create the resource blocks based on environment sizing or allow for overrides
+Create the resource blocks based on environment sizing or allow for overrides.
+The environment values compared here must stay in sync with the `environment`
+enum in values.schema.json (dev, qa, prod) -- a comparison against a value the
+schema rejects makes the branch unreachable.
 */}}
 {{- define "curator.resources" -}}
 {{- if .Values.resources -}}
 {{- toYaml .Values.resources -}}
 {{- else -}}
-{{- if eq .Values.environment "production" -}}
+{{- if eq .Values.environment "prod" -}}
 requests:
   cpu: 1
   memory: 1Gi

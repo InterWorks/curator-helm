@@ -52,3 +52,62 @@ tests:
     asserts:
       - notExists:
           path: spec.replicas
+
+  # The sizing branches key off `environment`, whose allowed values come from
+  # values.schema.json (dev, qa, prod). These pin that agreement: a branch
+  # comparing against a value the schema rejects is unreachable and silently
+  # falls through to the small block.
+  - it: uses the production sizing when environment is prod and resources is unset
+    set:
+      image.tag: latest
+      environment: prod
+    asserts:
+      - equal:
+          path: spec.template.spec.containers[0].resources.requests.cpu
+          value: 1
+      - equal:
+          path: spec.template.spec.containers[0].resources.requests.memory
+          value: 1Gi
+      - equal:
+          path: spec.template.spec.containers[0].resources.limits.cpu
+          value: 1500m
+      - equal:
+          path: spec.template.spec.containers[0].resources.limits.memory
+          value: 2Gi
+
+  - it: uses the small sizing for non-prod environments
+    set:
+      image.tag: latest
+      environment: dev
+    asserts:
+      - equal:
+          path: spec.template.spec.containers[0].resources.requests.cpu
+          value: 500m
+      - equal:
+          path: spec.template.spec.containers[0].resources.requests.memory
+          value: 512Mi
+      - equal:
+          path: spec.template.spec.containers[0].resources.limits.cpu
+          value: 500m
+      - equal:
+          path: spec.template.spec.containers[0].resources.limits.memory
+          value: 512Mi
+
+  - it: prefers an explicit resources override over the environment sizing
+    set:
+      image.tag: latest
+      environment: prod
+      resources:
+        requests:
+          cpu: 250m
+          memory: 256Mi
+        limits:
+          cpu: 3.5
+          memory: 1Gi
+    asserts:
+      - equal:
+          path: spec.template.spec.containers[0].resources.requests.cpu
+          value: 250m
+      - equal:
+          path: spec.template.spec.containers[0].resources.limits.cpu
+          value: 3.5
