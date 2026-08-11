@@ -50,6 +50,54 @@ Helm Unit Tests and Check Helm Documentation workflows run those
 independently on each PR. Reason about rendered output by reading the
 templates.
 
+## Sibling repos: the contract this chart sits inside
+
+Two repos decide whether a change here is correct, and neither is visible
+from this one. If they are checked out into `.themis-context/` for this run,
+read them. If they are not, reason from what follows and raise a cross-repo
+concern as a **question**, not as an asserted bug -- the decisive facts live
+in a repo you cannot open.
+
+### `InterWorks/iac-interworks` -- the consumer
+
+The GitOps monorepo that deploys this chart. Per-site HelmReleases live under
+`infrastructure/<tenant>/<region>/customer-workload/<customer>/curator/helm/`
+as `dev-helmrelease.yaml` / `qa-helmrelease.yaml` / `prod-helmrelease.yaml`,
+or `<env>-<site>-helmrelease.yaml` where a customer runs more than one
+portal. `.templates/apps/curator/helm/` holds the stubs new sites are
+generated from.
+
+Each HelmRelease pins a chart version and supplies its own values, so:
+
+- **What the fleet actually sets is what matters.** Before flagging a
+  default as wrong, check whether any site relies on it; before removing or
+  renaming a key, check who passes it. Example: every prod HelmRelease sets
+  `resources` explicitly, which is why an unreachable production sizing
+  branch in `curator.resources` went unnoticed for so long.
+- **`.templates/` is the source of truth for new sites.** A values change
+  that leaves the template stub behind ships a broken new-site path.
+
+### `InterWorks/curator` -- the application
+
+The Winter/Laravel app this chart runs. The chart's job is to hand it a
+correct environment, and the names have to match on both sides.
+
+- **The env contract lives in `docker/config/*.php`, not the repo-root
+  `config/*.php`.** The `docker/config` files are baked into the image and
+  are what read `CACHE_HOST`, `CACHE_PORT`, `CACHE_PREFIX`, `S3_BUCKET`, and
+  `S3_REGION`. The repo-root `config/*.php` tree reads a different set
+  (`DB_HOST`, `SENTRY_LARAVEL_DSN`, `AWS_*`, …). Checking a chart-rendered
+  env var against the wrong one of those two trees produces a confident
+  wrong answer in either direction.
+- **`curator.config` keys override those same files.** Each key is written
+  into the config directory with `.php` appended, so a key that doesn't name
+  a real config file mounts a file nothing loads.
+- **A new variable in `_env.tpl` is only useful if the app reads it**, and a
+  variable the app requires but the chart never sets fails at runtime, not at
+  render. Check both directions when a diff touches `_env.tpl`.
+- **Probe paths are app routes.** `/ping` and `/healthz` are defined in the
+  application; a probe path change has to name a route that exists.
+
 ## What CI already covers (do not flag)
 
 These run on every PR, independently of this review. Do not raise findings
