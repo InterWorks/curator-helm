@@ -115,6 +115,16 @@ persistence:
     bucket: some-bucket
     # -- region bucket is in
     region: ""
+    # -- custom S3-compatible endpoint, leave unset to use AWS
+    endpoint: ~
+    # -- secret containing the AWS access key id, leave unset to rely on IRSA/instance role credentials
+    accessKeyIdSecret:
+      name: ~
+      key: ~
+    # -- secret containing the AWS secret access key, leave unset to rely on IRSA/instance role credentials
+    secretAccessKeySecret:
+      name: ~
+      key: ~
   
   # -- existingClaim is the name of an existing persistent volume claim to use for storage
   existingClaim: ""
@@ -196,32 +206,35 @@ curator:
   cache:
     # -- cache type, possible values apc, array, database, file, memcached, redis
     driver: ~
-    # -- cache host
+    # -- memcached host, only used when driver is memcached
     host: ~
-    # -- cache port
+    # -- memcached port, only used when driver is memcached
     port: ~
-    # -- cache prefix
+    # -- cache prefix, defaults to a value derived from APP_NAME if unset
     prefix: ~
   # -- environment variables to pass into cms.php
   cms:
     routesCache: ~
     assetCache: ~
     assetMinify: ~
-    filesystemsUploadsPath: ~
-    filesystemsMediaPath: ~
+    # -- disk used for CMS media/uploads storage, defaults to "s3" if persistence.s3.enabled else "local"
+    filesystemDriver: ~
+    filesystemUploadsPath: ~
+    filesystemMediaPath: ~
     enableCSRF: ~
   database:
     connection: ~
     host: ~
-    name: ~
+    databaseName: ~
     username: ~
     password:
       secretKeyRef:
         name: ~
         key: ~
+  # -- environment variables to pass into filesystems.php
   filesystems:
-    driver: ~
-    awsBucket: ~
+    # -- default filesystem disk, defaults to "s3" if persistence.s3.enabled else "local"
+    disk: ~
   logging:
     channel: ~
     deprecationsChannel: ~
@@ -229,31 +242,27 @@ curator:
   mail:
     host: ~
     port: ~
-    password:
-      secretKeyRef:
-        name: ~
-        key: ~
+    passwordSecretRef:
+      name: ~
+      key: ~
     username: ~
     fromAddress: ~
     fromName: ~
     ehloDomain: ~
   powerbi:
+    tenant: ~
     clientIdSecretRef:
-      secretKeyRef:
-        name: ~
-        key: ~
+      name: ~
+      key: ~
     clientSecretSecretRef:
-      secretKeyRef:
-        name: ~
-        key: ~
+      name: ~
+      key: ~
     adminClientIdSecretRef:
-      secretKeyRef:
-        name: ~
-        key: ~
+      name: ~
+      key: ~
     adminClientSecretSecretRef:
-      secretKeyRef:
-        name: ~
-        key: ~
+      name: ~
+      key: ~
     redirectURI: ~
     cacheEnabled: ~
     cacheExpirySeconds: ~
@@ -263,11 +272,6 @@ curator:
     driver: ~
     cookie: ~
     secureCookie: ~
-    
-    
-  appKeySecret:
-    name: ~
-    key: ~
   ## Initial Admin parameters
   auth:
     # -- secret to use for initial admin user

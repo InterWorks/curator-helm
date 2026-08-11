@@ -17,21 +17,15 @@
       value: {{ .Values.curator.app.appKeySecret.key | default "app-key"}}
 {{ end }}
 # cache.php
-{{ if .Values.curator.cache.driver }}
 - name: CACHE_DRIVER
-  value: {{ .Values.curator.cache.driver }}
-{{ end }}
-{{ if .Values.curator.cache.host }}
-- name: CACHE_HOST
-  value: {{ .Values.curator.cache.host }}
-{{ end }}
-{{ if .Values.curator.cache.port }}
-- name: CACHE_PORT
-  value: {{ .Values.curator.cache.port }}
-{{ end }}
+  value: {{ .Values.curator.cache.driver | default "memcached" }}
+- name: MEMCACHED_HOST
+  value: {{ .Values.curator.cache.host | default "memcached" }}
+- name: MEMCACHED_PORT
+  value: {{ .Values.curator.cache.port | default "11211" | quote }}
 {{ if .Values.curator.cache.prefix }}
 - name: CACHE_PREFIX
-  value: {{ .Values.curator.cache.prefix | default .Values.environment }}
+  value: {{ .Values.curator.cache.prefix }}
 {{ end }}
 # cms.php
 {{ if .Values.curator.cms.routesCache }}
@@ -46,13 +40,15 @@
 - name: ASSET_MINIFY
   value: {{ .Values.curator.cms.assetMinify }}
 {{ end }}
-{{ if .Values.curator.cms.filesystemsUploadsPath }}
+- name: FILESYSTEM_DRIVER
+  value: {{ .Values.curator.cms.filesystemDriver | default (ternary "s3" "local" .Values.persistence.s3.enabled) }}
+{{ if .Values.curator.cms.filesystemUploadsPath }}
 - name: FILESYSTEM_UPLOADS_PATH
-  value: {{ .Values.curator.cms.filesystemsUploadsPath }}
+  value: {{ .Values.curator.cms.filesystemUploadsPath }}
 {{ end }}
-{{ if .Values.curator.cms.filesystemsMediaPath }}
+{{ if .Values.curator.cms.filesystemMediaPath }}
 - name: FILESYSTEM_MEDIA_PATH
-  value: {{ .Values.curator.cms.filesystemsMediaPath }}
+  value: {{ .Values.curator.cms.filesystemMediaPath }}
 {{ end }}
 {{ if .Values.curator.cms.enableCSRF }}
 - name: ENABLE_CSRF
@@ -60,9 +56,9 @@
 {{ end }}
 # database.php
 {{ if .Values.curator.database.connection }}
-- name: DB_DATABASE
-  value: {{ .Values.curator.database.connection}}
-{{ else }}
+- name: DB_CONNECTION
+  value: {{ .Values.curator.database.connection }}
+{{ end }}
 {{ if .Values.curator.database.host }}
 - name: DB_HOST
   value: {{ .Values.curator.database.host }}
@@ -77,14 +73,14 @@
 - name: DB_DATABASE
   value: {{ .Values.mariadbOperator.database.name | default .Values.environment }}
 {{ end }}
-{{ if .Values.curator.database.user }}
+{{ if .Values.curator.database.username }}
 - name: DB_USERNAME
   value: {{ .Values.curator.database.username }}
 {{ else }}
 - name: DB_USERNAME
   value: {{ .Values.mariadbOperator.user.username | default "curator"}}
 {{ end }}
-{{ if and (.Values.curator.database.password.secretKeyRef.name .values.curator.database.password.secretKeyRef.key )}}
+{{ if and .Values.curator.database.password.secretKeyRef.name .Values.curator.database.password.secretKeyRef.key }}
 - name: DB_PASSWORD
   valueFrom:
     secretKeyRef:
@@ -98,26 +94,33 @@
       key: {{ .Values.mariadbOperator.user.userPasswordSecretKeyRef.key | default "password" }}
 {{ end }}
 # filesystems.php
-###
-# FILESYSTEM_DRIVER is created above.
-# TODO should that go here instead?
-###
-{{ if .Values.curator.filesystems.filesystemDriver }}
-- name: FILESYSTEM_DRIVER
-  value: {{ .Values.curator.filesystems.filesystemDriver }}
-{{ end }}
-{{ if .Values.curator.filesystems.awsBucket }}
-- name: AWS_BUCKET
-  value: {{ .Values.curator.filesystems.awsBucket }}
-{{ end }}
-###
-# AWS_DEFAULT_REGION is passed in via the pod identity webhook
-###
+- name: FILESYSTEM_DISK
+  value: {{ .Values.curator.filesystems.disk | default (ternary "s3" "local" .Values.persistence.s3.enabled) }}
 {{ if .Values.persistence.s3.enabled -}}
-- name: S3_BUCKET
-  value: {{ .Values.persistence.s3.bucket | default .Values.environment }}
-- name: S3_REGION
-  value: {{ .Values.persistence.s3.region | default .Values.environment }}
+- name: AWS_BUCKET
+  value: {{ .Values.persistence.s3.bucket }}
+{{ if .Values.persistence.s3.region }}
+- name: AWS_DEFAULT_REGION
+  value: {{ .Values.persistence.s3.region }}
+{{ end }}
+{{ if .Values.persistence.s3.endpoint }}
+- name: AWS_ENDPOINT
+  value: {{ .Values.persistence.s3.endpoint }}
+{{ end }}
+{{ if .Values.persistence.s3.accessKeyIdSecret }}
+- name: AWS_ACCESS_KEY_ID
+  valueFrom:
+    secretKeyRef:
+      name: {{ .Values.persistence.s3.accessKeyIdSecret.name }}
+      key: {{ .Values.persistence.s3.accessKeyIdSecret.key }}
+{{ end }}
+{{ if .Values.persistence.s3.secretAccessKeySecret }}
+- name: AWS_SECRET_ACCESS_KEY
+  valueFrom:
+    secretKeyRef:
+      name: {{ .Values.persistence.s3.secretAccessKeySecret.name }}
+      key: {{ .Values.persistence.s3.secretAccessKeySecret.key }}
+{{ end }}
 {{- end }}
 # logging.php
 {{ if .Values.curator.logging.channel }}
@@ -137,12 +140,12 @@
 - name: MAIL_HOST
   value: {{ .Values.curator.mail.host }}
 {{ end }}
-{{ if and (.Values.curator.mail.passwordSecretRef.name .Values.curator.mail.passwordSecretRef.key) }}
+{{ if and .Values.curator.mail.passwordSecretRef.name .Values.curator.mail.passwordSecretRef.key }}
 - name: MAIL_PASSWORD
   valueFrom:
     secretKeyRef:
       name: {{ .Values.curator.mail.passwordSecretRef.name }}
-      key: {{ .Values.curator.mail.passwordSecretRef.name.key }}
+      key: {{ .Values.curator.mail.passwordSecretRef.key }}
 {{ end }}
 {{ if .Values.curator.mail.port }}
 - name: MAIL_PORT
@@ -165,32 +168,32 @@
   value: {{ .Values.curator.mail.ehloDomain }}
 {{ end }}
 # powerbi.php
-{{ if .Values.curator.powerbi.powerBiTenant }}
-- name: MAIL_FROM_NAME
-  value: {{ .Values.curator.mail.powerBiTenant }}
+{{ if .Values.curator.powerbi.tenant }}
+- name: POWER_BI_TENANT
+  value: {{ .Values.curator.powerbi.tenant }}
 {{ end }}
-{{ if and (.Values.curator.powerbi.clientIdSecretRef.name .Values.curator.powerbi.clientIdSecretRef.key) }}
+{{ if and .Values.curator.powerbi.clientIdSecretRef.name .Values.curator.powerbi.clientIdSecretRef.key }}
 - name: POWER_BI_CLIENT_ID
   valueFrom:
     secretKeyRef:
       name: {{ .Values.curator.powerbi.clientIdSecretRef.name }}
       key: {{ .Values.curator.powerbi.clientIdSecretRef.key }}
 {{ end }}
-{{ if and (.Values.curator.powerbi.clientSecretSecretRef.name .Values.curator.powerbi.clientSecretSecretRef.key) }}
+{{ if and .Values.curator.powerbi.clientSecretSecretRef.name .Values.curator.powerbi.clientSecretSecretRef.key }}
 - name: POWER_BI_CLIENT_SECRET
   valueFrom:
     secretKeyRef:
       name: {{ .Values.curator.powerbi.clientSecretSecretRef.name }}
       key: {{ .Values.curator.powerbi.clientSecretSecretRef.key }}
 {{ end }}
-{{ if and (.Values.curator.powerbi.adminClientIdSecretRef.name .Values.curator.powerbi.adminClientIdSecretRef.key) }}
+{{ if and .Values.curator.powerbi.adminClientIdSecretRef.name .Values.curator.powerbi.adminClientIdSecretRef.key }}
 - name: POWER_BI_ADMIN_CLIENT_ID
   valueFrom:
     secretKeyRef:
       name: {{ .Values.curator.powerbi.adminClientIdSecretRef.name }}
       key: {{ .Values.curator.powerbi.adminClientIdSecretRef.key }}
 {{ end }}
-{{ if and (.Values.curator.powerbi.adminClientSecretSecretRef.name .Values.curator.powerbi.adminClientSecretSecretRef.key) }}
+{{ if and .Values.curator.powerbi.adminClientSecretSecretRef.name .Values.curator.powerbi.adminClientSecretSecretRef.key }}
 - name: POWER_BI_ADMIN_CLIENT_SECRET
   valueFrom:
     secretKeyRef:
@@ -219,17 +222,17 @@
 # No configurable items in services
 ###
 # session.php
-{{ if .Values.curator.session.sessionDriver }}
+{{ if .Values.curator.session.driver }}
 - name: SESSION_DRIVER
-  value: {{ .Values.curator.session.sessionDriver }}
+  value: {{ .Values.curator.session.driver }}
 {{ end }}
-{{ if .Values.curator.session.sessionCookie }}
+{{ if .Values.curator.session.cookie }}
 - name: SESSION_COOKIE
-  value: {{ .Values.curator.session.sessionCookie }}
+  value: {{ .Values.curator.session.cookie }}
 {{ end }}
-{{ if .Values.curator.session.sessionSecureCookie }}
+{{ if .Values.curator.session.secureCookie }}
 - name: SESSION_SECURE_COOKIE
-  value: {{ .Values.curator.session.sessionSecureCookie }}
+  value: {{ .Values.curator.session.secureCookie }}
 {{ end }}
 # view.php
 ###
