@@ -15,6 +15,9 @@
 #   - include_lessons: false (no sibling-bot lessons relevant here).
 #   - comment_only: true (Themis posts findings as a non-blocking COMMENT
 #     review, never APPROVE / REQUEST_CHANGES, so it never blocks a PR).
+#   - context_repos: curator + iac-interworks, checked out read-only so
+#     Themis can verify cross-repo contracts instead of only asking about
+#     them (added in CuratorAgents themis-review @ the pinned SHA below).
 #
 # Bot-authored PRs are NOT reviewed:
 #   The two bot authors here are Renovate (image digest, action, and npm
@@ -37,6 +40,13 @@
 #   The Themis GitHub App must be installed on InterWorks/curator-helm
 #   (Pull requests: Write) and remain installed on InterWorks/CuratorAgents
 #   (Contents: Read) so the reusable can fetch Themis's soul/style assets.
+#   The `context_repos` below additionally need Contents: Read on
+#   InterWorks/curator and InterWorks/iac-interworks. That grant is
+#   read-only and isolated: the reusable mints a separate token for the
+#   clones and never hands it to the agent. If it's missing, the run
+#   degrades to a review without sibling context (a `::warning::` in the
+#   job log and no "Context Repositories" block in the prompt) rather
+#   than failing.
 # ==============================================================================
 
 name: Claude Code Review
@@ -62,12 +72,20 @@ jobs:
     # Renovate keeps the digest current: the org renovate-config extends
     # config:best-practices, which enables helpers:pinGitHubActionDigests, so
     # the pin gets bumped via a normal (reviewable) Renovate PR.
-    uses: InterWorks/CuratorAgents/.github/workflows/themis-review.yml@3e9df2b8591eebba3fbd57557b2a4d0f8c34d647 # themis-v1.33.0
+    uses: InterWorks/CuratorAgents/.github/workflows/themis-review.yml@403cc42b4155bc94098dc63f5680efe73fb80f4a # themis-v1.35.0
     secrets: inherit
     with:
       review_doc: REVIEW.md
       include_cross_bot_conventions: false
       include_lessons: false
+      # This chart is judged by two repos it can't see: iac-interworks pins a
+      # chart version per site and supplies each site's values, and curator's
+      # docker/config/*.php reads the env vars these templates render. Both
+      # are cloned read-only into .themis-context/ for the review. See the
+      # "Sibling repos" section of REVIEW.md for what to check in each.
+      context_repos: |
+        curator
+        iac-interworks
       # Comment-only: Themis posts findings as a non-blocking COMMENT
       # review here rather than APPROVE / REQUEST_CHANGES, so it never
       # green-checks or blocks a PR.
