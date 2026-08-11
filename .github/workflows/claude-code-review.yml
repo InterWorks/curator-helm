@@ -1,0 +1,74 @@
+# ==============================================================================
+# Claude Code Review (curator-helm caller stub)
+# ==============================================================================
+#
+# Thin caller stub that delegates to the canonical themis-review reusable
+# hosted in InterWorks/CuratorAgents. Themis reviews pull requests opened
+# against this repo against REVIEW.md.
+#
+# Per-repo customization:
+#   - review_doc: REVIEW.md (this repo has no CLAUDE.md; CONTRIBUTING.md is
+#     the development guide and REVIEW.md is the review spec, same split as
+#     iac-interworks).
+#   - include_cross_bot_conventions: false (curator-helm isn't part of the
+#     Curator bot ecosystem; those conventions don't apply here).
+#   - include_lessons: false (no sibling-bot lessons relevant here).
+#   - comment_only: true (Themis posts findings as a non-blocking COMMENT
+#     review, never APPROVE / REQUEST_CHANGES, so it never blocks a PR).
+#
+# Bot-authored PRs are NOT reviewed:
+#   The two bot authors here are Renovate (image digest, action, and npm
+#   bumps) and release-please (the version-bump + CHANGELOG release PR).
+#   Neither carries a diff a review can add value to. The job-level `if:`
+#   gate below skips any PR whose author is a Bot account, which runs before
+#   the reusable and so bypasses its default `allowed_bots` (which includes
+#   renovate[bot]/dependabot[bot] and would otherwise let Themis review bot
+#   PRs).
+#   Note: this keys on `pull_request.user.type == 'Bot'`, correct for both
+#   Renovate and release-please running as GitHub Apps. A PAT-authored bot
+#   PR authoring as a User account would not be caught by this gate.
+#
+# Required org-level configuration (InterWorks org, granted to this repo):
+#   - vars.THEMIS_GH_APP_ID
+#   - secrets.THEMIS_GH_APP_PRIVATE_KEY
+#   - secrets.THEMIS_ANTHROPIC_API_KEY
+#
+# Required app installation:
+#   The Themis GitHub App must be installed on InterWorks/curator-helm
+#   (Pull requests: Write) and remain installed on InterWorks/CuratorAgents
+#   (Contents: Read) so the reusable can fetch Themis's soul/style assets.
+# ==============================================================================
+
+name: Claude Code Review
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened, ready_for_review, edited, review_requested]
+
+# Workflow-level permissions grant the maximum the called reusable
+# may use. The reusable's job-level permissions are a subset of these.
+permissions:
+  contents: read
+  pull-requests: write
+  issues: read
+  id-token: write
+
+jobs:
+  themis:
+    # Skip bot-authored PRs (Renovate, release-please, Dependabot). Only the
+    # reusable's own draft/event-type gating applies beyond this.
+    if: ${{ github.event.pull_request.user.type != 'Bot' }}
+    # Pinned to a release SHA (immutable) rather than the mutable @main ref.
+    # Renovate keeps the digest current: the org renovate-config extends
+    # config:best-practices, which enables helpers:pinGitHubActionDigests, so
+    # the pin gets bumped via a normal (reviewable) Renovate PR.
+    uses: InterWorks/CuratorAgents/.github/workflows/themis-review.yml@3e9df2b8591eebba3fbd57557b2a4d0f8c34d647 # themis-v1.33.0
+    secrets: inherit
+    with:
+      review_doc: REVIEW.md
+      include_cross_bot_conventions: false
+      include_lessons: false
+      # Comment-only: Themis posts findings as a non-blocking COMMENT
+      # review here rather than APPROVE / REQUEST_CHANGES, so it never
+      # green-checks or blocks a PR.
+      comment_only: true
