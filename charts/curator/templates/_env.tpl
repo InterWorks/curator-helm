@@ -14,7 +14,7 @@
   valueFrom:
     secretKeyRef:
       name: {{ .Values.curator.app.appKeySecret.name | default (printf "%s-admin" .Release.Name) }}
-      value: {{ .Values.curator.app.appKeySecret.key | default "app-key"}}
+      key: {{ .Values.curator.app.appKeySecret.key | default "app-key"}}
 {{ end }}
 # cache.php
 - name: CACHE_DRIVER
