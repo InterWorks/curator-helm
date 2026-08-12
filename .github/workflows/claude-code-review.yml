@@ -38,6 +38,21 @@
 #     - Every `inputs.*` replaced by curator-helm's literal value (below).
 #     - Job gate additionally skips fork PRs and Bot authors.
 #     - Job renamed `themis-review` -> `themis`.
+#     - Third-party actions SHA-pinned with a version comment. Upstream
+#       uses mutable tags; this repo pins everywhere (helm-docs.yml,
+#       helm-test.yml, verify.yml, release.yaml) and REVIEW.md says to
+#       flag a mutable pin, so the vendored copy follows the local rule.
+#       Renovate keeps these current.
+#
+# KNOWN LIMITATION (upstream, tracked in InterWorks/CuratorAgents#389)
+#   The "Decide review gate" step short-circuits a re-review only when the
+#   prior review's API state is `APPROVED`. Under `comment_only: true`
+#   every review is posted as `COMMENTED` with the verdict in a banner, so
+#   that state never occurs and the fast path never fires -- each push to
+#   an already-approved PR pays for a full review. The thread-sweep step
+#   at the bottom of this file gets this right (it regexes the APPROVED
+#   banner); the gate does not. Left as-is deliberately rather than fixed
+#   only here, so this copy stays diffable against upstream.
 #
 # FROZEN INPUT VALUES (what the caller stub would have passed)
 #   review_doc:                     REVIEW.md
@@ -157,7 +172,7 @@ jobs:
 
       - name: Generate Themis bot token
         id: app-token
-        uses: actions/create-github-app-token@v3
+        uses: actions/create-github-app-token@bcd2ba49218906704ab6c1aa796996da409d3eb1 # v3.2.0
         with:
           client-id: ${{ vars.THEMIS_GH_APP_ID }}
           private-key: ${{ secrets.THEMIS_GH_APP_PRIVATE_KEY }}
@@ -187,7 +202,7 @@ jobs:
       # ------------------------------------------------------------------------
       - name: Capture prior Themis review state
         id: prior-review
-        uses: actions/github-script@v9
+        uses: actions/github-script@3a2844b7e9c422d3c10d287c895573f7108da1b3 # v9.0.0
         env:
           BOT_USERNAME: "themis-iw[bot]"
           LEGACY_BOT_USERNAME: ""
@@ -418,7 +433,7 @@ jobs:
 
       - name: Checkout caller repository
         if: steps.gate.outputs.run == 'true'
-        uses: actions/checkout@v6
+        uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6.1.0
         with:
           # Full history so Themis's `git log PRIOR_SHA..HEAD` and
           # `git diff PRIOR_SHA` calls work during incremental reviews.
@@ -426,7 +441,7 @@ jobs:
 
       - name: Checkout Themis assets
         if: steps.gate.outputs.run == 'true'
-        uses: actions/checkout@v6
+        uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6.1.0
         with:
           repository: InterWorks/CuratorAgents
           ref: main
@@ -462,7 +477,7 @@ jobs:
         id: context-token
         if: steps.gate.outputs.run == 'true' && steps.context-repos.outputs.names != ''
         continue-on-error: true
-        uses: actions/create-github-app-token@v3
+        uses: actions/create-github-app-token@bcd2ba49218906704ab6c1aa796996da409d3eb1 # v3.2.0
         with:
           client-id: ${{ vars.THEMIS_GH_APP_ID }}
           private-key: ${{ secrets.THEMIS_GH_APP_PRIVATE_KEY }}
@@ -840,7 +855,7 @@ jobs:
           # Used by post_claude_review.sh to render the Author rationale
           # footer that gets appended to REQUEST_CHANGES bodies.
           AGENT_NAME: Themis
-        uses: anthropics/claude-code-action@v1
+        uses: anthropics/claude-code-action@239e3a730883eeb5c53db12b0fc9573b3024b126 # v1.0.191
         with:
           anthropic_api_key: ${{ secrets.THEMIS_ANTHROPIC_API_KEY }}
           github_token: ${{ steps.app-token.outputs.token }}
@@ -913,7 +928,7 @@ jobs:
       # ------------------------------------------------------------------------
       - name: Resolve addressed inline threads on approval
         if: ${{ !cancelled() && steps.app-token.outputs.token != '' }}
-        uses: actions/github-script@v9
+        uses: actions/github-script@3a2844b7e9c422d3c10d287c895573f7108da1b3 # v9.0.0
         env:
           BOT_USERNAME: "themis-iw[bot]"
           LEGACY_BOT_USERNAME: ""
