@@ -1,15 +1,15 @@
 {{ define "env.environment" }}
 # app.php
-{{ if .Values.curator.app.debug }}
+{{ if not (kindIs "invalid" .Values.curator.app.debug) }}
 - name: APP_DEBUG
-  value: {{ .Values.curator.app.debug }}
+  value: {{ .Values.curator.app.debug | quote }}
 {{ end }}
 {{ with (first .Values.ingress.hosts) -}}
 - name: APP_URL
   value: {{ .host }}
 {{ end -}}
 # TODO account for old value location
-{{ if and (.Values.curator.app.appKeySecret.name .Values.curator.app.appKeySecret.key) }}
+{{ if and .Values.curator.app.appKeySecret.name .Values.curator.app.appKeySecret.key }}
 - name: APP_KEY
   valueFrom:
     secretKeyRef:
@@ -28,17 +28,17 @@
   value: {{ .Values.curator.cache.prefix }}
 {{ end }}
 # cms.php
-{{ if .Values.curator.cms.routesCache }}
+{{ if not (kindIs "invalid" .Values.curator.cms.routesCache) }}
 - name: ROUTES_CACHE
-  value: {{ .Values.curator.cms.routesCache }}
+  value: {{ .Values.curator.cms.routesCache | quote }}
 {{ end }}
-{{ if .Values.curator.cms.assetCache }}
+{{ if not (kindIs "invalid" .Values.curator.cms.assetCache) }}
 - name: ASSET_CACHE
-  value: {{ .Values.curator.cms.assetCache }}
+  value: {{ .Values.curator.cms.assetCache | quote }}
 {{ end }}
-{{ if .Values.curator.cms.assetMinify }}
+{{ if not (kindIs "invalid" .Values.curator.cms.assetMinify) }}
 - name: ASSET_MINIFY
-  value: {{ .Values.curator.cms.assetMinify }}
+  value: {{ .Values.curator.cms.assetMinify | quote }}
 {{ end }}
 - name: FILESYSTEM_DRIVER
   value: {{ .Values.curator.cms.filesystemDriver | default (ternary "s3" "local" .Values.persistence.s3.enabled) }}
@@ -50,9 +50,9 @@
 - name: FILESYSTEM_MEDIA_PATH
   value: {{ .Values.curator.cms.filesystemMediaPath }}
 {{ end }}
-{{ if .Values.curator.cms.enableCSRF }}
+{{ if not (kindIs "invalid" .Values.curator.cms.enableCSRF) }}
 - name: ENABLE_CSRF
-  value: {{ .Values.curator.cms.enableCSRF }}
+  value: {{ .Values.curator.cms.enableCSRF | quote }}
 {{ end }}
 # database.php
 {{ if .Values.curator.database.connection }}
@@ -100,14 +100,14 @@
 - name: AWS_ENDPOINT
   value: {{ .Values.persistence.s3.endpoint }}
 {{ end }}
-{{ if and (.Values.persistence.s3.accessKeyIdSecret.name .Values.persistence.s3.accessKeyIdSecret.key)}}
+{{ if and .Values.persistence.s3.accessKeyIdSecret.name .Values.persistence.s3.accessKeyIdSecret.key }}
 - name: AWS_ACCESS_KEY_ID
   valueFrom:
     secretKeyRef:
       name: {{ .Values.persistence.s3.accessKeyIdSecret.name }}
       key: {{ .Values.persistence.s3.accessKeyIdSecret.key }}
 {{ end }}
-{{ if and (.Values.persistence.s3.secretKeyIdSecret.name .Values.persistence.s3.secretKeyIdSecret.key) }}
+{{ if and .Values.persistence.s3.secretAccessKeySecret.name .Values.persistence.s3.secretAccessKeySecret.key }}
 - name: AWS_SECRET_ACCESS_KEY
   valueFrom:
     secretKeyRef:
@@ -197,9 +197,9 @@
 - name: POWER_BI_REDIRECT_URI
   value: {{ .Values.curator.powerbi.redirectURI }}
 {{ end }}
-{{ if .Values.curator.powerbi.cacheEnabled }}
+{{ if not (kindIs "invalid" .Values.curator.powerbi.cacheEnabled) }}
 - name: POWER_BI_CACHE_ENABLED
-  value: {{ .Values.curator.powerbi.cacheEnabled }}
+  value: {{ .Values.curator.powerbi.cacheEnabled | quote }}
 {{ end }}
 {{ if .Values.curator.powerbi.cacheExpirySeconds }}
 - name: POWER_BI_CACHE_EXPIRY_SECONDS
@@ -223,7 +223,7 @@
 - name: SESSION_COOKIE
   value: {{ .Values.curator.session.cookie }}
 {{ end }}
-{{ if .Values.curator.session.secureCookie }}
+{{ if not (kindIs "invalid" .Values.curator.session.secureCookie) }}
 - name: SESSION_SECURE_COOKIE
   value: {{ .Values.curator.session.secureCookie | quote }}
 {{ end }}
