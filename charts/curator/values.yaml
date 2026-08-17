@@ -226,9 +226,12 @@ curator:
     filesystemUploadsPath: ~
     filesystemMediaPath: ~
     enableCSRF: ~
+  # -- environment variables to pass into database.php
   database:
     connection: ~
     host: ~
+    # -- database port, only set this if the database is not listening on the connection's default port
+    port: ~
     databaseName: ~
     username: ~
     password:

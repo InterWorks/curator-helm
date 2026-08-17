@@ -46,6 +46,10 @@ tests:
           path: spec.template.spec.containers[0].env
           content:
             name: CACHE_PREFIX
+      - notContains:
+          path: spec.template.spec.containers[0].env
+          content:
+            name: DB_PORT
 
   - it: switches storage to s3 when persistence.s3.enabled is set, with AWS credentials from secrets
     set:
@@ -106,6 +110,7 @@ tests:
       curator.cache.prefix: my-prefix
       curator.cms.filesystemDriver: local
       curator.database.host: external-db
+      curator.database.port: "3307"
       curator.database.databaseName: custom-db
       curator.database.username: custom-user
       curator.filesystems.disk: local
@@ -146,6 +151,11 @@ tests:
           content:
             name: DB_HOST
             value: external-db
+      - contains:
+          path: spec.template.spec.containers[0].env
+          content:
+            name: DB_PORT
+            value: "3307"
       - contains:
           path: spec.template.spec.containers[0].env
           content:

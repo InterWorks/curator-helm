@@ -73,6 +73,10 @@
 - name: DB_USERNAME
   value: {{ .Values.mariadbOperator.user.username | default "curator"}}
 {{ end }}
+{{ if .Values.curator.database.port }}
+- name: DB_PORT
+  value: {{ .Values.curator.database.port | quote }}
+{{ end }}
 {{ if and .Values.curator.database.password.secretKeyRef.name .Values.curator.database.password.secretKeyRef.key }}
 - name: DB_PASSWORD
   valueFrom:

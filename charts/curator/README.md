@@ -28,12 +28,8 @@ A Helm chart for Curator in a Container in Kubernetes
 | curator.cms | object | `{"assetCache":null,"assetMinify":null,"enableCSRF":null,"filesystemDriver":null,"filesystemMediaPath":null,"filesystemUploadsPath":null,"routesCache":null}` | environment variables to pass into cms.php |
 | curator.cms.filesystemDriver | string | `nil` | disk used for CMS media/uploads storage, defaults to "s3" if persistence.s3.enabled else "local" |
 | curator.config | object | `{}` | If one of these is defined the above config section will no longer be applicable if the new config doesn't utilze environment variables |
-| curator.database.connection | string | `nil` |  |
-| curator.database.databaseName | string | `nil` |  |
-| curator.database.host | string | `nil` |  |
-| curator.database.password.secretKeyRef.key | string | `nil` |  |
-| curator.database.password.secretKeyRef.name | string | `nil` |  |
-| curator.database.username | string | `nil` |  |
+| curator.database | object | `{"connection":null,"databaseName":null,"host":null,"password":{"secretKeyRef":{"key":null,"name":null}},"port":null,"username":null}` | environment variables to pass into database.php |
+| curator.database.port | string | `nil` | database port, only set this if the database is not listening on the connection's default port |
 | curator.env | object | `{}` | environment variables to set in the container |
 | curator.envFromSecret | list | `[]` | read environment variables from a secret |
 | curator.filesystems | object | `{"disk":null}` | environment variables to pass into filesystems.php |
