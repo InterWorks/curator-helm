@@ -2,12 +2,14 @@ name: Verify Changes
 
 on:
   pull_request:
+    types: [opened, edited, reopened, synchronize]
 
 jobs:
   commitlint:
     runs-on: us-east-2-development
     permissions:
       contents: read
+      pull-requests: read
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
 
@@ -21,11 +23,14 @@ jobs:
       - name: Install commitlint
         run: npm ci
 
-      # PRs are squash-merged, so the PR title becomes the commit message on
-      # main and is what release-please parses — individual commits within
-      # the PR are squashed away and don't need to be conventional-commit
-      # compliant.
+      # release-please parses the PR title since it becomes the squash
+      # commit message on main. Fetched live via the API (rather than
+      # github.event.pull_request.title) so a re-run reflects the current
+      # title instead of the payload from whenever the run first triggered.
       - name: Lint PR title
         env:
-          PR_TITLE: ${{ github.event.pull_request.title }}
-        run: echo "$PR_TITLE" | npx commitlint --verbose
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh pr view "${{ github.event.pull_request.number }}" \
+            --repo "${{ github.repository }}" \
+            --json title -q .title | npx commitlint --verbose
