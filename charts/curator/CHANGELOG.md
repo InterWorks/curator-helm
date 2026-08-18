@@ -11,6 +11,17 @@
 
 * **helm-chart:** add Sentry environment variables to deployments ([2a2d3d3](https://github.com/interworks/curator-helm/commit/2a2d3d3faa8eb1627c7f146063f6cdfc5e214e88))
 
+## [3.0.0](https://github.com/InterWorks/curator-helm/compare/v2.7.3...v3.0.0) (2026-08-18)
+
+
+### ⚠ BREAKING CHANGES
+
+* **config:** update env vars being passed in ([#24](https://github.com/InterWorks/curator-helm/issues/24))
+
+### Features
+
+* **config:** update env vars being passed in ([#24](https://github.com/InterWorks/curator-helm/issues/24)) ([c3d2678](https://github.com/InterWorks/curator-helm/commit/c3d2678b4ee9cc135d1ff7738dcfe9b2bcc3fc2d))
+
 ## [2.7.3](https://github.com/InterWorks/curator-helm/compare/v2.7.2...v2.7.3) (2026-08-05)
 
 
