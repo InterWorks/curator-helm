@@ -120,10 +120,8 @@
 {{ end }}
 {{- end }}
 # logging.php
-{{ if .Values.curator.logging.channel }}
 - name: LOG_CHANNEL
-  value: {{ .Values.curator.logging.channel | default "stdout" }}
-{{ end }}
+  value: {{ .Values.curator.logging.channel | default "stdout" | quote }}
 {{ if .Values.curator.logging.deprecationsChannel }}
 - name: LOG_DEPRECATIONS_CHANNEL
   value: {{ .Values.curator.logging.deprecationsChannel }}
@@ -219,10 +217,8 @@
 # No configurable items in services
 ###
 # session.php
-{{ if .Values.curator.session.driver }}
 - name: SESSION_DRIVER
-  value: {{ .Values.curator.session.driver | default "database" }}
-{{ end }}
+  value: {{ .Values.curator.session.driver | default "database" | quote }}
 {{ if .Values.curator.session.cookie }}
 - name: SESSION_COOKIE
   value: {{ .Values.curator.session.cookie }}
