@@ -122,7 +122,7 @@
 # logging.php
 {{ if .Values.curator.logging.channel }}
 - name: LOG_CHANNEL
-  value: {{ .Values.curator.logging.channel }}
+  value: {{ .Values.curator.logging.channel | default "stdout" }}
 {{ end }}
 {{ if .Values.curator.logging.deprecationsChannel }}
 - name: LOG_DEPRECATIONS_CHANNEL
@@ -221,7 +221,7 @@
 # session.php
 {{ if .Values.curator.session.driver }}
 - name: SESSION_DRIVER
-  value: {{ .Values.curator.session.driver }}
+  value: {{ .Values.curator.session.driver | default "database" }}
 {{ end }}
 {{ if .Values.curator.session.cookie }}
 - name: SESSION_COOKIE
