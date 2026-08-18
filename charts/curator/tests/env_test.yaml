@@ -1,0 +1,194 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/helm-unittest/helm-unittest/main/schema/helm-testsuite.json
+suite: test env.environment (config migration contract)
+templates:
+  - deployment.yaml
+tests:
+  - it: renders identical env vars for sites that upgrade with no values.yaml changes
+    set:
+      ingress.hosts:
+        - host: curator.example.com
+    asserts:
+      - contains:
+          path: spec.template.spec.containers[0].env
+          content:
+            name: CACHE_DRIVER
+            value: memcached
+      - contains:
+          path: spec.template.spec.containers[0].env
+          content:
+            name: MEMCACHED_HOST
+            value: memcached
+      - contains:
+          path: spec.template.spec.containers[0].env
+          content:
+            name: MEMCACHED_PORT
+            value: "11211"
+      - contains:
+          path: spec.template.spec.containers[0].env
+          content:
+            name: FILESYSTEM_DRIVER
+            value: local
+      - contains:
+          path: spec.template.spec.containers[0].env
+          content:
+            name: FILESYSTEM_DISK
+            value: local
+      - contains:
+          path: spec.template.spec.containers[0].env
+          content:
+            name: APP_URL
+            value: curator.example.com
+      - notContains:
+          path: spec.template.spec.containers[0].env
+          content:
+            name: AWS_BUCKET
+      - notContains:
+          path: spec.template.spec.containers[0].env
+          content:
+            name: CACHE_PREFIX
+      - notContains:
+          path: spec.template.spec.containers[0].env
+          content:
+            name: DB_PORT
+
+  - it: switches storage to s3 when persistence.s3.enabled is set, with AWS credentials from secrets
+    set:
+      ingress.hosts:
+        - host: curator.example.com
+      persistence.s3.enabled: true
+      persistence.s3.bucket: my-bucket
+      persistence.s3.region: us-east-1
+      persistence.s3.accessKeyIdSecret.name: aws-creds
+      persistence.s3.accessKeyIdSecret.key: access-key-id
+      persistence.s3.secretAccessKeySecret.name: aws-creds
+      persistence.s3.secretAccessKeySecret.key: secret-access-key
+    asserts:
+      - contains:
+          path: spec.template.spec.containers[0].env
+          content:
+            name: FILESYSTEM_DRIVER
+            value: s3
+      - contains:
+          path: spec.template.spec.containers[0].env
+          content:
+            name: FILESYSTEM_DISK
+            value: s3
+      - contains:
+          path: spec.template.spec.containers[0].env
+          content:
+            name: AWS_BUCKET
+            value: my-bucket
+      - contains:
+          path: spec.template.spec.containers[0].env
+          content:
+            name: AWS_DEFAULT_REGION
+            value: us-east-1
+      - contains:
+          path: spec.template.spec.containers[0].env
+          content:
+            name: AWS_ACCESS_KEY_ID
+            valueFrom:
+              secretKeyRef:
+                name: aws-creds
+                key: access-key-id
+      - contains:
+          path: spec.template.spec.containers[0].env
+          content:
+            name: AWS_SECRET_ACCESS_KEY
+            valueFrom:
+              secretKeyRef:
+                name: aws-creds
+                key: secret-access-key
+
+  - it: honors explicit overrides for cache, cms, database, filesystems, mail and powerbi settings
+    set:
+      ingress.hosts:
+        - host: curator.example.com
+      curator.cache.driver: redis
+      curator.cache.host: my-redis
+      curator.cache.port: "6379"
+      curator.cache.prefix: my-prefix
+      curator.cms.filesystemDriver: local
+      curator.database.host: external-db
+      curator.database.port: "3307"
+      curator.database.databaseName: custom-db
+      curator.database.username: custom-user
+      curator.filesystems.disk: local
+      curator.mail.host: smtp.example.com
+      curator.mail.passwordSecretRef.name: mail-secret
+      curator.mail.passwordSecretRef.key: password
+      curator.powerbi.tenant: my-tenant
+      curator.powerbi.clientIdSecretRef.name: powerbi-secret
+      curator.powerbi.clientIdSecretRef.key: client-id
+    asserts:
+      - contains:
+          path: spec.template.spec.containers[0].env
+          content:
+            name: CACHE_DRIVER
+            value: redis
+      - contains:
+          path: spec.template.spec.containers[0].env
+          content:
+            name: MEMCACHED_HOST
+            value: my-redis
+      - contains:
+          path: spec.template.spec.containers[0].env
+          content:
+            name: CACHE_PREFIX
+            value: my-prefix
+      - contains:
+          path: spec.template.spec.containers[0].env
+          content:
+            name: FILESYSTEM_DRIVER
+            value: local
+      - contains:
+          path: spec.template.spec.containers[0].env
+          content:
+            name: FILESYSTEM_DISK
+            value: local
+      - contains:
+          path: spec.template.spec.containers[0].env
+          content:
+            name: DB_HOST
+            value: external-db
+      - contains:
+          path: spec.template.spec.containers[0].env
+          content:
+            name: DB_PORT
+            value: "3307"
+      - contains:
+          path: spec.template.spec.containers[0].env
+          content:
+            name: DB_DATABASE
+            value: custom-db
+      - contains:
+          path: spec.template.spec.containers[0].env
+          content:
+            name: DB_USERNAME
+            value: custom-user
+      - contains:
+          path: spec.template.spec.containers[0].env
+          content:
+            name: MAIL_HOST
+            value: smtp.example.com
+      - contains:
+          path: spec.template.spec.containers[0].env
+          content:
+            name: MAIL_PASSWORD
+            valueFrom:
+              secretKeyRef:
+                name: mail-secret
+                key: password
+      - contains:
+          path: spec.template.spec.containers[0].env
+          content:
+            name: POWER_BI_TENANT
+            value: my-tenant
+      - contains:
+          path: spec.template.spec.containers[0].env
+          content:
+            name: POWER_BI_CLIENT_ID
+            valueFrom:
+              secretKeyRef:
+                name: powerbi-secret
+                key: client-id

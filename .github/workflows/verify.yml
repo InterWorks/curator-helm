@@ -2,16 +2,16 @@ name: Verify Changes
 
 on:
   pull_request:
+    types: [opened, edited, reopened, synchronize]
 
 jobs:
   commitlint:
     runs-on: us-east-2-development
     permissions:
       contents: read
+      pull-requests: read
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
-        with:
-          fetch-depth: 0
 
       # Installs node at the version pinned in mise.toml, matching local dev
       # and the other workflows.
@@ -23,11 +23,16 @@ jobs:
       - name: Install commitlint
         run: npm ci
 
-      # release-please derives versions and the changelog from conventional
-      # commits, so every commit in the PR must follow that format.
-      - name: Lint PR commits
-        run: >
-          npx commitlint
-          --from ${{ github.event.pull_request.base.sha }}
-          --to ${{ github.event.pull_request.head.sha }}
-          --verbose
+      # release-please parses the PR title since it becomes the squash
+      # commit message on main. Fetched live via the API (rather than
+      # github.event.pull_request.title) so a re-run reflects the current
+      # title instead of the payload from whenever the run first triggered.
+      - name: Lint PR title
+        env:
+          GH_TOKEN: ${{ github.token }}
+          PR_URL: ${{ github.event.pull_request.url }}
+        run: |
+          curl -sSL \
+            -H "Authorization: Bearer ${GH_TOKEN}" \
+            -H "Accept: application/vnd.github+json" \
+            "$PR_URL" | jq -r .title | npx commitlint --verbose

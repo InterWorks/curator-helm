@@ -137,11 +137,13 @@ limits:
 {{/*
 Determines which mariadb endpoint to use
 Determination order:
-Maxscale -> mariadbEndpoint -> mariadb
+curator.database.host -> Maxscale -> mariadbEndpoint -> mariadb
 */}}
 {{- define "curatorDbEndpoint" -}}
-{{/* Use maxscale for db endpoint */}}
-{{- if (and .Values.mariadbOperator.maxscaleEndpoint .Values.mariadbOperator.mariadbNamespace) -}}
+{{- if .Values.curator.database.host -}}
+{{ .Values.curator.database.host }}
+{{- /* Use maxscale for db endpoint */ -}}
+{{- else if (and .Values.mariadbOperator.maxscaleEndpoint .Values.mariadbOperator.mariadbNamespace) -}}
 {{ .Values.mariadbOperator.maxscaleEndpoint }}.{{ .Values.mariadbOperator.mariadbNamespace }}
 {{- /* Use mariadbEndpoint for db endpoint */ -}}
 {{- else if (and .Values.mariadbOperator.mariadbEndpoint .Values.mariadbOperator.mariadbNamespace) -}}
