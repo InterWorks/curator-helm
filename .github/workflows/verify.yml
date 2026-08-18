@@ -30,7 +30,9 @@ jobs:
       - name: Lint PR title
         env:
           GH_TOKEN: ${{ github.token }}
+          PR_URL: ${{ github.event.pull_request.url }}
         run: |
-          gh pr view "${{ github.event.pull_request.number }}" \
-            --repo "${{ github.repository }}" \
-            --json title -q .title | npx commitlint --verbose
+          curl -sSL \
+            -H "Authorization: Bearer ${GH_TOKEN}" \
+            -H "Accept: application/vnd.github+json" \
+            "$PR_URL" | jq -r .title | npx commitlint --verbose
