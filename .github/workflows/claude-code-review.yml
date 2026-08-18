@@ -433,7 +433,7 @@ jobs:
 
       - name: Checkout caller repository
         if: steps.gate.outputs.run == 'true'
-        uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6.1.0
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           # Full history so Themis's `git log PRIOR_SHA..HEAD` and
           # `git diff PRIOR_SHA` calls work during incremental reviews.
@@ -441,7 +441,7 @@ jobs:
 
       - name: Checkout Themis assets
         if: steps.gate.outputs.run == 'true'
-        uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6.1.0
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           repository: InterWorks/CuratorAgents
           ref: main
