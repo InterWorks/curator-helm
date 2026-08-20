@@ -11,6 +11,13 @@
 
 * **helm-chart:** add Sentry environment variables to deployments ([2a2d3d3](https://github.com/interworks/curator-helm/commit/2a2d3d3faa8eb1627c7f146063f6cdfc5e214e88))
 
+## [3.0.2](https://github.com/InterWorks/curator-helm/compare/v3.0.1...v3.0.2) (2026-08-20)
+
+
+### Bug Fixes
+
+* **config:** media upload paths default states ([#85](https://github.com/InterWorks/curator-helm/issues/85)) ([5b939ce](https://github.com/InterWorks/curator-helm/commit/5b939ce9d2c71aacc5511c62e3c2f55207819c62))
+
 ## [3.0.1](https://github.com/InterWorks/curator-helm/compare/v3.0.0...v3.0.1) (2026-08-20)
 
 
