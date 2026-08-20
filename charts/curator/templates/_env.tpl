@@ -42,14 +42,10 @@
 {{ end }}
 - name: FILESYSTEM_DRIVER
   value: {{ .Values.curator.cms.filesystemDriver | default (ternary "s3" "local" .Values.persistence.s3.enabled) }}
-{{ if .Values.curator.cms.filesystemUploadsPath }}
 - name: FILESYSTEM_UPLOADS_PATH
-  value: {{ .Values.curator.cms.filesystemUploadsPath }}
-{{ end }}
-{{ if .Values.curator.cms.filesystemMediaPath }}
+  value: {{ .Values.curator.cms.filesystemUploadsPath | default (printf "https://%s.s3.amazonaws.com/uploads" .Values.persistence.s3.bucket) }}
 - name: FILESYSTEM_MEDIA_PATH
-  value: {{ .Values.curator.cms.filesystemMediaPath }}
-{{ end }}
+  value: {{ .Values.curator.cms.filesystemMediaPath | default (printf "https://%s.s3.amazonaws.com/media" .Values.persistence.s3.bucket) }}
 {{ if not (kindIs "invalid" .Values.curator.cms.enableCSRF) }}
 - name: ENABLE_CSRF
   value: {{ .Values.curator.cms.enableCSRF | quote }}
