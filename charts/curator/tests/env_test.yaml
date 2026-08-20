@@ -50,6 +50,14 @@ tests:
           path: spec.template.spec.containers[0].env
           content:
             name: DB_PORT
+      - notContains:
+          path: spec.template.spec.containers[0].env
+          content:
+            name: FILESYSTEM_UPLOADS_PATH
+      - notContains:
+          path: spec.template.spec.containers[0].env
+          content:
+            name: FILESYSTEM_MEDIA_PATH
 
   - it: switches storage to s3 when persistence.s3.enabled is set, with AWS credentials from secrets
     set:
@@ -99,6 +107,45 @@ tests:
               secretKeyRef:
                 name: aws-creds
                 key: secret-access-key
+
+  - it: uses s3 storage when only persistence is set
+    set:
+      persistence.s3.enabled: true
+      persistence.s3.bucket: my-bucket
+      persistence.s3.region: us-east-2
+    asserts:
+      - contains:
+          path: spec.template.spec.containers[0].env
+          content:
+            name: FILESYSTEM_UPLOADS_PATH
+            value: https://my-bucket.s3.amazonaws.com/uploads
+      - contains:
+          path: spec.template.spec.containers[0].env
+          content:
+            name: FILESYSTEM_MEDIA_PATH
+            value: https://my-bucket.s3.amazonaws.com/media
+  
+  - it: set custom paths for local storage
+    set:
+      curator.cms.filesystemMediaPath: /dev/real/path/media
+      curator.cms.filesystemUploadsPath: /dev/real/path/uploads
+    asserts:
+      - contains:
+          path: spec.template.spec.containers[0].env
+          content: 
+            name: FILESYSTEM_DISK
+            value: local
+      - contains:
+          path: spec.template.spec.containers[0].env
+          content: 
+            name: FILESYSTEM_MEDIA_PATH
+            value: /dev/real/path/media
+      - contains:
+          path: spec.template.spec.containers[0].env
+          content: 
+            name: FILESYSTEM_UPLOADS_PATH
+            value: /dev/real/path/uploads
+            
 
   - it: honors explicit overrides for cache, cms, database, filesystems, mail and powerbi settings
     set:
