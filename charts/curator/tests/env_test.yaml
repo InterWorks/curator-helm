@@ -50,6 +50,14 @@ tests:
           path: spec.template.spec.containers[0].env
           content:
             name: DB_PORT
+      - notContains:
+          path: spec.template.spec.containers[0].env
+          content:
+            name: FILESYSTEM_UPLOADS_PATH
+      - notContains:
+          path: spec.template.spec.containers[0].env
+          content:
+            name: FILESYSTEM_MEDIA_PATH
 
   - it: switches storage to s3 when persistence.s3.enabled is set, with AWS credentials from secrets
     set:
