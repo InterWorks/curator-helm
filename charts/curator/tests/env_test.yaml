@@ -100,6 +100,32 @@ tests:
                 name: aws-creds
                 key: secret-access-key
 
+  - it: uses s3 storage when only persistence is set
+    set:
+      persistence.s3.enabled: true
+      persistence.s3.bucket: my-bucket
+      persistence.s3.region: us-east-2
+    asserts:
+      - contains:
+          path: spec.template.spec.containers[0].env
+          content:
+            name: FILESYSTEM_UPLOADS_PATH
+            value: https://my-bucket.s3.amazonaws.com/uploads
+      - contains:
+          path: spec.template.spec.containers[0].env
+          content:
+            name: FILESYSTEM_MEDIA_PATH
+            value: https://my-bucket.s3.amazonaws.com/media
+  
+  - it: sets paths storage
+    asserts:
+      - contains:
+          path: spec.template.spec.containers[0].env
+          content: 
+            name: FILESYSTEM_DISK
+            value: local
+            
+
   - it: honors explicit overrides for cache, cms, database, filesystems, mail and powerbi settings
     set:
       ingress.hosts:
