@@ -117,13 +117,26 @@ tests:
             name: FILESYSTEM_MEDIA_PATH
             value: https://my-bucket.s3.amazonaws.com/media
   
-  - it: sets paths storage
+  - it: set custom paths for local storage
+    set:
+      curator.cms.filesystemMediaPath: /dev/real/path/media
+      curator.cms.filesystemUploadsPath: /dev/real/path/uploads
     asserts:
       - contains:
           path: spec.template.spec.containers[0].env
           content: 
             name: FILESYSTEM_DISK
             value: local
+      - contains:
+          path: spec.template.spec.containers[0].env
+          content: 
+            name: FILESYSTEM_MEDIA_PATH
+            value: /dev/real/path/media
+      - contains:
+          path: spec.template.spec.containers[0].env
+          content: 
+            name: FILESYSTEM_UPLOADS_PATH
+            value: /dev/real/path/uploads
             
 
   - it: honors explicit overrides for cache, cms, database, filesystems, mail and powerbi settings
