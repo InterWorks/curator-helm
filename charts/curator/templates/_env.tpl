@@ -222,6 +222,66 @@
 ###
 # No configurable items in services
 ###
+# winter/search/search.php
+{{ if .Values.curator.search.driver }}
+{{ $validSearchEngine := list "database" "typesense" }}
+{{ if not (has .Values.curator.search.driver $validSearchEngine )}}
+{{ fail (printf "Invalid search driver '%s'. Must be either database or typesense" .Values.curator.search.driver) }}
+{{ end }}
+{{ end }}
+- name: SEARCH_DRIVER
+  value: {{ .Values.curator.search.driver}}
+- name: SEARCH_PREFIX
+  value: {{ .Values.curator.search.prefix}}
+- name: SEARCH_QUEUE
+  value: {{ .Values.curator.search.queue}}
+{{ if eq .Values.driver "algolia"}}
+- name: SEARCH_IDENTIFY
+  value: .Values.algolia.identify
+{{ with .Values.algolia.idSecretRef }}
+- name: ALGOLIA_APP_ID
+  valueFrom:
+    secretKeyRef:
+        name: {{ .name }}
+        key: {{ .key }}
+{{ end }}
+{{ with .Values.algolia.secretValueSecretRef }}
+- name: ALGOLIA_APP_SECRET
+  valueFrom:
+    secretKeyRef:
+        name: {{ .name }}
+        key: {{ .key }}
+{{ end }}
+{{ end }}
+{{ if eq .Values.curator.search.driver "typesense" }}
+{{ with .Values.curator.search.typesense.apiKeySecretRef }}
+- name: TYPESENSE_API_KEY
+  valueFrom:
+    secretKeyRef:
+      name: {{ .name }}
+      key: {{ .key }}
+{{ end }}
+- name: TYPESENSE_HOST
+  value: {{ .Values.curator.search.typesense.host }}
+- name: TYPESENSE_PORT
+  value: {{ .Values.curator.search.typesense.port | quote }}
+- name: TYPESENSE_PATH
+  value: {{ .Values.curator.search.typesense.path }}
+- name: TYPESENSE_PROTOCOL
+  value: {{ .Values.curator.search.typesense.protocol }}
+- name: TYPESENSE_CONNECTION_TIMEOUT_SECONDS
+  value: {{ .Values.curator.search.typesense.connection.timeout | quote }}
+- name: TYPESENSE_HEALTHCHECK_INTERVAL_SECONDS
+  value: {{ .Values.curator.search.typesense.connection.healthcheckInterval | quote }}
+- name: TYPESENSE_NUM_RETRIES
+  value: {{ .Values.curator.search.typesense.connection.retries | quote }}
+- name: TYPESENSE_RETRY_INTERVAL_SECONDS
+  value: {{ .Values.curator.search.typesense.connection.retryInterval | quote }}
+- name: TYPESENSE_MAX_RESULTS
+  value: {{ .Values.curator.search.typesense.maxResults | quote}}
+- name: TYPESENSE_IMPORT_ACTION
+  value: {{ .Values.curator.search.typesense.importAction }}
+{{ end }}
 # session.php
 - name: SESSION_DRIVER
   value: {{ .Values.curator.session.driver | default "database" | quote }}
