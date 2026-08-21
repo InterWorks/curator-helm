@@ -223,9 +223,11 @@
 # No configurable items in services
 ###
 # winter/search/search.php
+{{ if .Values.curator.search.driver }}
 {{ $validSearchEngine := list "database" "typesense" }}
 {{ if not (has .Values.curator.search.driver $validSearchEngine )}}
 {{ fail (printf "Invalid search driver '%s'. Must be either database or typesense" .Values.curator.search.driver) }}
+{{ end }}
 {{ end }}
 - name: SEARCH_DRIVER
   value: {{ .Values.curator.search.driver}}
