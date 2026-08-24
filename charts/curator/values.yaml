@@ -77,7 +77,7 @@ podSecurityContext: {}
 
 podDisruptionBudget:
   # -- Enable Pod Disruption Budget
-  enabled: true
+  enabled: false
   # -- Max Unavailable pods, default is 1
   maxUnavailable: ~
   # -- Min Available pods, default is 1
@@ -275,6 +275,51 @@ curator:
     cacheExpirySeconds: ~
   queue:
     connection: ~
+  search:
+    # -- search engine; allowable values: database, typesense, null
+    driver: ~
+    # -- search prefix applied to all search index names, allows for multitenancy
+    prefix: ~
+    # -- allows for queuing of data sync
+    queue: ~
+    # -- config for connecting to algolia
+    algolia:
+      idSecretRef:
+        name: ~
+        key: ~
+      secretValueSecretRef:
+        name: ~
+        key: ~
+      # -- only allowed when search driver is set to algolia
+      identify:
+    # -- config for connecting to typesense
+    typesense:
+      # -- api key config to authenticate to typesense
+      apiKeySecretRef:
+        name: ~
+        key: ~
+      # -- typesense endpoint
+      host: ~
+      # -- typesense port
+      port: ~
+      # -- typesense path
+      path: ~
+      # -- typesense protocol, 
+      protocol: ~
+      # -- connection parameters
+      connection:
+        # -- in seconds, time until considered unavailable
+        timeout: ~
+        # -- in seconds, time between healthcheck probes
+        healthcheckInterval: ~
+        # -- max number of retries before considered failed
+        retries: ~
+        # -- number of retries allowed before considered failed
+        retryInterval: ~
+      # -- max number of results returned by typesense
+      maxResults: ~
+      # -- defines how typesense imports data
+      importAction: ~
   session:
     driver: ~
     cookie: ~

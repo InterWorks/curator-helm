@@ -66,6 +66,24 @@ A Helm chart for Curator in a Container in Kubernetes
 | curator.readinessProbe.path | string | `"/healthz"` | Endpoint the probe hits; /healthz verifies the database is reachable |
 | curator.readinessProbe.periodSeconds | int | `10` | Period to wait between checks |
 | curator.readinessProbe.timeoutSeconds | int | `15` | Timeout for probe |
+| curator.search.algolia | object | `{"idSecretRef":{"key":null,"name":null},"identify":null,"secretValueSecretRef":{"key":null,"name":null}}` | config for connecting to algolia |
+| curator.search.algolia.identify | string | `nil` | only allowed when search driver is set to algolia |
+| curator.search.driver | string | `nil` | search engine; allowable values: database, typesense, null |
+| curator.search.prefix | string | `nil` | search prefix applied to all search index names, allows for multitenancy |
+| curator.search.queue | string | `nil` | allows for queuing of data sync |
+| curator.search.typesense | object | `{"apiKeySecretRef":{"key":null,"name":null},"connection":{"healthcheckInterval":null,"retries":null,"retryInterval":null,"timeout":null},"host":null,"importAction":null,"maxResults":null,"path":null,"port":null,"protocol":null}` | config for connecting to typesense |
+| curator.search.typesense.apiKeySecretRef | object | `{"key":null,"name":null}` | api key config to authenticate to typesense |
+| curator.search.typesense.connection | object | `{"healthcheckInterval":null,"retries":null,"retryInterval":null,"timeout":null}` | connection parameters |
+| curator.search.typesense.connection.healthcheckInterval | string | `nil` | in seconds, time between healthcheck probes |
+| curator.search.typesense.connection.retries | string | `nil` | max number of retries before considered failed |
+| curator.search.typesense.connection.retryInterval | string | `nil` | number of retries allowed before considered failed |
+| curator.search.typesense.connection.timeout | string | `nil` | in seconds, time until considered unavailable |
+| curator.search.typesense.host | string | `nil` | typesense endpoint |
+| curator.search.typesense.importAction | string | `nil` | defines how typesense imports data |
+| curator.search.typesense.maxResults | string | `nil` | max number of results returned by typesense |
+| curator.search.typesense.path | string | `nil` | typesense path |
+| curator.search.typesense.port | string | `nil` | typesense port |
+| curator.search.typesense.protocol | string | `nil` | typesense protocol,  |
 | curator.sentry.dsn | string | `""` | Sentry Laravel DSN for error reporting |
 | curator.sentry.environment | string | `""` | Sentry Laravel environment name, defaults to the Helm release name if not set |
 | curator.session.cookie | string | `nil` |  |
@@ -121,7 +139,7 @@ A Helm chart for Curator in a Container in Kubernetes
 | persistence.size | string | `"5Gi"` | size of persistent volume claim |
 | persistence.storageClass | string | `nil` | persistent volume claim storageClass |
 | persistence.subPath | string | `""` | persistent volume claim subpath |
-| podDisruptionBudget.enabled | bool | `true` | Enable Pod Disruption Budget |
+| podDisruptionBudget.enabled | bool | `false` | Enable Pod Disruption Budget |
 | podDisruptionBudget.maxUnavailable | string | `nil` | Max Unavailable pods, default is 1 |
 | podDisruptionBudget.minAvailable | string | `nil` | Min Available pods, default is 1 |
 | podDisruptionBudget.selector | object | `{}` | Selector for the PDB |

@@ -8,6 +8,7 @@ tests:
   - it: renders with maxUnavailable
     set:
       podDisruptionBudget.maxUnavailable: 1
+      podDisruptionBudget.enabled: true
     asserts:
       - isKind:
           of: PodDisruptionBudget
@@ -18,12 +19,15 @@ tests:
   - it: renders with minAvailable
     set:
       podDisruptionBudget.minAvailable: 2
+      podDisruptionBudget.enabled: true
     asserts:
       - equal:
           path: spec.minAvailable
           value: 2
 
   - it: fails when neither maxUnavailable nor minAvailable is set
+    set:
+      podDisruptionBudget.enabled: true
     asserts:
       - failedTemplate:
           errorMessage: You must specify either podDisruptionBudget.maxUnavailable or podDisruptionBudget.minAvailable.
@@ -32,6 +36,7 @@ tests:
     set:
       podDisruptionBudget.maxUnavailable: 1
       podDisruptionBudget.minAvailable: 1
+      podDisruptionBudget.enabled: true
     asserts:
       - failedTemplate:
           errorMessage: You must specify either podDisruptionBudget.maxUnavailable or podDisruptionBudget.minAvailable, not both.

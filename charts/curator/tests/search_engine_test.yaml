@@ -1,0 +1,104 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/helm-unittest/helm-unittest/main/schema/helm-testsuite.json
+suite: test searchEngine
+templates:
+  - deployment.yaml
+release:
+  name: curator
+tests:
+  - it: errors on non-allowable setting
+    set:
+      curator.search.driver: "algolia"
+    asserts:
+      - failedTemplate:
+          errorMessage: "Invalid search driver 'algolia'. Must be either 'database', 'typesense', or unset"
+  - it: renders expected typesense values
+    set:
+      curator.search.driver: "typesense"
+      curator.search.prefix: "prefix"
+      curator.search.queue: "searchQueue"
+      curator.search.typesense.apiKeySecretRef.name: "secretName"
+      curator.search.typesense.apiKeySecretRef.key: "secretKey"
+      curator.search.typesense.host: "typesense-host"
+      curator.search.typesense.port: "8108"
+      curator.search.typesense.path: "subPath"
+      curator.search.typesense.protocol: "http"
+      curator.search.typesense.connection.timeout: "15"
+      curator.search.typesense.connection.healthcheckInterval: "30"
+      curator.search.typesense.connection.retries: "3"
+      curator.search.typesense.connection.retryInterval: "5"
+      curator.search.typesense.maxResults: "500"
+      curator.search.typesense.importAction: "upsert"
+    asserts:
+      - contains:
+          path: spec.template.spec.containers[0].env
+          content:
+            name: SEARCH_DRIVER
+            value: typesense
+      - contains:
+          path: spec.template.spec.containers[0].env
+          content:
+            name: SEARCH_PREFIX
+            value: prefix
+      - contains:
+          path: spec.template.spec.containers[0].env
+          content:
+            name: SEARCH_QUEUE
+            value: searchQueue
+      - contains:
+          path: spec.template.spec.containers[0].env
+          content:
+            name: TYPESENSE_API_KEY
+            valueFrom:
+              secretKeyRef:
+                name: secretName
+                key: secretKey
+      - contains:
+          path: spec.template.spec.containers[0].env
+          content:
+            name: TYPESENSE_HOST
+            value: typesense-host
+      - contains:
+          path: spec.template.spec.containers[0].env
+          content:
+            name: TYPESENSE_PORT
+            value: "8108"
+      - contains:
+          path: spec.template.spec.containers[0].env
+          content:
+            name: TYPESENSE_PATH
+            value: subPath
+      - contains:
+          path: spec.template.spec.containers[0].env
+          content:
+            name: TYPESENSE_PROTOCOL
+            value: http
+      - contains:
+          path: spec.template.spec.containers[0].env
+          content:
+            name: TYPESENSE_CONNECTION_TIMEOUT_SECONDS
+            value: "15"
+      - contains:
+          path: spec.template.spec.containers[0].env
+          content:
+            name: TYPESENSE_HEALTHCHECK_INTERVAL_SECONDS
+            value: "30"
+      - contains:
+          path: spec.template.spec.containers[0].env
+          content:
+            name: TYPESENSE_NUM_RETRIES
+            value: "3"
+      - contains:
+          path: spec.template.spec.containers[0].env
+          content:
+            name: TYPESENSE_RETRY_INTERVAL_SECONDS
+            value: "5"
+      - contains:
+          path: spec.template.spec.containers[0].env
+          content:
+            name: TYPESENSE_MAX_RESULTS
+            value: "500"
+      - contains:
+          path: spec.template.spec.containers[0].env
+          content:
+            name: TYPESENSE_IMPORT_ACTION
+            value: upsert

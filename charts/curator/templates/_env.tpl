@@ -222,6 +222,104 @@
 ###
 # No configurable items in services
 ###
+# winter/search/search.php
+{{ if .Values.curator.search.driver }}
+{{ $validSearchEngine := list "database" "typesense" "" }}
+{{ if not (has .Values.curator.search.driver $validSearchEngine )}}
+{{ fail (printf "Invalid search driver '%s'. Must be either 'database', 'typesense', or unset" .Values.curator.search.driver) }}
+{{ end }}
+{{ end }}
+{{- if .Values.curator.search.driver }}
+- name: SEARCH_DRIVER
+  value: {{ .Values.curator.search.driver }}
+{{- end }}
+{{- if .Values.curator.search.prefix }}
+- name: SEARCH_PREFIX
+  value: {{ .Values.curator.search.prefix }}
+{{- end }}
+{{- if .Values.curator.search.queue }}
+- name: SEARCH_QUEUE
+  value: {{ .Values.curator.search.queue }}
+{{- end }}
+# Config for algolia driver
+{{ if and (eq .Values.curator.search.driver "algolia") }}
+{{- if .Values.curator.search.algolia.identify }}
+- name: SEARCH_IDENTIFY
+  value: {{ .Values.curator.search.algolia.identify }}
+{{- end }}
+{{- if and .Values.curator.search.algolia.idSecretRef.name .Values.curator.search.algolia.idSecretRef.key}}
+{{ with .Values.curator.search.algolia.idSecretRef }}
+- name: ALGOLIA_APP_ID
+  valueFrom:
+    secretKeyRef:
+        name: {{ .name }}
+        key: {{ .key }}
+{{ end }}
+{{- end }}
+{{- if and .Values.curator.search.algolia.secretValueSecretRef.name .Values.curator.search.algolia.secretValueSecretRef.key}}
+{{ with .Values.curator.search.algolia.secretValueSecretRef }}
+- name: ALGOLIA_APP_SECRET
+  valueFrom:
+    secretKeyRef:
+        name: {{ .name }}
+        key: {{ .key }}
+{{ end }}
+{{- end }}
+{{- end }}
+# end config for algolia driver
+# config for typesearch driver
+{{ if eq .Values.curator.search.driver "typesense" }}
+{{- if and .Values.curator.search.typesense.apiKeySecretRef.name .Values.curator.search.typesense.apiKeySecretRef.key}}
+{{ with .Values.curator.search.typesense.apiKeySecretRef }}
+- name: TYPESENSE_API_KEY
+  valueFrom:
+    secretKeyRef:
+      name: {{ .name }}
+      key: {{ .key }}
+{{- end }}
+{{- end }}
+{{- if .Values.curator.search.typesense.host }}
+- name: TYPESENSE_HOST
+  value: {{ .Values.curator.search.typesense.host }}
+{{- end }}
+{{- if .Values.curator.search.typesense.port }}
+- name: TYPESENSE_PORT
+  value: {{ .Values.curator.search.typesense.port | quote }}
+{{- end }}
+{{- if .Values.curator.search.typesense.path }}
+- name: TYPESENSE_PATH
+  value: {{ .Values.curator.search.typesense.path }}
+{{- end }}
+{{- if .Values.curator.search.typesense.protocol }}
+- name: TYPESENSE_PROTOCOL
+  value: {{ .Values.curator.search.typesense.protocol }}
+{{- end }}
+{{- if .Values.curator.search.typesense.connection.timeout }}
+- name: TYPESENSE_CONNECTION_TIMEOUT_SECONDS
+  value: {{ .Values.curator.search.typesense.connection.timeout | quote }}
+{{- end }}
+{{- if .Values.curator.search.typesense.connection.healthcheckInterval }}
+- name: TYPESENSE_HEALTHCHECK_INTERVAL_SECONDS
+  value: {{ .Values.curator.search.typesense.connection.healthcheckInterval | quote }}
+{{- end }}
+{{- if .Values.curator.search.typesense.connection.retries }}
+- name: TYPESENSE_NUM_RETRIES
+  value: {{ .Values.curator.search.typesense.connection.retries | quote }}
+{{- end }}
+{{- if .Values.curator.search.typesense.connection.retryInterval }}
+- name: TYPESENSE_RETRY_INTERVAL_SECONDS
+  value: {{ .Values.curator.search.typesense.connection.retryInterval | quote }}
+{{- end }}
+{{- if .Values.curator.search.typesense.maxResults }}
+- name: TYPESENSE_MAX_RESULTS
+  value: {{ .Values.curator.search.typesense.maxResults | quote}}
+{{- end }}
+{{- if .Values.curator.search.typesense.importAction }}
+- name: TYPESENSE_IMPORT_ACTION
+  value: {{ .Values.curator.search.typesense.importAction }}
+{{- end }}
+{{ end }}
+# end typesense config
 # session.php
 - name: SESSION_DRIVER
   value: {{ .Values.curator.session.driver | default "database" | quote }}
