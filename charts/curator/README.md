@@ -67,7 +67,7 @@ A Helm chart for Curator in a Container in Kubernetes
 | curator.readinessProbe.periodSeconds | int | `10` | Period to wait between checks |
 | curator.readinessProbe.timeoutSeconds | int | `15` | Timeout for probe |
 | curator.search.algolia | object | `{"idSecretRef":{"key":null,"name":null},"secretValueSecretRef":{"key":null,"name":null}}` | config for connecting to algolia |
-| curator.search.driver | string | `nil` | search engine; allowable values: database, typesense, collection, null |
+| curator.search.driver | string | `nil` | search engine; allowable values: database, typesense, null |
 | curator.search.identify | string | `nil` | only allowed when search driver is set to algolia |
 | curator.search.prefix | string | `nil` | search prefix applied to all search index names, allows for multitenancy |
 | curator.search.queue | string | `nil` | allows for queuing of data sync |
