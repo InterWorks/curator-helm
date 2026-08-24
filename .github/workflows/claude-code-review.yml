@@ -746,7 +746,7 @@ jobs:
 
           Treat an *unexplained* version downgrade as a likely regression. Most repos pin chart, image, and dependency versions that automation (Renovate/Dependabot) only ever moves forward, so a hand-authored change that *lowers* a pin -- often a side effect of copying a file that carried an older version -- is usually an accident. Flag a pin that moves backward and ask the author to confirm it is deliberate, rather than rationalizing it as "alignment" or "pinning to match." Exception: a deliberate revert or rollback -- a revert commit, or a PR that says it is backing out a bump that broke something -- is a legitimate downgrade; don't flag it.
 
-          If the PR title does not follow the conventions in ${REVIEW_DOC}, fix it with \`gh pr edit --title\` and mention the change in your review body.
+          If ${REVIEW_DOC} states an explicit PR title convention and the title does not follow it, fix it with \`gh pr edit --title\` and mention the change in your review body. If ${REVIEW_DOC} says nothing about PR titles, leave the title alone -- never apply a title format from another repository (the context checkouts included) or invent one.
 
           EOF
 
