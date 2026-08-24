@@ -10,7 +10,7 @@ tests:
       curator.search.driver: "algolia"
     asserts:
       - failedTemplate:
-          errorMessage: "Invalid search driver 'algolia'. Must be either database or typesense"
+          errorMessage: "Invalid search driver 'algolia'. Must be either 'database', 'typesense', or unset"
   - it: renders expected typesense values
     set:
       curator.search.driver: "typesense"
