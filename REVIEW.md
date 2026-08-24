@@ -217,6 +217,18 @@ suggests.
   labeled `fix:` ships a breaking change as a patch to the whole fleet.
   Flag the mislabel, not the message wording.
 
+### PR titles
+
+- **PR titles are conventional commits** (`type(scope): description`), the
+  same grammar commitlint enforces on commit messages. Squash merges here
+  use the PR title as the commit message, so a non-conventional title is
+  invisible to release-please and skips the version bump it should drive.
+- **Never retitle a PR into the `Prefix: Area: Past-tense` style** used by
+  the `InterWorks/curator` application repo (`New Feature: Search: Added
+  ...`). That convention does not apply in this repo; a conventional-commit
+  title is already correct and must stay as the author wrote it (fixing a
+  wrong *type* or missing `!` is fair, per *Release automation* above).
+
 ### Image pins
 
 - `image.tag` is digest-pinned (`latest@sha256:...`) and Renovate-managed.
