@@ -77,7 +77,7 @@ podSecurityContext: {}
 
 podDisruptionBudget:
   # -- Enable Pod Disruption Budget
-  enabled: true
+  enabled: false
   # -- Max Unavailable pods, default is 1
   maxUnavailable: ~
   # -- Min Available pods, default is 1
