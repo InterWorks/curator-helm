@@ -282,8 +282,6 @@ curator:
     prefix: ~
     # -- allows for queuing of data sync
     queue: ~
-    # -- only allowed when search driver is set to algolia
-    identify:
     # -- config for connecting to algolia
     algolia:
       idSecretRef:
@@ -292,6 +290,8 @@ curator:
       secretValueSecretRef:
         name: ~
         key: ~
+      # -- only allowed when search driver is set to algolia
+      identify:
     # -- config for connecting to typesense
     typesense:
       # -- api key config to authenticate to typesense

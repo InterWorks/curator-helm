@@ -245,7 +245,7 @@
 {{ if and (eq .Values.curator.search.driver "algolia") }}
 {{- if .Values.curator.search.algolia.identify }}
 - name: SEARCH_IDENTIFY
-  value: .Values.curator.search.algolia.identify 
+  value: {{ .Values.curator.search.algolia.identify }}
 {{- end }}
 {{- if and .Values.curator.search.algolia.idSecretRef.name .Values.curator.search.algolia.idSecretRef.key}}
 {{ with .Values.curator.search.algolia.idSecretRef }}
