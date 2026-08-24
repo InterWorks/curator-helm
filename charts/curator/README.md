@@ -66,9 +66,9 @@ A Helm chart for Curator in a Container in Kubernetes
 | curator.readinessProbe.path | string | `"/healthz"` | Endpoint the probe hits; /healthz verifies the database is reachable |
 | curator.readinessProbe.periodSeconds | int | `10` | Period to wait between checks |
 | curator.readinessProbe.timeoutSeconds | int | `15` | Timeout for probe |
-| curator.search.algolia | object | `{"idSecretRef":{"key":null,"name":null},"secretValueSecretRef":{"key":null,"name":null}}` | config for connecting to algolia |
+| curator.search.algolia | object | `{"idSecretRef":{"key":null,"name":null},"identify":null,"secretValueSecretRef":{"key":null,"name":null}}` | config for connecting to algolia |
+| curator.search.algolia.identify | string | `nil` | only allowed when search driver is set to algolia |
 | curator.search.driver | string | `nil` | search engine; allowable values: database, typesense, null |
-| curator.search.identify | string | `nil` | only allowed when search driver is set to algolia |
 | curator.search.prefix | string | `nil` | search prefix applied to all search index names, allows for multitenancy |
 | curator.search.queue | string | `nil` | allows for queuing of data sync |
 | curator.search.typesense | object | `{"apiKeySecretRef":{"key":null,"name":null},"connection":{"healthcheckInterval":null,"retries":null,"retryInterval":null,"timeout":null},"host":null,"importAction":null,"maxResults":null,"path":null,"port":null,"protocol":null}` | config for connecting to typesense |
