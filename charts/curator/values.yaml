@@ -311,7 +311,7 @@ curator:
         # -- in seconds, time until considered unavailable
         timeout: ~
         # -- in seconds, time between healthcheck probes
-        healcheckInterval: ~
+        healthcheckInterval: ~
         # -- max number of retries before considered failed
         retries: ~
         # -- number of retries allowed before considered failed
