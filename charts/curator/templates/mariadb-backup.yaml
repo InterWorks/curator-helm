@@ -1,4 +1,4 @@
-{{- if .Values.mariadbOperator.enabled -}}
+{{- if (and .Values.mariadbOperator.enabled (ne .Values.mariadbOperator.backup.enabled false)) -}}
 apiVersion: k8s.mariadb.com/v1alpha1
 kind: Backup
 metadata:

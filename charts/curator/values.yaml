@@ -415,6 +415,8 @@ mariadbOperator:
     # -- allowable login hosts for the user
     host: "%"
   backup:
+    # -- create a Backup resource for this site's mariadb database. Disable when centralizing sites onto a mariadb cluster in a different namespace, since cross-namespace backups aren't supported.
+    enabled: true
     # -- suspend backups, if true, no backups will be created
     suspend: false
     # -- schedule to take backups

@@ -1,0 +1,28 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/helm-unittest/helm-unittest/main/schema/helm-testsuite.json
+suite: test mariadb backup
+templates:
+  - mariadb-backup.yaml
+release:
+  name: curator
+tests:
+  - it: renders by default when mariadbOperator is enabled
+    set:
+      mariadbOperator.enabled: true
+    asserts:
+      - isKind:
+          of: Backup
+
+  - it: does not render when mariadbOperator.backup.enabled is false
+    set:
+      mariadbOperator.enabled: true
+      mariadbOperator.backup.enabled: false
+    asserts:
+      - hasDocuments:
+          count: 0
+
+  - it: does not render when mariadbOperator is disabled
+    set:
+      mariadbOperator.enabled: false
+    asserts:
+      - hasDocuments:
+          count: 0
