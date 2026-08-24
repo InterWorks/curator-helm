@@ -71,10 +71,10 @@ A Helm chart for Curator in a Container in Kubernetes
 | curator.search.identify | string | `nil` | only allowed when search driver is set to algolia |
 | curator.search.prefix | string | `nil` | search prefix applied to all search index names, allows for multitenancy |
 | curator.search.queue | string | `nil` | allows for queuing of data sync |
-| curator.search.typesense | object | `{"apiKeySecretRef":{"key":null,"name":null},"connection":{"healcheckInterval":null,"retries":null,"retryInterval":null,"timeout":null},"host":null,"importAction":null,"maxResults":null,"path":null,"port":null,"protocol":null}` | config for connecting to typesense |
+| curator.search.typesense | object | `{"apiKeySecretRef":{"key":null,"name":null},"connection":{"healthcheckInterval":null,"retries":null,"retryInterval":null,"timeout":null},"host":null,"importAction":null,"maxResults":null,"path":null,"port":null,"protocol":null}` | config for connecting to typesense |
 | curator.search.typesense.apiKeySecretRef | object | `{"key":null,"name":null}` | api key config to authenticate to typesense |
-| curator.search.typesense.connection | object | `{"healcheckInterval":null,"retries":null,"retryInterval":null,"timeout":null}` | connection parameters |
-| curator.search.typesense.connection.healcheckInterval | string | `nil` | in seconds, time between healthcheck probes |
+| curator.search.typesense.connection | object | `{"healthcheckInterval":null,"retries":null,"retryInterval":null,"timeout":null}` | connection parameters |
+| curator.search.typesense.connection.healthcheckInterval | string | `nil` | in seconds, time between healthcheck probes |
 | curator.search.typesense.connection.retries | string | `nil` | max number of retries before considered failed |
 | curator.search.typesense.connection.retryInterval | string | `nil` | number of retries allowed before considered failed |
 | curator.search.typesense.connection.timeout | string | `nil` | in seconds, time until considered unavailable |
@@ -139,7 +139,7 @@ A Helm chart for Curator in a Container in Kubernetes
 | persistence.size | string | `"5Gi"` | size of persistent volume claim |
 | persistence.storageClass | string | `nil` | persistent volume claim storageClass |
 | persistence.subPath | string | `""` | persistent volume claim subpath |
-| podDisruptionBudget.enabled | bool | `true` | Enable Pod Disruption Budget |
+| podDisruptionBudget.enabled | bool | `false` | Enable Pod Disruption Budget |
 | podDisruptionBudget.maxUnavailable | string | `nil` | Max Unavailable pods, default is 1 |
 | podDisruptionBudget.minAvailable | string | `nil` | Min Available pods, default is 1 |
 | podDisruptionBudget.selector | object | `{}` | Selector for the PDB |
