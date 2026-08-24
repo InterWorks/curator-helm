@@ -17,7 +17,9 @@ A Helm chart for Curator in a Container in Kubernetes
 | cronjob.affinity | object | `{}` |  |
 | cronjob.env | object | `{}` |  |
 | cronjob.nodeSelector | object | `{}` |  |
+| cronjob.startingDeadlineSeconds | int | `300` | Seconds the controller may start a missed run late before counting it as missed; keeps the CronJob from stalling permanently after 100 missed schedules (e.g. while a stuck job holds the Forbid lock) |
 | cronjob.successfulJobsHistoryLimit | int | `1` |  |
+| cronjob.suspend | bool | `false` | Suspend the scheduler CronJob. Managed by the chart so Flux drift detection reverts manual suspends (e.g. a k9s pause during maintenance that never gets resumed) |
 | curator.app | object | `{"appKeySecret":{"key":null,"name":null},"debug":null}` | environment variables to pass into app.php |
 | curator.auth.existingSecret | string | `"curator-auth"` | secret to use for initial admin user |
 | curator.cache | object | `{"driver":null,"host":null,"port":null,"prefix":null}` | environment variables to pass into cache.php |

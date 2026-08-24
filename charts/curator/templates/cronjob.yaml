@@ -5,6 +5,8 @@ metadata:
 spec:
   schedule: "* * * * *"
   concurrencyPolicy: Forbid
+  suspend: {{ .Values.cronjob.suspend }}
+  startingDeadlineSeconds: {{ .Values.cronjob.startingDeadlineSeconds }}
   successfulJobsHistoryLimit: {{ .Values.cronjob.successfulJobsHistoryLimit }}
   jobTemplate:
     spec:

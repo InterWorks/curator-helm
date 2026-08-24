@@ -93,7 +93,13 @@ cronjob:
   affinity: {}
   env: {}
   nodeSelector: {}
+  # -- Seconds the controller may start a missed run late before counting it as missed; keeps the CronJob
+  # from stalling permanently after 100 missed schedules (e.g. while a stuck job holds the Forbid lock)
+  startingDeadlineSeconds: 300
   successfulJobsHistoryLimit: 1
+  # -- Suspend the scheduler CronJob. Managed by the chart so Flux drift detection reverts manual
+  # suspends (e.g. a k9s pause during maintenance that never gets resumed)
+  suspend: false
 
 # -- Resource configuration, environment will control resources if left blank but can be overridden
 resources: {}

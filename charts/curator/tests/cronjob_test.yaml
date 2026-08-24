@@ -1,0 +1,47 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/helm-unittest/helm-unittest/main/schema/helm-testsuite.json
+suite: test cronjob
+templates:
+  - cronjob.yaml
+tests:
+  - it: should work
+    set:
+      image.tag: latest
+    asserts:
+      - isKind:
+          of: CronJob
+      - matchRegex:
+          path: metadata.name
+          pattern: -cron$
+      - equal:
+          path: spec.schedule
+          value: "* * * * *"
+      - equal:
+          path: spec.concurrencyPolicy
+          value: Forbid
+      - equal:
+          path: spec.jobTemplate.spec.template.spec.containers[0].image
+          value: ghcr.io/interworks/curator:latest
+
+  - it: is not suspended by default and owns the suspend field
+    asserts:
+      - equal:
+          path: spec.suspend
+          value: false
+
+  - it: sets a starting deadline so missed runs cannot stall the CronJob permanently
+    asserts:
+      - equal:
+          path: spec.startingDeadlineSeconds
+          value: 300
+
+  - it: honours suspend and startingDeadlineSeconds overrides
+    set:
+      cronjob.suspend: true
+      cronjob.startingDeadlineSeconds: 120
+    asserts:
+      - equal:
+          path: spec.suspend
+          value: true
+      - equal:
+          path: spec.startingDeadlineSeconds
+          value: 120
