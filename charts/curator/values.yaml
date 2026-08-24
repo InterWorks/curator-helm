@@ -276,7 +276,7 @@ curator:
   queue:
     connection: ~
   search:
-    # -- search engine; allowable values: database, typesense, collection, null
+    # -- search engine; allowable values: database, typesense, null
     driver: ~
     # -- search prefix applied to all search index names, allows for multitenancy
     prefix: ~
