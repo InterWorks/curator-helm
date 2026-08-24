@@ -106,6 +106,7 @@ A Helm chart for Curator in a Container in Kubernetes
 | ingress.hosts | list | `[]` | Ingress hosts configuration |
 | ingress.tls | list | `[]` | TLS config |
 | mariadbOperator.backup.bucket | string | `""` | s3 bucket to store backups |
+| mariadbOperator.backup.enabled | bool | `true` | create a Backup resource for this site's mariadb database. Disable when centralizing sites onto a mariadb cluster in a different namespace, since cross-namespace backups aren't supported. |
 | mariadbOperator.backup.region | string | `""` | s3 region for bucket |
 | mariadbOperator.backup.retention | string | `"168h"` | retention period for backups |
 | mariadbOperator.backup.schedule | string | `"0 0 * * *"` | schedule to take backups |
