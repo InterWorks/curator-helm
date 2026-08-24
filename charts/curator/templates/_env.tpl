@@ -242,7 +242,7 @@
   value: {{ .Values.curator.search.queue }}
 {{- end }}
 # Config for algolia driver
-{{ if and (eq .Values.driver "algolia") }}
+{{ if and (eq .Values.curator.search.driver "algolia") }}
 {{- if .Values.curator.search.algolia.identify }}
 - name: SEARCH_IDENTIFY
   value: .Values.curator.search.algolia.identify 
