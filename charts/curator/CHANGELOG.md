@@ -11,6 +11,13 @@
 
 * **helm-chart:** add Sentry environment variables to deployments ([2a2d3d3](https://github.com/interworks/curator-helm/commit/2a2d3d3faa8eb1627c7f146063f6cdfc5e214e88))
 
+## [3.2.0](https://github.com/InterWorks/curator-helm/compare/v3.1.0...v3.2.0) (2026-08-24)
+
+
+### Features
+
+* **mariadb:** allow disabling backup resource creation ([#92](https://github.com/InterWorks/curator-helm/issues/92)) ([c584923](https://github.com/InterWorks/curator-helm/commit/c5849236e14f557d2dd28515816118508293d0c6))
+
 ## [3.1.0](https://github.com/InterWorks/curator-helm/compare/v3.0.2...v3.1.0) (2026-08-24)
 
 
