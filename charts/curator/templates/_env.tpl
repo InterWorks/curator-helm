@@ -247,6 +247,7 @@
 - name: SEARCH_IDENTIFY
   value: .Values.curator.search.algolia.identify 
 {{- end }}
+{{- if and .Values.curator.search.algolia.idSecretRef.name .Values.curator.search.algolia.idSecretRef.key}}
 {{ with .Values.curator.search.algolia.idSecretRef }}
 - name: ALGOLIA_APP_ID
   valueFrom:
@@ -254,6 +255,8 @@
         name: {{ .name }}
         key: {{ .key }}
 {{ end }}
+{{- end }}
+{{- if and .Values.curator.search.algolia.secretValueSecretRef.name .Values.curator.search.algolia.secretValueSecretRef.key}}
 {{ with .Values.curator.search.algolia.secretValueSecretRef }}
 - name: ALGOLIA_APP_SECRET
   valueFrom:
@@ -262,16 +265,19 @@
         key: {{ .key }}
 {{ end }}
 {{- end }}
+{{- end }}
 # end config for algolia driver
 # config for typesearch driver
 {{ if eq .Values.curator.search.driver "typesense" }}
+{{- if and .Values.curator.search.typesense.apiKeySecretRef.name .Values.curator.search.typesense.apiKeySecretRef.key}}
 {{ with .Values.curator.search.typesense.apiKeySecretRef }}
 - name: TYPESENSE_API_KEY
   valueFrom:
     secretKeyRef:
       name: {{ .name }}
       key: {{ .key }}
-{{ end }}
+{{- end }}
+{{- end }}
 {{- if .Values.curator.search.typesense.host }}
 - name: TYPESENSE_HOST
   value: {{ .Values.curator.search.typesense.host }}
