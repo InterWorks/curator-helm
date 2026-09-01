@@ -6,7 +6,12 @@
 {{ end }}
 {{ with (first .Values.ingress.hosts) -}}
 - name: APP_URL
-  value: {{ .host }}
+  # Must include the scheme. Laravel/Winter falls back to APP_URL for URL generation whenever there is
+  # no HTTP request -- notably the `artisan schedule:run` CronJob and the cache-warm jobs it drains. A
+  # scheme-less APP_URL makes those CLI-context renders emit host-only, scheme-less links (e.g.
+  # "example.com/dashboard/x"), which browsers resolve relative to the current page into a doubled host
+  # ("example.com/example.com/dashboard/x") and Curator then 404s. Ingress always terminates TLS here.
+  value: "https://{{ .host }}"
 {{ end -}}
 # TODO account for old value location
 {{ if and .Values.curator.app.appKeySecret.name .Values.curator.app.appKeySecret.key }}
