@@ -11,6 +11,13 @@
 
 * **helm-chart:** add Sentry environment variables to deployments ([2a2d3d3](https://github.com/interworks/curator-helm/commit/2a2d3d3faa8eb1627c7f146063f6cdfc5e214e88))
 
+## [3.2.1](https://github.com/InterWorks/curator-helm/compare/v3.2.0...v3.2.1) (2026-09-01)
+
+
+### Bug Fixes
+
+* **curator:** include scheme in APP_URL to prevent malformed links ([#96](https://github.com/InterWorks/curator-helm/issues/96)) ([a1c80ad](https://github.com/InterWorks/curator-helm/commit/a1c80ad987a9d920f55ee1e9cb4c39f77af42c3c))
+
 ## [3.2.0](https://github.com/InterWorks/curator-helm/compare/v3.1.0...v3.2.0) (2026-08-24)
 
 
