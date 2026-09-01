@@ -37,7 +37,7 @@ tests:
           path: spec.template.spec.containers[0].env
           content:
             name: APP_URL
-            value: curator.example.com
+            value: https://curator.example.com
       - notContains:
           path: spec.template.spec.containers[0].env
           content:
