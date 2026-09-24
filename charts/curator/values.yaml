@@ -243,8 +243,11 @@ curator:
     # -- default filesystem disk, defaults to "s3" if persistence.s3.enabled else "local"
     disk: ~
   logging:
+    # -- log channel, defaults to "stderr" (must exist in the image's config/logging.php)
     channel: ~
     deprecationsChannel: ~
+    # -- Monolog formatter class, e.g. "Monolog\\Formatter\\JsonFormatter" for JSON log lines
+    formatter: ~
     level: ~
   mail:
     host: ~

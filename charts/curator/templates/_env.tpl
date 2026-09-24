@@ -132,7 +132,16 @@
 {{- end }}
 # logging.php
 - name: LOG_CHANNEL
-  value: {{ .Values.curator.logging.channel | default "stdout" | quote }}
+  # Must name a channel that actually exists in the image's config/logging.php. Curator tracks the
+  # WinterCMS/Laravel stock channel set, which has no "stdout" channel -- the old Docker config overlay
+  # used to add one, but that overlay was removed, so "stdout" now resolves to nothing and Laravel
+  # throws "Log [stdout] is not defined". "stderr" is the stock container channel; Kubernetes captures
+  # stdout and stderr identically, differing only in the CRI stream tag.
+  value: {{ .Values.curator.logging.channel | default "stderr" | quote }}
+{{ if .Values.curator.logging.formatter }}
+- name: LOG_STDERR_FORMATTER
+  value: {{ .Values.curator.logging.formatter | quote }}
+{{ end }}
 {{ if .Values.curator.logging.deprecationsChannel }}
 - name: LOG_DEPRECATIONS_CHANNEL
   value: {{ .Values.curator.logging.deprecationsChannel }}
