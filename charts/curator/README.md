@@ -38,8 +38,9 @@ A Helm chart for Curator in a Container in Kubernetes
 | curator.livenessProbe.path | string | `"/ping"` | Endpoint the probe hits; keep it cheap and dependency-free |
 | curator.livenessProbe.periodSeconds | int | `10` | Period to wait between checks |
 | curator.livenessProbe.timeoutSeconds | int | `15` | Timeout for probe |
-| curator.logging.channel | string | `nil` |  |
+| curator.logging.channel | string | `nil` | log channel, defaults to "stderr" (must exist in the image's config/logging.php) |
 | curator.logging.deprecationsChannel | string | `nil` |  |
+| curator.logging.formatter | string | `nil` | Monolog formatter class, e.g. "Monolog\\Formatter\\JsonFormatter" for JSON log lines |
 | curator.logging.level | string | `nil` |  |
 | curator.mail.ehloDomain | string | `nil` |  |
 | curator.mail.fromAddress | string | `nil` |  |
