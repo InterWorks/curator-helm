@@ -11,6 +11,13 @@
 
 * **helm-chart:** add Sentry environment variables to deployments ([2a2d3d3](https://github.com/interworks/curator-helm/commit/2a2d3d3faa8eb1627c7f146063f6cdfc5e214e88))
 
+## [3.2.2](https://github.com/InterWorks/curator-helm/compare/v3.2.1...v3.2.2) (2026-09-24)
+
+
+### Bug Fixes
+
+* **curator:** point LOG_CHANNEL at a channel that exists in the image ([#99](https://github.com/InterWorks/curator-helm/issues/99)) ([70a7e2a](https://github.com/InterWorks/curator-helm/commit/70a7e2a9ba53d6e42f12e7d8ac18da72162d4a0b))
+
 ## [3.2.1](https://github.com/InterWorks/curator-helm/compare/v3.2.0...v3.2.1) (2026-09-01)
 
 
