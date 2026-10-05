@@ -46,3 +46,23 @@ tests:
       - equal:
           path: spec.mariaDbRef.namespace
           value: curator-mariadb
+
+  - it: labels a centralized Backup with the owning release and its namespace
+    release:
+      name: qa-talent-chambers-com
+      namespace: orbach-and-chambers-ltd
+    set:
+      mariadbOperator.enabled: true
+      mariadbOperator.mariadbNamespace: curator-mariadb
+      ingress.hosts:
+        - host: qa.talent.chambers.com
+    asserts:
+      - equal:
+          path: metadata.labels["app.kubernetes.io/instance"]
+          value: qa-talent-chambers-com
+      - equal:
+          path: metadata.labels["curator.interworks.com/release-namespace"]
+          value: orbach-and-chambers-ltd
+      - equal:
+          path: metadata.annotations["curator.interworks.com/site"]
+          value: qa.talent.chambers.com

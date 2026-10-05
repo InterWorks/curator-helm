@@ -7,7 +7,10 @@ metadata:
   create it in the MariaDB's namespace. Its ServiceAccount (defaulted to the Backup
   name) is created there too and needs a pod identity association in that namespace. */}}
   namespace: {{ .Values.mariadbOperator.mariadbNamespace | default .Release.Namespace }}
+  labels:
+    {{- include "curator.mariadbLabels" . | nindent 4 }}
   annotations:
+    {{- with (include "curator.mariadbAnnotations" .) }}{{ . | nindent 4 }}{{ end }}
     "helm.sh/resource-policy": keep
 spec:
   mariaDbRef:
