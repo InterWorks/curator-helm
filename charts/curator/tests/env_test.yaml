@@ -278,3 +278,30 @@ tests:
           content:
             name: LOG_LEVEL
             value: warning
+
+  - it: routes a centralized site through MaxScale in mariadbNamespace
+    set:
+      mariadbOperator.mariadbNamespace: curator-mariadb
+      mariadbOperator.maxscaleEndpoint: curator-maxscale
+    asserts:
+      - contains:
+          path: spec.template.spec.containers[0].env
+          content:
+            name: DB_HOST
+            value: curator-maxscale.curator-mariadb
+
+  - it: never falls back to the release namespace when mariadbNamespace is set
+    # Without maxscaleEndpoint/mariadbEndpoint the old fallback built
+    # <mariadbName>.<Release.Namespace>, silently pointing a centralized site at its
+    # old in-namespace cluster.
+    set:
+      mariadbOperator.mariadbNamespace: curator-mariadb
+      mariadbOperator.maxscaleEndpoint: null
+      mariadbOperator.mariadbEndpoint: ""
+    asserts:
+      - contains:
+          path: spec.template.spec.containers[0].env
+          content:
+            name: DB_HOST
+            value: curator-mariadb.curator-mariadb
+

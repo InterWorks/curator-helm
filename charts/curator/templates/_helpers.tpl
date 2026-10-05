@@ -151,7 +151,9 @@ curator.database.host -> Maxscale -> mariadbEndpoint -> mariadb
 {{- else if .Values.mariadbOperator.mariadbEndpoint -}}
 {{ .Values.mariadbOperator.mariadbEndpoint }}.{{ .Release.Namespace }}
 {{- else -}}
-{{- /* DEFAULT Use mariadb for db endpoint */ -}}
-{{ .Values.mariadbOperator.mariadbName }}.{{ .Release.Namespace }}
+{{- /* DEFAULT Use mariadb for db endpoint. Honour mariadbNamespace here too: falling
+back to .Release.Namespace would silently route a centralized site to its old
+in-namespace cluster if maxscaleEndpoint were omitted. */ -}}
+{{ .Values.mariadbOperator.mariadbName }}.{{ .Values.mariadbOperator.mariadbNamespace | default .Release.Namespace }}
 {{- end -}}
 {{- end -}}

@@ -26,3 +26,23 @@ tests:
     asserts:
       - hasDocuments:
           count: 0
+
+  - it: renders in the release namespace when mariadbNamespace is unset
+    set:
+      mariadbOperator.enabled: true
+    asserts:
+      - equal:
+          path: metadata.namespace
+          value: NAMESPACE
+
+  - it: renders next to a centralized MariaDB in mariadbNamespace
+    set:
+      mariadbOperator.enabled: true
+      mariadbOperator.mariadbNamespace: curator-mariadb
+    asserts:
+      - equal:
+          path: metadata.namespace
+          value: curator-mariadb
+      - equal:
+          path: spec.mariaDbRef.namespace
+          value: curator-mariadb
