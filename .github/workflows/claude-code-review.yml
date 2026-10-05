@@ -864,7 +864,7 @@ jobs:
           use_sticky_comment: true
           allowed_bots: curator-agents[bot],mnemosyne-iw[bot],epimetheus-iw[bot],themis-iw[bot],hyperion-iw[bot],prometheus-iw[bot],curator-claude-bot[bot],curator-ci-bot[bot],renovate[bot],dependabot[bot]
           claude_args: >-
-            --model claude-sonnect-5-5
+            --model claude-sonnet-5-5
             --effort ${{ vars.CLAUDE_CODE_REVIEW_EFFORT }}
             --max-turns 80
             --allowed-tools
