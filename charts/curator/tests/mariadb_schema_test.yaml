@@ -53,3 +53,27 @@ tests:
     asserts:
       - failedTemplate:
           errorPattern: "maxLength"
+
+  - it: treats an empty mariadbNamespace as unset (release namespace)
+    set:
+      mariadbOperator.mariadbNamespace: ""
+    asserts:
+      - isKind:
+          of: Database
+      - equal:
+          path: spec.mariaDbRef.namespace
+          value: NAMESPACE
+
+  - it: still rejects an invalid mariadbNamespace
+    set:
+      mariadbOperator.mariadbNamespace: Curator_MariaDB
+    asserts:
+      - failedTemplate:
+          errorPattern: "does not match pattern"
+
+  - it: rejects an empty mariadbName (DB_HOST would become ".<namespace>")
+    set:
+      mariadbOperator.mariadbName: ""
+    asserts:
+      - failedTemplate:
+          errorPattern: "does not match pattern"

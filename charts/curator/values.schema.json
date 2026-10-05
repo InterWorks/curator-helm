@@ -19,8 +19,9 @@
         },
         "mariadbEndpoint": { "type": ["string", "null"] },
         "mariadbNamespace": {
+          "description": "Empty string or null means the release namespace, matching the templates' `default`.",
           "type": ["string", "null"],
-          "pattern": "^[a-z0-9]([-a-z0-9]*[a-z0-9])?$",
+          "pattern": "^([a-z0-9]([-a-z0-9]*[a-z0-9])?)?$",
           "maxLength": 63
         },
         "maxscaleEndpoint": { "type": ["string", "null"] },
