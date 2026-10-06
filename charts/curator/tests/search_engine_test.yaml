@@ -2,6 +2,8 @@
 suite: test searchEngine
 templates:
   - deployment.yaml
+values:
+  - values/database.yaml
 release:
   name: curator
 tests:

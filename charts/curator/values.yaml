@@ -248,18 +248,28 @@ curator:
     filesystemUploadsPath: ~
     filesystemMediaPath: ~
     enableCSRF: ~
-  # -- environment variables to pass into database.php
+  # The chart creates no database objects (Database, User, Grant, Backup); they are
+  # managed alongside the HelmRelease. host, databaseName, username and
+  # password.secretKeyRef.name are required, and nothing is inferred.
+  # -- database connection, passed into database.php
   database:
+    # -- database driver (DB_CONNECTION), only set this to override the app's default
     connection: ~
+    # -- (string) database host the app and CronJob connect to, e.g. `curator-maxscale.curator-mariadb` or `curator-mariadb-primary.<namespace>`. Required.
     host: ~
+    # -- (string) host for the db-migrate and admin-creation jobs, so DDL bypasses MaxScale, e.g. `curator-mariadb-primary.curator-mariadb`. Defaults to `host`.
+    directHost: ~
     # -- database port, only set this if the database is not listening on the connection's default port
     port: ~
+    # -- (string) database name (DB_DATABASE). Required.
     databaseName: ~
+    # -- (string) database user (DB_USERNAME). Required.
     username: ~
     password:
+      # -- Secret holding the database user's password (DB_PASSWORD). `name` is required.
       secretKeyRef:
         name: ~
-        key: ~
+        key: password
   # -- environment variables to pass into filesystems.php
   filesystems:
     # -- default filesystem disk, defaults to "s3" if persistence.s3.enabled else "local"
@@ -406,49 +416,3 @@ curator:
     # services: ""
     # session: ""
     # view: ""
-
-mariadbOperator:
-  enabled: true
-  # -- Name of existing mariadb resource
-  mariadbName: "curator-mariadb"
-  # -- Endpoint to connect to mariadb, if not set it will use the mariadbName as the hostname
-  mariadbEndpoint: ""
-  # -- Namespace of existing mariadb resource
-  mariadbNamespace: ~
-  # -- Endpoint to connect to maxscale, if not set it will default to mariadbEndpoint
-  maxscaleEndpoint: ~
-
-  ## Database to connect to
-  database:
-    # -- database to create
-    name: "production"
-    # -- character set for the database
-    characterSet: "utf8"
-    # -- collation for the database
-    collate: "utf8_general_ci"
-  user:
-    # -- mariadb user to create
-    username: "curator"
-    # -- secret reference for the created user password
-    userPasswordSecretKeyRef:
-      name: production-mariadb
-      key: password
-    # -- maximum number of connections for the user
-    maxUserConnections: 151
-    # -- grantOption for the user
-    grantOption: false
-    # -- allowable login hosts for the user
-    host: "%"
-  backup:
-    # -- create a Backup resource for this site's mariadb database. It is created in `mariadbNamespace` (the MariaDB's namespace), since the operator does not support cross-namespace backups; its ServiceAccount (named after the Backup) is created there too and needs S3 access in that namespace.
-    enabled: true
-    # -- suspend backups, if true, no backups will be created
-    suspend: false
-    # -- schedule to take backups
-    schedule: "0 0 * * *"
-    # -- retention period for backups
-    retention: 168h # 7 days
-    # -- s3 bucket to store backups
-    bucket: ""
-    # -- s3 region for bucket
-    region: ""

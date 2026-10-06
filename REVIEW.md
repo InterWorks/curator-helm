@@ -179,25 +179,27 @@ the CronJob, `#73` the last `mariadbEndpoint` fallback case, `#75` `-primary`
 on the app's `db_host`). Give this area more scrutiny than its diff size
 suggests.
 
+- **The chart creates no database objects (5.0.0+).** `Database`, `User`,
+  `Grant`, `Backup` and the DB password `ExternalSecret` are managed by Flux
+  alongside the HelmRelease, and their names are random pets that must never
+  appear in Git. Flag any PR that reintroduces a mariadb-operator template or
+  a `mariadbOperator` value: it brings back the hook churn and the inferred
+  host this design removed.
+- **`curator.database` is the only source of the connection, with no
+  fallbacks.** `host`, `databaseName`, `username` and
+  `password.secretKeyRef.name` are required by `values.schema.json`. Flag a
+  `default`, a computed host, or anything else that lets a missing value
+  render: a wrong default silently routes a site to the wrong database.
 - **`DB_HOST` is set in four places and is not part of the shared env
   block.** `_env.tpl`'s `env.environment` deliberately omits it;
-  `deployment.yaml` and `cronjob.yaml` set it from the `curatorDbEndpoint`
-  helper, while `job-create-admin.yaml` and `job-db-migrate.yaml` hand-roll
-  a `<mariadbName>-primary.<namespace>` value. Flag a change to
-  `curatorDbEndpoint` that isn't considered for all four consumers, and flag
-  any new pod spec that includes `env.environment` without also setting
+  `deployment.yaml` and `cronjob.yaml` use `curator.dbHost`, while
+  `job-create-admin.yaml` and `job-db-migrate.yaml` use `curator.dbDirectHost`.
+  Flag any new pod spec that includes `env.environment` without also setting
   `DB_HOST`.
-- **The `-primary` suffix on the write path is deliberate, not a typo.**
-  Migration and admin-creation jobs must hit the primary; routing them at a
-  replica gives read-only failures. Don't "simplify" those two to the shared
-  helper, and do flag a new write-path workload that resolves to the
-  replica-capable endpoint.
-- **`curatorDbEndpoint` resolves in a fixed order**: maxscale (with
-  namespace) -> `mariadbEndpoint` (with namespace) -> `mariadbEndpoint`
-  (release namespace) -> `mariadbName` (release namespace). A new branch or
-  a reordering changes which host live sites resolve to. Check each arm
-  renders a fully-qualified, correct host, and that a value combination the
-  branches don't cover can't fall through to a wrong default.
+- **The jobs' `directHost` is deliberate, not a typo.** Migration and
+  admin-creation jobs must hit the primary, bypassing MaxScale; routing them at
+  a replica gives read-only failures. Don't "simplify" those two to
+  `curator.dbHost`, and do flag a new write-path workload that uses `host`.
 
 ### Release automation (release-please owns the version)
 
@@ -300,10 +302,10 @@ You can see the diff; you cannot see *why* the author made it. Describe what
 the change does and let the author confirm the why -- never assert intent as
 fact.
 
-- Say *"this drops the `mariadbNamespace` arm from `curatorDbEndpoint`, so
-  external-namespace sites now resolve to the release namespace -- is that
-  intended?"*, not *"this correctly simplifies the endpoint helper"* **or**
-  *"this breaks external-namespace sites."* You don't know which -- name the
+- Say *"this makes `directHost` fall back to a computed `-primary` host, so
+  a site that omits it now resolves to a guessed endpoint -- is that
+  intended?"*, not *"this correctly simplifies the host helper"* **or**
+  *"this breaks centralized sites."* You don't know which -- name the
   fact and ask.
 - Don't manufacture a rationale to approve a questionable change, and don't
   invent a motive to condemn one.

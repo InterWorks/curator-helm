@@ -43,24 +43,6 @@ app.kubernetes.io/managed-by: {{ .Release.Service }}
 {{- end }}
 
 {{/*
-Identity metadata for the mariadb-operator CRs (Database, User, Grant, Backup). Their
-names are opaque random pets, so these make `kubectl get databases -A -L
-app.kubernetes.io/instance` show which site owns each one. release-namespace matters for
-the Backup, which lives in mariadbNamespace rather than the customer namespace.
-*/}}
-{{- define "curator.mariadbLabels" -}}
-{{ include "curator.selectorLabels" . }}
-app.kubernetes.io/managed-by: {{ .Release.Service }}
-curator.interworks.com/release-namespace: {{ .Release.Namespace }}
-{{- end }}
-
-{{- define "curator.mariadbAnnotations" -}}
-{{- with (first (.Values.ingress.hosts | default list)) -}}
-curator.interworks.com/site: {{ .host | quote }}
-{{- end }}
-{{- end }}
-
-{{/*
 Selector labels
 */}}
 {{- define "curator.selectorLabels" -}}
@@ -78,29 +60,6 @@ Create the name of the service account to use
 {{- default "default" .Values.serviceAccount.name }}
 {{- end }}
 {{- end }}
-
-{{/*
-Create a default fully qualified app name.
-We truncate at 63 chars because some Kubernetes name fields are limited to this (by the DNS naming spec).
-*/}}
-{{- define "curator.mariadb.fullname" -}}
-{{- if .Values.mariadb.externalHost -}}
-{{- .Values.mariadb.externalHost -}}
-{{- else -}}
-{{- printf "%s-%s" .Release.Name "mariadb" | trunc 63 | trimSuffix "-" -}}
-{{- end -}}
-{{- end -}}
-{{/*
-Create a default fully qualified app name for php because single quotes are required
-We truncate at 63 chars because some Kubernetes name fields are limited to this (by the DNS naming spec).
-*/}}
-{{- define "curator.mariadb.phpname" -}}
-{{- if .Values.mariadb.externalHost -}}
-{{- .Values.mariadb.externalHost -}}
-{{- else -}}
-{{- printf "%s-%s" .Release.Name "mariadb" | trunc 63 | trimSuffix "-" | squote -}}
-{{- end -}}
-{{- end -}}
 
 {{/*
 Create a default fully qualified app name.
@@ -153,25 +112,18 @@ limits:
 {{- end -}}
 {{- end -}}
 {{/*
-Determines which mariadb endpoint to use
-Determination order:
-curator.database.host -> Maxscale -> mariadbEndpoint -> mariadb
+Database hosts. There is no fallback chain: curator.database.host is required by
+values.schema.json, so a missing value fails the render instead of silently routing a
+site to a guessed host. directHost is what the migrate and admin-creation jobs use, so
+DDL can bypass MaxScale and go straight to the primary; it defaults to host.
 */}}
-{{- define "curatorDbEndpoint" -}}
-{{- if .Values.curator.database.host -}}
-{{ .Values.curator.database.host }}
-{{- /* Use maxscale for db endpoint */ -}}
-{{- else if (and .Values.mariadbOperator.maxscaleEndpoint .Values.mariadbOperator.mariadbNamespace) -}}
-{{ .Values.mariadbOperator.maxscaleEndpoint }}.{{ .Values.mariadbOperator.mariadbNamespace }}
-{{- /* Use mariadbEndpoint for db endpoint */ -}}
-{{- else if (and .Values.mariadbOperator.mariadbEndpoint .Values.mariadbOperator.mariadbNamespace) -}}
-{{ .Values.mariadbOperator.mariadbEndpoint }}.{{ .Values.mariadbOperator.mariadbNamespace }}
-{{- else if .Values.mariadbOperator.mariadbEndpoint -}}
-{{ .Values.mariadbOperator.mariadbEndpoint }}.{{ .Release.Namespace }}
-{{- else -}}
-{{- /* DEFAULT Use mariadb for db endpoint. Honour mariadbNamespace here too: falling
-back to .Release.Namespace would silently route a centralized site to its old
-in-namespace cluster if maxscaleEndpoint were omitted. */ -}}
-{{ .Values.mariadbOperator.mariadbName }}.{{ .Values.mariadbOperator.mariadbNamespace | default .Release.Namespace }}
+{{- define "curator.dbHost" -}}
+{{- if hasKey .Values "mariadbOperator" -}}
+{{- fail "mariadbOperator was removed in chart 5.0.0: the chart no longer creates the Database, User, Grant or Backup. Manage those alongside the HelmRelease and set curator.database (host, databaseName, username, password.secretKeyRef) instead." -}}
 {{- end -}}
+{{ required "curator.database.host is required" .Values.curator.database.host }}
+{{- end -}}
+
+{{- define "curator.dbDirectHost" -}}
+{{ .Values.curator.database.directHost | default (include "curator.dbHost" .) }}
 {{- end -}}

@@ -1,0 +1,159 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/helm-unittest/helm-unittest/main/schema/helm-testsuite.json
+# curator.database is the only source of the DB connection in 5.0.0. Nothing is inferred,
+# so these tests pin that a missing or misspelled value fails the render instead of
+# routing a site to a guessed database (the 4.x curatorDbEndpoint fallback chain).
+suite: test curator.database
+templates:
+  - deployment.yaml
+  - cronjob.yaml
+  - job-db-migrate.yaml
+  - job-create-admin.yaml
+values:
+  - values/database.yaml
+release:
+  name: curator
+tests:
+  - it: wires every workload to the explicit connection values
+    set:
+      curator.database.host: curator-maxscale.curator-mariadb
+      curator.database.databaseName: abnormally-vigorously-absolute-aardvark
+      curator.database.username: abnormally-vigorously-absolute-aardvark
+      curator.database.password.secretKeyRef.name: abnormally-vigorously-absolute-aardvark-mariadb
+    template: deployment.yaml
+    asserts:
+      - contains:
+          path: spec.template.spec.containers[0].env
+          content:
+            name: DB_HOST
+            value: curator-maxscale.curator-mariadb
+      - contains:
+          path: spec.template.spec.containers[0].env
+          content:
+            name: DB_DATABASE
+            value: abnormally-vigorously-absolute-aardvark
+      - contains:
+          path: spec.template.spec.containers[0].env
+          content:
+            name: DB_USERNAME
+            value: abnormally-vigorously-absolute-aardvark
+      - contains:
+          path: spec.template.spec.containers[0].env
+          content:
+            name: DB_PASSWORD
+            valueFrom:
+              secretKeyRef:
+                name: abnormally-vigorously-absolute-aardvark-mariadb
+                key: password
+
+  - it: points the CronJob at host
+    set:
+      curator.database.host: curator-maxscale.curator-mariadb
+      curator.database.directHost: curator-mariadb-primary.curator-mariadb
+    template: cronjob.yaml
+    asserts:
+      - contains:
+          path: spec.jobTemplate.spec.template.spec.containers[0].env
+          content:
+            name: DB_HOST
+            value: curator-maxscale.curator-mariadb
+
+  - it: sends the migrate job to directHost, bypassing MaxScale
+    set:
+      curator.database.host: curator-maxscale.curator-mariadb
+      curator.database.directHost: curator-mariadb-primary.curator-mariadb
+    template: job-db-migrate.yaml
+    asserts:
+      - contains:
+          path: spec.template.spec.containers[0].env
+          content:
+            name: DB_HOST
+            value: curator-mariadb-primary.curator-mariadb
+
+  - it: sends the admin-creation job to directHost, bypassing MaxScale
+    set:
+      curator.database.host: curator-maxscale.curator-mariadb
+      curator.database.directHost: curator-mariadb-primary.curator-mariadb
+    template: job-create-admin.yaml
+    asserts:
+      - contains:
+          path: spec.template.spec.containers[0].env
+          content:
+            name: DB_HOST
+            value: curator-mariadb-primary.curator-mariadb
+
+  - it: falls back to host for the jobs when directHost is unset
+    set:
+      curator.database.host: curator-mariadb-primary.acme
+    template: job-db-migrate.yaml
+    asserts:
+      - contains:
+          path: spec.template.spec.containers[0].env
+          content:
+            name: DB_HOST
+            value: curator-mariadb-primary.acme
+
+  - it: fails without a host (no inferred endpoint)
+    set:
+      curator.database.host: null
+    template: deployment.yaml
+    asserts:
+      - failedTemplate:
+          errorPattern: "/curator/database/host"
+
+  - it: fails without a databaseName
+    set:
+      curator.database.databaseName: null
+    template: deployment.yaml
+    asserts:
+      - failedTemplate:
+          errorPattern: "/curator/database/databaseName"
+
+  - it: fails without a username
+    set:
+      curator.database.username: null
+    template: deployment.yaml
+    asserts:
+      - failedTemplate:
+          errorPattern: "/curator/database/username"
+
+  - it: fails without a password secret name
+    set:
+      curator.database.password.secretKeyRef.name: null
+    template: deployment.yaml
+    asserts:
+      - failedTemplate:
+          errorPattern: "/curator/database/password/secretKeyRef/name"
+
+  - it: rejects a misspelled key (datbaseName)
+    set:
+      curator.database.datbaseName: test-db
+    template: deployment.yaml
+    asserts:
+      - failedTemplate:
+          errorPattern: "additional properties 'datbaseName' not allowed"
+
+  - it: rejects the removed mariadbOperator block
+    set:
+      mariadbOperator.mariadbNamespace: curator-mariadb
+    # Every DB-wired workload trips the guard; helm-unittest attributes the render
+    # failure to the first one, the migrate job.
+    template: job-db-migrate.yaml
+    asserts:
+      - failedTemplate:
+          errorPattern: "mariadbOperator was removed in chart 5.0.0"
+
+  - it: rejects a database name that is not a valid Kubernetes name
+    set:
+      curator.database.databaseName: prod_bold_otter
+    template: deployment.yaml
+    asserts:
+      - failedTemplate:
+          errorPattern: "does not match pattern"
+
+  - it: rejects a database name longer than the 52-character CronJob limit
+    set:
+      curator.database.databaseName: aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
+    template: deployment.yaml
+    asserts:
+      - failedTemplate:
+          errorPattern: "maxLength"

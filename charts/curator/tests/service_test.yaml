@@ -2,6 +2,8 @@
 suite: test service
 templates:
   - service.yaml
+values:
+  - values/database.yaml
 tests:
   - it: defaults to ClusterIP on port 8080
     asserts:

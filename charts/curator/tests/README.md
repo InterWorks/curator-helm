@@ -121,6 +121,6 @@ These behaviours of this chart trip up tests if you don't account for them:
 
 The suites intentionally cover a first slice (~25%) of `values.yaml`: `image`,
 `service`, `serviceAccount`, `autoscaling`/HPA, `ingress`, and
-`podDisruptionBudget`. Good next candidates: `persistence`, `mariadbOperator`,
+`podDisruptionBudget`. Good next candidates: `persistence`,
 `curator.{env,sentry,config}`, `cronjob`, `resources`, and pod scheduling
 (`nodeSelector` / `tolerations` / `affinity` / `topologySpreadConstraints`).

@@ -28,8 +28,14 @@ A Helm chart for Curator in a Container in Kubernetes
 | curator.cms | object | `{"assetCache":null,"assetMinify":null,"enableCSRF":null,"filesystemDriver":null,"filesystemMediaPath":null,"filesystemUploadsPath":null,"routesCache":null}` | environment variables to pass into cms.php |
 | curator.cms.filesystemDriver | string | `nil` | disk used for CMS media/uploads storage, defaults to "s3" if persistence.s3.enabled else "local" |
 | curator.config | object | `{}` | If one of these is defined the above config section will no longer be applicable if the new config doesn't utilze environment variables |
-| curator.database | object | `{"connection":null,"databaseName":null,"host":null,"password":{"secretKeyRef":{"key":null,"name":null}},"port":null,"username":null}` | environment variables to pass into database.php |
+| curator.database | object | `{"connection":null,"databaseName":null,"directHost":null,"host":null,"password":{"secretKeyRef":{"key":"password","name":null}},"port":null,"username":null}` | database connection, passed into database.php |
+| curator.database.connection | string | `nil` | database driver (DB_CONNECTION), only set this to override the app's default |
+| curator.database.databaseName | string | `nil` | database name (DB_DATABASE). Required. |
+| curator.database.directHost | string | `nil` | host for the db-migrate and admin-creation jobs, so DDL bypasses MaxScale, e.g. `curator-mariadb-primary.curator-mariadb`. Defaults to `host`. |
+| curator.database.host | string | `nil` | database host the app and CronJob connect to, e.g. `curator-maxscale.curator-mariadb` or `curator-mariadb-primary.<namespace>`. Required. |
+| curator.database.password.secretKeyRef | object | `{"key":"password","name":null}` | Secret holding the database user's password (DB_PASSWORD). `name` is required. |
 | curator.database.port | string | `nil` | database port, only set this if the database is not listening on the connection's default port |
+| curator.database.username | string | `nil` | database user (DB_USERNAME). Required. |
 | curator.env | object | `{}` | environment variables to set in the container |
 | curator.envFromSecret | list | `[]` | read environment variables from a secret |
 | curator.filesystems | object | `{"disk":null}` | environment variables to pass into filesystems.php |
@@ -108,25 +114,6 @@ A Helm chart for Curator in a Container in Kubernetes
 | ingress.enabled | bool | `true` | Control for ingress |
 | ingress.hosts | list | `[]` | Ingress hosts configuration |
 | ingress.tls | list | `[]` | TLS config |
-| mariadbOperator.backup.bucket | string | `""` | s3 bucket to store backups |
-| mariadbOperator.backup.enabled | bool | `true` | create a Backup resource for this site's mariadb database. It is created in `mariadbNamespace` (the MariaDB's namespace), since the operator does not support cross-namespace backups; its ServiceAccount (named after the Backup) is created there too and needs S3 access in that namespace. |
-| mariadbOperator.backup.region | string | `""` | s3 region for bucket |
-| mariadbOperator.backup.retention | string | `"168h"` | retention period for backups |
-| mariadbOperator.backup.schedule | string | `"0 0 * * *"` | schedule to take backups |
-| mariadbOperator.backup.suspend | bool | `false` | suspend backups, if true, no backups will be created |
-| mariadbOperator.database.characterSet | string | `"utf8"` | character set for the database |
-| mariadbOperator.database.collate | string | `"utf8_general_ci"` | collation for the database |
-| mariadbOperator.database.name | string | `"production"` | database to create |
-| mariadbOperator.enabled | bool | `true` |  |
-| mariadbOperator.mariadbEndpoint | string | `""` | Endpoint to connect to mariadb, if not set it will use the mariadbName as the hostname |
-| mariadbOperator.mariadbName | string | `"curator-mariadb"` | Name of existing mariadb resource |
-| mariadbOperator.mariadbNamespace | string | `nil` | Namespace of existing mariadb resource |
-| mariadbOperator.maxscaleEndpoint | string | `nil` | Endpoint to connect to maxscale, if not set it will default to mariadbEndpoint |
-| mariadbOperator.user.grantOption | bool | `false` | grantOption for the user |
-| mariadbOperator.user.host | string | `"%"` | allowable login hosts for the user |
-| mariadbOperator.user.maxUserConnections | int | `151` | maximum number of connections for the user |
-| mariadbOperator.user.userPasswordSecretKeyRef | object | `{"key":"password","name":"production-mariadb"}` | secret reference for the created user password |
-| mariadbOperator.user.username | string | `"curator"` | mariadb user to create |
 | nameOverride | string | `""` | Overrides the chart name, default is the name of the release |
 | nodeSelector | object | `{}` |  |
 | persistence.accessModes | list | `[]` | persistent volume claim accessMode |
