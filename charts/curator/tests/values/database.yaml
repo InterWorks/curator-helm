@@ -1,0 +1,10 @@
+# Minimal required curator.database values (chart 5.0.0 infers none of them). Loaded
+# by every suite; database_test.yaml overrides or removes them to test validation.
+curator:
+  database:
+    host: curator-mariadb-primary.test
+    databaseName: test-db
+    username: test-user
+    password:
+      secretKeyRef:
+        name: test-db-mariadb

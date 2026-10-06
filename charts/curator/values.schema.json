@@ -1,82 +1,102 @@
 {
   "$schema": "http://json-schema.org/schema#",
   "type": "object",
+  "required": [
+    "curator"
+  ],
   "properties": {
     "environment": {
       "type": "string",
-      "enum": ["dev", "qa", "prod"]
+      "enum": [
+        "dev",
+        "qa",
+        "prod"
+      ]
     },
-    "mariadbOperator": {
-      "description": "Strict: an unknown or misspelled key (e.g. mariaDbName) fails the render instead of silently falling back to a chart default. A wrong mariadbNamespace/mariadbName would otherwise route a site to the wrong database with no error.",
+    "curator": {
       "type": "object",
-      "additionalProperties": false,
+      "required": [
+        "database"
+      ],
       "properties": {
-        "enabled": { "type": "boolean" },
-        "mariadbName": {
-          "type": "string",
-          "pattern": "^[a-z0-9]([-a-z0-9]*[a-z0-9])?$",
-          "maxLength": 63
-        },
-        "mariadbEndpoint": { "type": ["string", "null"] },
-        "mariadbNamespace": {
-          "description": "Empty string or null means the release namespace, matching the templates' `default`.",
-          "type": ["string", "null"],
-          "pattern": "^([a-z0-9]([-a-z0-9]*[a-z0-9])?)?$",
-          "maxLength": 63
-        },
-        "maxscaleEndpoint": { "type": ["string", "null"] },
         "database": {
+          "description": "Strict, and the only source of the database connection: every required value must be set explicitly. Nothing falls back to a chart default, so a missing or misspelled key fails the render instead of routing the site to the wrong database.",
           "type": "object",
           "additionalProperties": false,
+          "required": [
+            "host",
+            "databaseName",
+            "username",
+            "password"
+          ],
           "properties": {
-            "name": {
-              "description": "Becomes the MariaDB database name and the metadata.name of the Database, Grant and Backup CRs. The Backup's CronJob takes the same name, and Kubernetes caps CronJob names at 52 characters.",
+            "connection": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "host": {
+              "type": "string",
+              "minLength": 1,
+              "pattern": "^[a-z0-9]([-a-z0-9.]*[a-z0-9])?$"
+            },
+            "directHost": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "pattern": "^([a-z0-9]([-a-z0-9.]*[a-z0-9])?)?$"
+            },
+            "port": {
+              "type": [
+                "integer",
+                "string",
+                "null"
+              ]
+            },
+            "databaseName": {
+              "description": "Also the metadata.name of the site's Database, Grant and Backup CRs (managed outside the chart). The Backup's CronJob takes the same name, and Kubernetes caps CronJob names at 52 characters.",
               "type": "string",
               "pattern": "^[a-z0-9]([-a-z0-9]*[a-z0-9])?$",
               "maxLength": 52
             },
-            "characterSet": { "type": "string" },
-            "collate": { "type": "string" }
-          }
-        },
-        "user": {
-          "type": "object",
-          "additionalProperties": false,
-          "properties": {
             "username": {
-              "description": "Becomes the MariaDB username and the metadata.name of the User CR.",
+              "description": "Also the metadata.name of the site's User CR (managed outside the chart).",
               "type": "string",
               "pattern": "^[a-z0-9]([-a-z0-9]*[a-z0-9])?$",
               "maxLength": 80
             },
-            "userPasswordSecretKeyRef": {
+            "password": {
               "type": "object",
               "additionalProperties": false,
+              "required": [
+                "secretKeyRef"
+              ],
               "properties": {
-                "name": { "type": "string", "minLength": 1 },
-                "key": { "type": "string", "minLength": 1 }
-              },
-              "required": ["name", "key"]
-            },
-            "maxUserConnections": { "type": "integer", "minimum": 0 },
-            "grantOption": { "type": "boolean" },
-            "host": { "type": "string" }
-          }
-        },
-        "backup": {
-          "type": "object",
-          "additionalProperties": false,
-          "properties": {
-            "enabled": { "type": "boolean" },
-            "suspend": { "type": "boolean" },
-            "schedule": { "type": "string" },
-            "retention": { "type": "string" },
-            "bucket": { "type": "string" },
-            "region": { "type": "string" }
+                "secretKeyRef": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "required": [
+                    "name",
+                    "key"
+                  ],
+                  "properties": {
+                    "name": {
+                      "type": "string",
+                      "minLength": 1
+                    },
+                    "key": {
+                      "type": "string",
+                      "minLength": 1
+                    }
+                  }
+                }
+              }
+            }
           }
         }
       }
     }
-  },
-  "required": ["environment"]
+  }
 }

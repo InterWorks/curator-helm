@@ -17,26 +17,16 @@ ingress:
     - secretName: curator-interworks-com-tls
       hosts:
       - curator.interworks.com
-mariadbOperator:
-  enabled: true
-  mariaDbName: "curator-mariadb"
-  ## Database to connect to
-  database: 
-    name: "prod"
-    characterSet: "utf8"
-    collate: "utf8_general_ci"
-  user:
-    username: "prod"
-    userPasswordSecretKeyRef:
-      name: prod-mariadb
-      key: password
-    maxUserConnections: 100
-  backup:
-    suspend: false
-    schedule: "0 0 * * *"
-    retention: 168h # 7 days
 environment: prod
 curator:
+  database:
+    host: curator-mariadb-primary.curator
+    databaseName: prod
+    username: prod
+    password:
+      secretKeyRef:
+        name: prod-mariadb
+        key: password
   cache:
     prefix: prod
   envFromSecret:

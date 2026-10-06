@@ -2,6 +2,8 @@
 suite: test ingress
 templates:
   - ingress.yaml
+values:
+  - values/database.yaml
 release:
   name: curator
 capabilities:

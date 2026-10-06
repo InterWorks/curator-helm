@@ -65,42 +65,25 @@
 - name: ENABLE_CSRF
   value: {{ .Values.curator.cms.enableCSRF | quote }}
 {{ end }}
-# database.php
+# database.php. host/databaseName/username/password are required by values.schema.json;
+# the chart creates no database objects and infers none of these values.
 {{ if .Values.curator.database.connection }}
 - name: DB_CONNECTION
   value: {{ .Values.curator.database.connection }}
 {{ end }}
-{{ if .Values.curator.database.databaseName }}
 - name: DB_DATABASE
-  value: {{ .Values.curator.database.databaseName}}
-{{ else }}
-- name: DB_DATABASE
-  value: {{ .Values.mariadbOperator.database.name | default .Values.environment }}
-{{ end }}
-{{ if .Values.curator.database.username }}
+  value: {{ .Values.curator.database.databaseName | quote }}
 - name: DB_USERNAME
-  value: {{ .Values.curator.database.username }}
-{{ else }}
-- name: DB_USERNAME
-  value: {{ .Values.mariadbOperator.user.username | default "curator"}}
-{{ end }}
+  value: {{ .Values.curator.database.username | quote }}
 {{ if .Values.curator.database.port }}
 - name: DB_PORT
   value: {{ .Values.curator.database.port | quote }}
 {{ end }}
-{{ if and .Values.curator.database.password.secretKeyRef.name .Values.curator.database.password.secretKeyRef.key }}
 - name: DB_PASSWORD
   valueFrom:
     secretKeyRef:
       name: {{ .Values.curator.database.password.secretKeyRef.name }}
       key: {{ .Values.curator.database.password.secretKeyRef.key }}
-{{ else }}
-- name: DB_PASSWORD
-  valueFrom:
-    secretKeyRef:
-      name: {{ .Values.mariadbOperator.user.userPasswordSecretKeyRef.name | default (printf "%s-mariadb" .Values.environment) }}
-      key: {{ .Values.mariadbOperator.user.userPasswordSecretKeyRef.key | default "password" }}
-{{ end }}
 # filesystems.php
 - name: FILESYSTEM_DISK
   value: {{ .Values.curator.filesystems.disk | default (ternary "s3" "local" .Values.persistence.s3.enabled) }}

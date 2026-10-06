@@ -2,6 +2,8 @@
 suite: test horizontalpodautoscaler
 templates:
   - hpa.yaml
+values:
+  - values/database.yaml
 release:
   name: curator
 tests:

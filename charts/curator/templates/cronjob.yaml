@@ -57,7 +57,7 @@ spec:
             env:
             {{- include "env.environment" . | nindent 12 }}
             - name: DB_HOST
-              value: {{ include "curatorDbEndpoint" . }}
+              value: {{ include "curator.dbHost" . }}
             {{- range $key, $value := .Values.cronjob.env }}
             - name: "{{ $key }}"
               value: "{{ $value }}"
