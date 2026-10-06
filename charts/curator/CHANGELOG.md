@@ -11,6 +11,13 @@
 
 * **helm-chart:** add Sentry environment variables to deployments ([2a2d3d3](https://github.com/interworks/curator-helm/commit/2a2d3d3faa8eb1627c7f146063f6cdfc5e214e88))
 
+## [4.1.0](https://github.com/InterWorks/curator-helm/compare/v4.0.0...v4.1.0) (2026-10-06)
+
+
+### Features
+
+* **curator:** add extraVolumes and extraVolumeMounts to every Curator pod ([#111](https://github.com/InterWorks/curator-helm/issues/111)) ([ddcdeeb](https://github.com/InterWorks/curator-helm/commit/ddcdeeb17cbfbb9210aba2114754d290eafc0904))
+
 ## [4.0.0](https://github.com/InterWorks/curator-helm/compare/v3.2.2...v4.0.0) (2026-10-06)
 
 
