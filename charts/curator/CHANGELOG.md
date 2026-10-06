@@ -11,6 +11,17 @@
 
 * **helm-chart:** add Sentry environment variables to deployments ([2a2d3d3](https://github.com/interworks/curator-helm/commit/2a2d3d3faa8eb1627c7f146063f6cdfc5e214e88))
 
+## [4.0.0](https://github.com/InterWorks/curator-helm/compare/v3.2.2...v4.0.0) (2026-10-06)
+
+
+### ⚠ BREAKING CHANGES
+
+* **curator:** values that set keys under mariadbOperator not defined by the chart (for example mariaDbName or the old auth block) now fail schema validation. Remove or rename them before upgrading.
+
+### Features
+
+* **curator:** enforce a strict mariadbOperator values schema ([#106](https://github.com/InterWorks/curator-helm/issues/106)) ([454b2e4](https://github.com/InterWorks/curator-helm/commit/454b2e4b2cce0c6d66e89e9586d3378e2e6ce6ff))
+
 ## [3.2.2](https://github.com/InterWorks/curator-helm/compare/v3.2.1...v3.2.2) (2026-09-24)
 
 
