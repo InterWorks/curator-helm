@@ -1,0 +1,117 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/helm-unittest/helm-unittest/main/schema/helm-testsuite.json
+suite: test extraVolumes, extraVolumeMounts and job imagePullSecrets
+templates:
+  - deployment.yaml
+  - cronjob.yaml
+  - job-db-migrate.yaml
+  - job-create-admin.yaml
+release:
+  name: curator
+set:
+  image.tag: latest
+tests:
+  - it: adds an image volume and its mount to the server Deployment
+    template: deployment.yaml
+    set: &imageVolume
+      extraVolumes:
+        - name: example-plugin
+          image:
+            reference: ghcr.io/example/example-plugin:1.0.0
+            pullPolicy: IfNotPresent
+      extraVolumeMounts:
+        - name: example-plugin
+          mountPath: /var/www/html/plugins/example/plugin
+          readOnly: true
+    asserts:
+      - contains:
+          path: spec.template.spec.volumes
+          content: &volume
+            name: example-plugin
+            image:
+              reference: ghcr.io/example/example-plugin:1.0.0
+              pullPolicy: IfNotPresent
+      - contains:
+          path: spec.template.spec.containers[0].volumeMounts
+          content: &mount
+            name: example-plugin
+            mountPath: /var/www/html/plugins/example/plugin
+            readOnly: true
+      # appended after the chart's own volumes, which stay in place
+      - equal:
+          path: spec.template.spec.volumes[0].name
+          value: framework
+
+  - it: adds the volume and mount to the schedule:run CronJob
+    template: cronjob.yaml
+    set: *imageVolume
+    asserts:
+      - contains:
+          path: spec.jobTemplate.spec.template.spec.volumes
+          content: *volume
+      - contains:
+          path: spec.jobTemplate.spec.template.spec.containers[0].volumeMounts
+          content: *mount
+
+  - it: adds the volume and mount to the db-migrate hook Job
+    template: job-db-migrate.yaml
+    set: *imageVolume
+    asserts:
+      - contains:
+          path: spec.template.spec.volumes
+          content: *volume
+      - contains:
+          path: spec.template.spec.containers[0].volumeMounts
+          content: *mount
+
+  - it: adds the volume and mount to the create-admin hook Job
+    template: job-create-admin.yaml
+    set: *imageVolume
+    asserts:
+      - contains:
+          path: spec.template.spec.volumes
+          content: *volume
+      - contains:
+          path: spec.template.spec.containers[0].volumeMounts
+          content: *mount
+
+  - it: renders no extra volumes or mounts by default
+    asserts:
+      - notContains:
+          path: spec.template.spec.volumes
+          content: *volume
+        template: deployment.yaml
+      - notContains:
+          path: spec.template.spec.volumes
+          content: *volume
+        template: job-db-migrate.yaml
+
+  - it: omits imagePullSecrets on the hook Jobs by default
+    asserts:
+      - notExists:
+          path: spec.template.spec.imagePullSecrets
+        template: job-db-migrate.yaml
+      - notExists:
+          path: spec.template.spec.imagePullSecrets
+        template: job-create-admin.yaml
+
+  - it: passes imagePullSecrets to both hook Jobs, matching the Deployment and CronJob
+    set:
+      imagePullSecrets:
+        - name: ghcr-pull
+    asserts:
+      - equal:
+          path: spec.template.spec.imagePullSecrets
+          value: [{name: ghcr-pull}]
+        template: job-db-migrate.yaml
+      - equal:
+          path: spec.template.spec.imagePullSecrets
+          value: [{name: ghcr-pull}]
+        template: job-create-admin.yaml
+      - equal:
+          path: spec.template.spec.imagePullSecrets
+          value: [{name: ghcr-pull}]
+        template: deployment.yaml
+      - equal:
+          path: spec.jobTemplate.spec.template.spec.imagePullSecrets
+          value: [{name: ghcr-pull}]
+        template: cronjob.yaml

@@ -185,6 +185,28 @@ topologySpreadConstraints: []
   #   nodeAffinityPolicy:
   #   nodeTaintsPolicy:
 
+# -- Extra volumes appended to every pod that runs Curator code: the server
+# Deployment, the `schedule:run` CronJob, and the `db-migrate` and `create-admin`
+# hook Jobs. Pair each with an `extraVolumeMounts` entry.
+extraVolumes: []
+  # Example: load a Winter plugin from an OCI image with a Kubernetes image volume
+  # (Kubernetes 1.33+, or 1.31-1.32 with the ImageVolume feature gate). A private
+  # registry needs pull credentials on the pod (`imagePullSecrets` or
+  # `serviceAccount.imagePullSecrets`).
+  # - name: example-plugin
+  #   image:
+  #     reference: ghcr.io/example/example-plugin:1.0.0@sha256:<digest>
+  #     pullPolicy: IfNotPresent
+
+# -- Extra volumeMounts appended to the Curator container in every pod that gets
+# `extraVolumes`.
+extraVolumeMounts: []
+  # Example: mount on the plugin's own directory, never on `plugins/` or the
+  # author folder, which would hide the plugins the image already ships there.
+  # - name: example-plugin
+  #   mountPath: /var/www/html/plugins/example/plugin
+  #   readOnly: true
+
 ## Curator Configuration parameters
 curator:
   # -- read environment variables from a secret

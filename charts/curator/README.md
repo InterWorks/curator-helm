@@ -96,6 +96,8 @@ A Helm chart for Curator in a Container in Kubernetes
 | curator.startupProbe.periodSeconds | int | `10` |  |
 | curator.startupProbe.timeoutSeconds | int | `5` | Timeout for probe |
 | environment | string | `"prod"` | Environment type (prod, qa, or dev). Used for cache prefix, database defaults, and resource sizing |
+| extraVolumeMounts | list | `[]` | Extra volumeMounts appended to the Curator container in every pod that gets `extraVolumes`. |
+| extraVolumes | list | `[]` | Extra volumes appended to every pod that runs Curator code: the server Deployment, the `schedule:run` CronJob, and the `db-migrate` and `create-admin` hook Jobs. Pair each with an `extraVolumeMounts` entry. |
 | fullnameOverride | string | `""` | Overrides the full name of the chart, default is the name of the release |
 | image | object | `{"pullPolicy":"IfNotPresent","registry":"ghcr.io/interworks","repository":"curator","tag":"latest@sha256:6a664746f21dd27c448f7909a6a0fb526f1448f103d65ee8d0cd1725f11579d0"}` | Image configuration |
 | image.pullPolicy | string | `"IfNotPresent"` | Image Pull Policy |

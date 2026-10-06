@@ -19,6 +19,10 @@ spec:
         app.kubernetes.io/instance: {{ .Release.Name | quote }}
         helm.sh/chart: "{{ .Chart.Name }}-{{ .Chart.Version }}"
     spec:
+      {{- with .Values.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
       restartPolicy: Never
       serviceAccountName: {{ include "curator.serviceAccountName" . }}
       containers:
@@ -42,6 +46,9 @@ spec:
           mountPath: /var/www/html/config/{{ $key }}.php
           subPath: {{ $key }}.php
         {{- end }}
+        {{- end }}
+        {{- with .Values.extraVolumeMounts }}
+        {{- toYaml . | nindent 8 }}
         {{- end }}
         command: [ "php", "artisan", "portal:migrate" ]
         env:
@@ -76,6 +83,9 @@ spec:
       - name: config
         configMap:
           name: {{ include "curator.fullname" . }}-config
+      {{- end }}
+      {{- with .Values.extraVolumes }}
+      {{- toYaml . | nindent 6 }}
       {{- end }}
       {{- with .Values.nodeSelector }}
       nodeSelector:
