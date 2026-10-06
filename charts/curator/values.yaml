@@ -418,7 +418,7 @@ mariadbOperator:
     # -- allowable login hosts for the user
     host: "%"
   backup:
-    # -- create a Backup resource for this site's mariadb database. Disable when centralizing sites onto a mariadb cluster in a different namespace, since cross-namespace backups aren't supported.
+    # -- create a Backup resource for this site's mariadb database. It is created in `mariadbNamespace` (the MariaDB's namespace), since the operator does not support cross-namespace backups; its ServiceAccount (named after the Backup) is created there too and needs S3 access in that namespace.
     enabled: true
     # -- suspend backups, if true, no backups will be created
     suspend: false

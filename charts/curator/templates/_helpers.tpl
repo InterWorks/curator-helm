@@ -43,6 +43,24 @@ app.kubernetes.io/managed-by: {{ .Release.Service }}
 {{- end }}
 
 {{/*
+Identity metadata for the mariadb-operator CRs (Database, User, Grant, Backup). Their
+names are opaque random pets, so these make `kubectl get databases -A -L
+app.kubernetes.io/instance` show which site owns each one. release-namespace matters for
+the Backup, which lives in mariadbNamespace rather than the customer namespace.
+*/}}
+{{- define "curator.mariadbLabels" -}}
+{{ include "curator.selectorLabels" . }}
+app.kubernetes.io/managed-by: {{ .Release.Service }}
+curator.interworks.com/release-namespace: {{ .Release.Namespace }}
+{{- end }}
+
+{{- define "curator.mariadbAnnotations" -}}
+{{- with (first (.Values.ingress.hosts | default list)) -}}
+curator.interworks.com/site: {{ .host | quote }}
+{{- end }}
+{{- end }}
+
+{{/*
 Selector labels
 */}}
 {{- define "curator.selectorLabels" -}}
@@ -151,7 +169,9 @@ curator.database.host -> Maxscale -> mariadbEndpoint -> mariadb
 {{- else if .Values.mariadbOperator.mariadbEndpoint -}}
 {{ .Values.mariadbOperator.mariadbEndpoint }}.{{ .Release.Namespace }}
 {{- else -}}
-{{- /* DEFAULT Use mariadb for db endpoint */ -}}
-{{ .Values.mariadbOperator.mariadbName }}.{{ .Release.Namespace }}
+{{- /* DEFAULT Use mariadb for db endpoint. Honour mariadbNamespace here too: falling
+back to .Release.Namespace would silently route a centralized site to its old
+in-namespace cluster if maxscaleEndpoint were omitted. */ -}}
+{{ .Values.mariadbOperator.mariadbName }}.{{ .Values.mariadbOperator.mariadbNamespace | default .Release.Namespace }}
 {{- end -}}
 {{- end -}}

@@ -3,7 +3,10 @@ kind: User
 metadata:
   name: {{ .Values.mariadbOperator.user.username | default "curator" }}
   namespace: {{ .Release.Namespace }}
+  labels:
+    {{- include "curator.mariadbLabels" . | nindent 4 }}
   annotations:
+    {{- with (include "curator.mariadbAnnotations" .) }}{{ . | nindent 4 }}{{ end }}
     "helm.sh/hook": pre-install
     "helm.sh/hook-weight": "40"
 spec:
