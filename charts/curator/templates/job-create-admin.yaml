@@ -50,7 +50,22 @@ spec:
         {{- with .Values.extraVolumeMounts }}
         {{- toYaml . | nindent 8 }}
         {{- end }}
-        command: [ "php", "artisan", "backenduser:create", "$(WEBADMIN_USER)", "$(WEBADMIN_PASSWORD)", "$(WEBADMIN_USER)@no-reply.interworks.com"]
+        {{- /* Idempotent: a reinstall onto existing data (a release rename, or a rebuild
+        restored from backup) runs this post-install hook again, and backenduser:create
+        fails if the user already exists. Treat only that error as success; anything
+        else still fails the job. */}}
+        command:
+        - /bin/sh
+        - -c
+        - |
+          out=$(php artisan backenduser:create "$WEBADMIN_USER" "$WEBADMIN_PASSWORD" "$WEBADMIN_USER@no-reply.interworks.com" 2>&1)
+          rc=$?
+          echo "$out"
+          if [ "$rc" -ne 0 ] && echo "$out" | grep -q "has already been taken"; then
+            echo "Admin user $WEBADMIN_USER already exists; skipping creation."
+            exit 0
+          fi
+          exit "$rc"
         env:
           {{- include "env.environment" . | nindent 10 }}
           - name: WEBADMIN_PASSWORD
