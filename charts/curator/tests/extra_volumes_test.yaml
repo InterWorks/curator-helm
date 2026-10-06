@@ -5,6 +5,8 @@ templates:
   - cronjob.yaml
   - job-db-migrate.yaml
   - job-create-admin.yaml
+values:
+  - values/database.yaml
 release:
   name: curator
 set:
