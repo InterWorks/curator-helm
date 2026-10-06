@@ -97,6 +97,9 @@ spec:
               subPath: {{ $key }}.php
             {{- end }}
             {{- end }}
+            {{- with .Values.extraVolumeMounts }}
+            {{- toYaml . | nindent 12 }}
+            {{- end }}
       volumes:
       - name: framework
         emptyDir:
@@ -118,6 +121,9 @@ spec:
       - name: config
         configMap:
           name: {{ include "curator.fullname" . }}-config
+      {{- end }}
+      {{- with .Values.extraVolumes }}
+      {{- toYaml . | nindent 6 }}
       {{- end }}
       {{- with .Values.affinity }}
       affinity:

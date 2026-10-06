@@ -51,6 +51,9 @@ spec:
               {{- if .Values.persistence.subPath}}
               subPath: {{ .Values.persistence.subPath }}
               {{- end }}
+            {{- with .Values.extraVolumeMounts }}
+            {{- toYaml . | nindent 12 }}
+            {{- end }}
             env:
             {{- include "env.environment" . | nindent 12 }}
             - name: DB_HOST
@@ -77,3 +80,6 @@ spec:
               emptyDir:
             - name: cms
               emptyDir:
+            {{- with .Values.extraVolumes }}
+            {{- toYaml . | nindent 12 }}
+            {{- end }}
