@@ -1,0 +1,36 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/helm-unittest/helm-unittest/main/schema/helm-testsuite.json
+# The admin-creation Job is a post-install hook, so it runs again whenever a release is
+# installed onto existing data (a release rename, or a rebuild restored from backup).
+# backenduser:create is not idempotent, so the Job must treat "already taken" as success
+# or the install fails and Flux stalls the HelmRelease.
+suite: test admin-creation job
+templates:
+  - job-create-admin.yaml
+values:
+  - values/database.yaml
+release:
+  name: curator
+tests:
+  - it: runs as a post-install hook only
+    asserts:
+      - equal:
+          path: metadata.annotations["helm.sh/hook"]
+          value: post-install
+
+  - it: wraps backenduser:create in a shell
+    asserts:
+      - equal:
+          path: spec.template.spec.containers[0].command[0]
+          value: /bin/sh
+      - equal:
+          path: spec.template.spec.containers[0].command[1]
+          value: -c
+      - matchRegex:
+          path: spec.template.spec.containers[0].command[2]
+          pattern: 'php artisan backenduser:create "\$WEBADMIN_USER" "\$WEBADMIN_PASSWORD" "\$WEBADMIN_USER@no-reply.interworks.com"'
+
+  - it: treats an existing user as success and anything else as failure
+    asserts:
+      - matchRegex:
+          path: spec.template.spec.containers[0].command[2]
+          pattern: 'grep -q "has already been taken"; then[\s\S]*exit 0[\s\S]*exit "\$rc"'
