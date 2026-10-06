@@ -11,6 +11,17 @@
 
 * **helm-chart:** add Sentry environment variables to deployments ([2a2d3d3](https://github.com/interworks/curator-helm/commit/2a2d3d3faa8eb1627c7f146063f6cdfc5e214e88))
 
+## [5.0.0](https://github.com/InterWorks/curator-helm/compare/v4.1.0...v5.0.0) (2026-10-06)
+
+
+### ⚠ BREAKING CHANGES
+
+* **curator:** the mariadbOperator values block is removed and rejected. Before upgrading, move each site's database objects out of the chart (existing hook-created objects and the keep-annotated Backup are left in place, so they can be adopted without data movement) and set curator.database: host = the old resolved DB_HOST, directHost = <mariadbName>-primary.<namespace> where it differs, databaseName = mariadbOperator.database.name, username = mariadbOperator.user.username, password.secretKeyRef = mariadbOperator.user.userPasswordSecretKeyRef.
+
+### Features
+
+* **curator:** stop managing database objects; curator.database is the only connection source ([#110](https://github.com/InterWorks/curator-helm/issues/110)) ([39b8097](https://github.com/InterWorks/curator-helm/commit/39b8097c5f95dccd45e77606a20d6384f05862ab))
+
 ## [4.1.0](https://github.com/InterWorks/curator-helm/compare/v4.0.0...v4.1.0) (2026-10-06)
 
 
