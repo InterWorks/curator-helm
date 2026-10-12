@@ -16,7 +16,7 @@ jobs:
       # Installs node at the version pinned in mise.toml, matching local dev
       # and the other workflows.
       - name: Set up tools via mise
-        uses: jdx/mise-action@7a4e45a543138629540c9a1616d08632b893e492 # v5.0.1
+        uses: jdx/mise-action@2d8d4cafcbd33be2ea37d2b6f5ad595363d1f1ca # v5.1.1
 
       # `npm ci` installs the exact versions from package-lock.json, so the
       # linter can't drift between runs.
