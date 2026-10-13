@@ -11,6 +11,13 @@
 
 * **helm-chart:** add Sentry environment variables to deployments ([2a2d3d3](https://github.com/interworks/curator-helm/commit/2a2d3d3faa8eb1627c7f146063f6cdfc5e214e88))
 
+## [5.1.0](https://github.com/InterWorks/curator-helm/compare/v5.0.1...v5.1.0) (2026-10-13)
+
+
+### Features
+
+* **curator:** default to JSON log lines on the stderr channel ([#120](https://github.com/InterWorks/curator-helm/issues/120)) ([0ffd33a](https://github.com/InterWorks/curator-helm/commit/0ffd33a8a415ea28bee350ff2c36839d1d017bcd))
+
 ## [5.0.1](https://github.com/InterWorks/curator-helm/compare/v5.0.0...v5.0.1) (2026-10-06)
 
 
