@@ -4,6 +4,9 @@ on:
   push:
     branches:
       - main
+      # Maintenance line for sites held below 5.0.0 (see Renovate's curator hold in
+      # iac-interworks). release-please targets whichever branch was pushed.
+      - 4.x
   # Allows manually (re-)publishing a chart release from the Actions tab —
   # e.g. to backfill a release whose publish step was skipped. Provide the
   # release tag so chart-releaser packages that exact version.
@@ -35,7 +38,7 @@ jobs:
       # release-please names its branch
       # release-please--branches--<target-branch>--components--<package-name>.
       # Keep in sync with release-please-config.json / the target branch.
-      RELEASE_BRANCH: release-please--branches--main--components--curator
+      RELEASE_BRANCH: release-please--branches--${{ github.ref_name }}--components--curator
     steps:
       # Mint a short-lived token from the release-automation GitHub App. Unlike
       # the default GITHUB_TOKEN, pushes made with it DO trigger other
@@ -58,6 +61,8 @@ jobs:
           token: ${{ steps.app-token.outputs.token }}
           config-file: release-please-config.json
           manifest-file: .release-please-manifest.json
+          # main for the current line, 4.x for the maintenance line.
+          target-branch: ${{ github.ref_name }}
 
       # When a release PR is open, regenerate helm-docs on its branch so the
       # README version badge tracks the bumped Chart.yaml. Pushed with the app
@@ -122,4 +127,39 @@ jobs:
         env:
           CR_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
           CR_RELEASE_NOTES_FILE: "CHANGELOG.md"
-          CR_MAKE_RELEASE_LATEST: "true"
+          # Only main's releases become GitHub's "Latest"; a 4.x maintenance release
+          # must not take that badge from the newer 5.x line.
+          CR_MAKE_RELEASE_LATEST: ${{ github.ref_name == 'main' && 'true' || 'false' }}
+
+      # release-please creates its own v<version> GitHub release earlier in the run
+      # without setting make_latest, and GitHub defaults that to true, so a 4.x
+      # release would take "Latest" from the 5.x line regardless of the flag above.
+      # Hand it back to the highest-versioned curator-<version> release.
+      - name: Restore Latest to the newest chart release
+        if: github.ref_name != 'main'
+        uses: actions/github-script@3a2844b7e9c422d3c10d287c895573f7108da1b3 # v9.0.0
+        with:
+          script: |
+            const releases = await github.paginate(github.rest.repos.listReleases, {
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              per_page: 100,
+            });
+            const parse = (tag) => tag.replace(/^curator-/, '').split('.').map(Number);
+            const newest = releases
+              .filter((r) => !r.draft && !r.prerelease && /^curator-\d+\.\d+\.\d+$/.test(r.tag_name))
+              .sort((a, b) => {
+                const [x, y] = [parse(a.tag_name), parse(b.tag_name)];
+                return (y[0] - x[0]) || (y[1] - x[1]) || (y[2] - x[2]);
+              })[0];
+            if (!newest) {
+              core.setFailed('No published curator-<version> release found to mark as Latest.');
+              return;
+            }
+            await github.rest.repos.updateRelease({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              release_id: newest.id,
+              make_latest: 'true',
+            });
+            core.info(`Marked ${newest.tag_name} as Latest.`);
