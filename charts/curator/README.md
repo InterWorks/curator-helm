@@ -40,7 +40,7 @@ A Helm chart for Curator in a Container in Kubernetes
 | curator.livenessProbe.timeoutSeconds | int | `15` | Timeout for probe |
 | curator.logging.channel | string | `nil` | log channel, defaults to "stderr" (must exist in the image's config/logging.php) |
 | curator.logging.deprecationsChannel | string | `nil` |  |
-| curator.logging.formatter | string | `nil` | Monolog formatter class, e.g. "Monolog\\Formatter\\JsonFormatter" for JSON log lines |
+| curator.logging.formatter | string | `"Monolog\\Formatter\\JsonFormatter"` | Monolog formatter class for the stderr channel (LOG_STDERR_FORMATTER). Defaults to JSON log lines; set to "" to fall back to Monolog's plain-text LineFormatter |
 | curator.logging.level | string | `nil` |  |
 | curator.mail.ehloDomain | string | `nil` |  |
 | curator.mail.fromAddress | string | `nil` |  |
