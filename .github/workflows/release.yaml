@@ -130,3 +130,36 @@ jobs:
           # Only main's releases become GitHub's "Latest"; a 4.x maintenance release
           # must not take that badge from the newer 5.x line.
           CR_MAKE_RELEASE_LATEST: ${{ github.ref_name == 'main' && 'true' || 'false' }}
+
+      # release-please creates its own v<version> GitHub release earlier in the run
+      # without setting make_latest, and GitHub defaults that to true, so a 4.x
+      # release would take "Latest" from the 5.x line regardless of the flag above.
+      # Hand it back to the highest-versioned curator-<version> release.
+      - name: Restore Latest to the newest chart release
+        if: github.ref_name != 'main'
+        uses: actions/github-script@3a2844b7e9c422d3c10d287c895573f7108da1b3 # v9.0.0
+        with:
+          script: |
+            const releases = await github.paginate(github.rest.repos.listReleases, {
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              per_page: 100,
+            });
+            const parse = (tag) => tag.replace(/^curator-/, '').split('.').map(Number);
+            const newest = releases
+              .filter((r) => !r.draft && !r.prerelease && /^curator-\d+\.\d+\.\d+$/.test(r.tag_name))
+              .sort((a, b) => {
+                const [x, y] = [parse(a.tag_name), parse(b.tag_name)];
+                return (y[0] - x[0]) || (y[1] - x[1]) || (y[2] - x[2]);
+              })[0];
+            if (!newest) {
+              core.setFailed('No published curator-<version> release found to mark as Latest.');
+              return;
+            }
+            await github.rest.repos.updateRelease({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              release_id: newest.id,
+              make_latest: 'true',
+            });
+            core.info(`Marked ${newest.tag_name} as Latest.`);
