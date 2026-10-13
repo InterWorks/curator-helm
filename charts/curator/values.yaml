@@ -278,8 +278,8 @@ curator:
     # -- log channel, defaults to "stderr" (must exist in the image's config/logging.php)
     channel: ~
     deprecationsChannel: ~
-    # -- Monolog formatter class, e.g. "Monolog\\Formatter\\JsonFormatter" for JSON log lines
-    formatter: ~
+    # -- Monolog formatter class for the stderr channel (LOG_STDERR_FORMATTER). Defaults to JSON log lines; set to "" to fall back to Monolog's plain-text LineFormatter
+    formatter: 'Monolog\Formatter\JsonFormatter'
     level: ~
   mail:
     host: ~

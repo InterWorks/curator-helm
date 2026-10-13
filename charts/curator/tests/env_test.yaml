@@ -242,7 +242,7 @@ tests:
                 name: powerbi-secret
                 key: client-id
 
-  - it: defaults LOG_CHANNEL to stderr and omits LOG_STDERR_FORMATTER
+  - it: defaults LOG_CHANNEL to stderr and LOG_STDERR_FORMATTER to JSON
     set:
       ingress.hosts:
         - host: curator.example.com
@@ -252,17 +252,30 @@ tests:
           content:
             name: LOG_CHANNEL
             value: stderr
+      - contains:
+          path: spec.template.spec.containers[0].env
+          content:
+            name: LOG_STDERR_FORMATTER
+            value: Monolog\Formatter\JsonFormatter
+
+  - it: omits LOG_STDERR_FORMATTER when the formatter is set to an empty string
+    set:
+      ingress.hosts:
+        - host: curator.example.com
+      curator.logging.formatter: ""
+    asserts:
       - notContains:
           path: spec.template.spec.containers[0].env
           content:
             name: LOG_STDERR_FORMATTER
+          any: true
 
   - it: honors explicit logging channel, formatter and level overrides
     set:
       ingress.hosts:
         - host: curator.example.com
       curator.logging.channel: daily
-      curator.logging.formatter: Monolog\Formatter\JsonFormatter
+      curator.logging.formatter: Monolog\Formatter\LineFormatter
       curator.logging.level: warning
     asserts:
       - contains:
@@ -274,7 +287,7 @@ tests:
           path: spec.template.spec.containers[0].env
           content:
             name: LOG_STDERR_FORMATTER
-            value: Monolog\Formatter\JsonFormatter
+            value: Monolog\Formatter\LineFormatter
       - contains:
           path: spec.template.spec.containers[0].env
           content:
