@@ -2,5 +2,14 @@
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
   "extends": [
     "local>InterWorks/renovate-config"
+  ],
+  "packageRules": [
+    {
+      "description": "claude-code-action ships patch releases almost daily; merge non-major bumps once checks pass instead of hand-merging each PR. The release age is pinned here, not just inherited from the shared preset, so automerge stays gated on a cooldown that gives a compromised release time to be caught and yanked.",
+      "matchDepNames": ["anthropics/claude-code-action"],
+      "matchUpdateTypes": ["minor", "patch", "digest", "pinDigest"],
+      "minimumReleaseAge": "7 days",
+      "automerge": true
+    }
   ]
 }
