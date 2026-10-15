@@ -2,5 +2,13 @@
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
   "extends": [
     "local>InterWorks/renovate-config"
+  ],
+  "packageRules": [
+    {
+      "description": "claude-code-action ships patch releases almost daily; merge non-major bumps once checks pass instead of hand-merging each PR.",
+      "matchDepNames": ["anthropics/claude-code-action"],
+      "matchUpdateTypes": ["minor", "patch", "digest", "pinDigest"],
+      "automerge": true
+    }
   ]
 }
