@@ -1,0 +1,86 @@
+name: Auto-approve claude-code-action Updates
+
+# Renovate automerges non-major anthropics/claude-code-action bumps (see
+# renovate.json), but the main ruleset's last-push approval means a PR whose
+# last push came from Renovate needs an approval from someone else before it
+# can merge. This workflow supplies that approval, and only for a PR that does
+# nothing except move the action's pinned SHA within v1.
+#
+# pull_request_target runs this file as it exists on the base branch, so a PR
+# can't rewrite the checks below to approve itself. The PR's code is never
+# checked out or executed; only its diff is read from the API.
+
+on:
+  pull_request_target:
+    types: [opened, reopened, synchronize]
+    branches: [main]
+
+jobs:
+  approve:
+    # The author is who opened the PR; the actor is who pushed the commit that
+    # triggered this run. Both must be Renovate, so a human pushing onto a
+    # Renovate branch doesn't get approved. Fork PRs never qualify.
+    if: >-
+      github.event.pull_request.user.login == 'renovate-interworks[bot]' &&
+      github.actor == 'renovate-interworks[bot]' &&
+      github.event.pull_request.head.repo.full_name == github.repository
+    runs-on: us-east-2-development
+    permissions:
+      contents: read
+      pull-requests: write
+    steps:
+      - name: Approve if the diff only bumps claude-code-action
+        env:
+          GH_TOKEN: ${{ github.token }}
+          PR_URL: ${{ github.event.pull_request.url }}
+          HEAD_SHA: ${{ github.event.pull_request.head.sha }}
+        run: |
+          set -euo pipefail
+          api() {
+            curl -sSfL \
+              -H "Authorization: Bearer ${GH_TOKEN}" \
+              -H "Accept: application/vnd.github+json" \
+              "$@"
+          }
+
+          # The files endpoint reflects the PR's current head. If something
+          # was pushed since this run triggered, let that push's run decide.
+          current_sha=$(api "$PR_URL" | jq -r .head.sha)
+          if [ "$current_sha" != "$HEAD_SHA" ]; then
+            echo "PR head moved to $current_sha since $HEAD_SHA; skipping."
+            exit 0
+          fi
+
+          files=$(api "${PR_URL}/files?per_page=100")
+
+          # Only modified workflow files, each with a patch (GitHub omits the
+          # patch for very large diffs, which we can't vet).
+          bad_files=$(jq -r '.[] | select(
+              (.filename | startswith(".github/workflows/") | not)
+              or .status != "modified"
+              or (.patch == null)
+            ) | .filename' <<<"$files")
+          if [ -n "$bad_files" ]; then
+            echo "Not approving: unexpected files changed:"
+            echo "$bad_files"
+            exit 0
+          fi
+
+          # Every added or removed line must be a v1 pin of the action, so a
+          # major bump or any other edit falls through to a human review.
+          pin='^[+-][[:space:]]*(- )?uses: anthropics/claude-code-action@[0-9a-f]{40} # v1\.[0-9]+\.[0-9]+$'
+          bad_lines=$(jq -r '.[].patch' <<<"$files" \
+            | grep -E '^[+-]' | grep -Ev "$pin" || true)
+          if [ -n "$bad_lines" ]; then
+            echo "Not approving: diff changes more than the action pin:"
+            echo "$bad_lines"
+            exit 0
+          fi
+
+          # Pin the approval to the vetted commit; a later push makes it stale.
+          jq -n --arg sha "$HEAD_SHA" '{
+            commit_id: $sha,
+            event: "APPROVE",
+            body: "Auto-approved: diff only bumps anthropics/claude-code-action within v1."
+          }' | api -X POST "${PR_URL}/reviews" --data @- > /dev/null
+          echo "Approved $HEAD_SHA."
