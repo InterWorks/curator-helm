@@ -105,7 +105,8 @@ tests:
       - equal:
           path: metadata.annotations["helm.sh/hook-weight"]
           value: "-10"
-      # removed (with its Secret) once the pre-install hooks finish, so no admin credentials linger
+      # removed (with its Secret) once the pre-install hooks finish, so no admin credentials linger;
+      # before-hook-creation lets a retried install replace a leftover copy
       - equal:
           path: metadata.annotations["helm.sh/hook-delete-policy"]
-          value: hook-succeeded
+          value: before-hook-creation,hook-succeeded
