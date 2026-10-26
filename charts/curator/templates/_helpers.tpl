@@ -114,7 +114,7 @@ limits:
 {{/*
 Database hosts. There is no fallback chain: curator.database.host is required by
 values.schema.json, so a missing value fails the render instead of silently routing a
-site to a guessed host. directHost is what the migrate and admin-creation jobs use, so
+site to a guessed host. directHost is what the db-migrate hook jobs use, so
 DDL can bypass MaxScale and go straight to the primary; it defaults to host.
 */}}
 {{- define "curator.dbHost" -}}

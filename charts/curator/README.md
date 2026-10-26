@@ -31,7 +31,7 @@ A Helm chart for Curator in a Container in Kubernetes
 | curator.database | object | `{"connection":null,"databaseName":null,"directHost":null,"host":null,"password":{"secretKeyRef":{"key":"password","name":null}},"port":null,"username":null}` | database connection, passed into database.php |
 | curator.database.connection | string | `nil` | database driver (DB_CONNECTION), only set this to override the app's default |
 | curator.database.databaseName | string | `nil` | database name (DB_DATABASE). Required. |
-| curator.database.directHost | string | `nil` | host for the db-migrate and admin-creation jobs, so DDL bypasses MaxScale, e.g. `curator-mariadb-primary.curator-mariadb`. Defaults to `host`. |
+| curator.database.directHost | string | `nil` | host for the db-migrate hook jobs, so DDL bypasses MaxScale, e.g. `curator-mariadb-primary.curator-mariadb`. Defaults to `host`. |
 | curator.database.host | string | `nil` | database host the app and CronJob connect to, e.g. `curator-maxscale.curator-mariadb` or `curator-mariadb-primary.<namespace>`. Required. |
 | curator.database.password.secretKeyRef | object | `{"key":"password","name":null}` | Secret holding the database user's password (DB_PASSWORD). `name` is required. |
 | curator.database.port | string | `nil` | database port, only set this if the database is not listening on the connection's default port |
@@ -103,7 +103,7 @@ A Helm chart for Curator in a Container in Kubernetes
 | curator.startupProbe.timeoutSeconds | int | `5` | Timeout for probe |
 | environment | string | `"prod"` | Environment type (prod, qa, or dev). Used for cache prefix, database defaults, and resource sizing |
 | extraVolumeMounts | list | `[]` | Extra volumeMounts appended to the Curator container in every pod that gets `extraVolumes`. |
-| extraVolumes | list | `[]` | Extra volumes appended to every pod that runs Curator code: the server Deployment, the `schedule:run` CronJob, and the `db-migrate` and `create-admin` hook Jobs. Pair each with an `extraVolumeMounts` entry. |
+| extraVolumes | list | `[]` | Extra volumes appended to every pod that runs Curator code: the server Deployment, the `schedule:run` CronJob, and the install and upgrade `db-migrate` hook Jobs. Pair each with an `extraVolumeMounts` entry. |
 | fullnameOverride | string | `""` | Overrides the full name of the chart, default is the name of the release |
 | image | object | `{"pullPolicy":"IfNotPresent","registry":"ghcr.io/interworks","repository":"curator","tag":"latest@sha256:6a664746f21dd27c448f7909a6a0fb526f1448f103d65ee8d0cd1725f11579d0"}` | Image configuration |
 | image.pullPolicy | string | `"IfNotPresent"` | Image Pull Policy |
