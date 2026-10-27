@@ -6,8 +6,8 @@ suite: test curator.database
 templates:
   - deployment.yaml
   - cronjob.yaml
-  - job-db-migrate.yaml
-  - job-create-admin.yaml
+  - job-db-migrate-install.yaml
+  - job-db-migrate-upgrade.yaml
 values:
   - values/database.yaml
 release:
@@ -57,11 +57,11 @@ tests:
             name: DB_HOST
             value: curator-maxscale.curator-mariadb
 
-  - it: sends the migrate job to directHost, bypassing MaxScale
+  - it: sends the install migrate job to directHost, bypassing MaxScale
     set:
       curator.database.host: curator-maxscale.curator-mariadb
       curator.database.directHost: curator-mariadb-primary.curator-mariadb
-    template: job-db-migrate.yaml
+    template: job-db-migrate-install.yaml
     asserts:
       - contains:
           path: spec.template.spec.containers[0].env
@@ -69,11 +69,11 @@ tests:
             name: DB_HOST
             value: curator-mariadb-primary.curator-mariadb
 
-  - it: sends the admin-creation job to directHost, bypassing MaxScale
+  - it: sends the upgrade migrate job to directHost, bypassing MaxScale
     set:
       curator.database.host: curator-maxscale.curator-mariadb
       curator.database.directHost: curator-mariadb-primary.curator-mariadb
-    template: job-create-admin.yaml
+    template: job-db-migrate-upgrade.yaml
     asserts:
       - contains:
           path: spec.template.spec.containers[0].env
@@ -84,13 +84,19 @@ tests:
   - it: falls back to host for the jobs when directHost is unset
     set:
       curator.database.host: curator-mariadb-primary.acme
-    template: job-db-migrate.yaml
     asserts:
       - contains:
           path: spec.template.spec.containers[0].env
           content:
             name: DB_HOST
             value: curator-mariadb-primary.acme
+        template: job-db-migrate-install.yaml
+      - contains:
+          path: spec.template.spec.containers[0].env
+          content:
+            name: DB_HOST
+            value: curator-mariadb-primary.acme
+        template: job-db-migrate-upgrade.yaml
 
   - it: fails without a host (no inferred endpoint)
     set:
@@ -136,8 +142,8 @@ tests:
     set:
       mariadbOperator.mariadbNamespace: curator-mariadb
     # Every DB-wired workload trips the guard; helm-unittest attributes the render
-    # failure to the first one, the migrate job.
-    template: job-db-migrate.yaml
+    # failure to a single one, here the upgrade migrate job.
+    template: job-db-migrate-upgrade.yaml
     asserts:
       - failedTemplate:
           errorPattern: "mariadbOperator was removed in chart 5.0.0"

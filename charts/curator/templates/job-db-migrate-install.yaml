@@ -1,0 +1,1 @@
+{{- include "curator.dbMigrateJob" (dict "root" . "mode" "install") }}

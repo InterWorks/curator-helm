@@ -109,9 +109,9 @@ these checks already enforce.
   already pins.
   **Caveat, and it is a big one:** suites exist only for `deployment`, `hpa`,
   `ingress`, `pdb`, `service`, and `serviceaccount`, and each suite exercises
-  one set of values. `cronjob.yaml`, `job-create-admin.yaml`,
-  `job-db-migrate.yaml`, `configmap.yaml`, `pvc.yaml`, the `externalsecrets-*`
-  and `mariadb-*` templates, and every conditional branch no suite sets
+  one set of values. `cronjob.yaml`, `job-db-migrate-install.yaml`,
+  `job-db-migrate-upgrade.yaml`, `configmap.yaml`, `pvc.yaml`, the
+  `externalsecrets-*` and `mariadb-*` templates, and every conditional branch no suite sets
   (`persistence.s3.enabled`, `autoscaling.enabled`, `maxscaleEndpoint`,
   `mariadbNamespace`, `curator.config`, `envFromSecret`) are **unverified**.
   Read those paths and reason about them yourself.
@@ -193,12 +193,12 @@ suggests.
 - **`DB_HOST` is set in four places and is not part of the shared env
   block.** `_env.tpl`'s `env.environment` deliberately omits it;
   `deployment.yaml` and `cronjob.yaml` use `curator.dbHost`, while
-  `job-create-admin.yaml` and `job-db-migrate.yaml` use `curator.dbDirectHost`.
+  the two db-migrate Jobs (`_job-db-migrate.tpl`) use `curator.dbDirectHost`.
   Flag any new pod spec that includes `env.environment` without also setting
   `DB_HOST`.
-- **The jobs' `directHost` is deliberate, not a typo.** Migration and
-  admin-creation jobs must hit the primary, bypassing MaxScale; routing them at
-  a replica gives read-only failures. Don't "simplify" those two to
+- **The jobs' `directHost` is deliberate, not a typo.** The migration jobs
+  (the install one also seeds the first admin) must hit the primary,
+  bypassing MaxScale; routing them at a replica gives read-only failures. Don't "simplify" them to
   `curator.dbHost`, and do flag a new write-path workload that uses `host`.
 
 ### Release automation (release-please owns the version)

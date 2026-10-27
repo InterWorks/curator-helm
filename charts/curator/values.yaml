@@ -186,7 +186,7 @@ topologySpreadConstraints: []
   #   nodeTaintsPolicy:
 
 # -- Extra volumes appended to every pod that runs Curator code: the server
-# Deployment, the `schedule:run` CronJob, and the `db-migrate` and `create-admin`
+# Deployment, the `schedule:run` CronJob, and the install and upgrade `db-migrate`
 # hook Jobs. Pair each with an `extraVolumeMounts` entry.
 extraVolumes: []
   # Example: load a Winter plugin from an OCI image with a Kubernetes image volume
@@ -257,7 +257,7 @@ curator:
     connection: ~
     # -- (string) database host the app and CronJob connect to, e.g. `curator-maxscale.curator-mariadb` or `curator-mariadb-primary.<namespace>`. Required.
     host: ~
-    # -- (string) host for the db-migrate and admin-creation jobs, so DDL bypasses MaxScale, e.g. `curator-mariadb-primary.curator-mariadb`. Defaults to `host`.
+    # -- (string) host for the db-migrate hook jobs, so DDL bypasses MaxScale, e.g. `curator-mariadb-primary.curator-mariadb`. Defaults to `host`.
     directHost: ~
     # -- database port, only set this if the database is not listening on the connection's default port
     port: ~
