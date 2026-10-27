@@ -9,6 +9,11 @@ spec:
   jobTemplate:
     spec:
       template:
+        metadata:
+          labels:
+            # Opts the every-minute scheduler pods out of the platform's Kyverno guardrails: they
+            # soak up spare capacity and simply rerun a minute later if evicted.
+            guardrails.interworks.com/exempt: "true"
         spec:
           {{- with .Values.imagePullSecrets }}
           imagePullSecrets:

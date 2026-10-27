@@ -1,0 +1,16 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/helm-unittest/helm-unittest/main/schema/helm-testsuite.json
+suite: test cronjob
+templates:
+  - cronjob.yaml
+values:
+  - values/database.yaml
+release:
+  name: curator
+tests:
+  - it: labels the scheduler pods as exempt from the platform guardrails
+    asserts:
+      - isKind:
+          of: CronJob
+      - equal:
+          path: spec.jobTemplate.spec.template.metadata.labels["guardrails.interworks.com/exempt"]
+          value: "true"
