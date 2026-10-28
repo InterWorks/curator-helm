@@ -1,6 +1,6 @@
 # curator
 
-![Version: 5.1.0](https://img.shields.io/badge/Version-5.1.0-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: 2025.08-03](https://img.shields.io/badge/AppVersion-2025.08--03-informational?style=flat-square)
+![Version: 5.1.0](https://img.shields.io/badge/Version-5.1.0-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: 2026.10-04](https://img.shields.io/badge/AppVersion-2026.10--04-informational?style=flat-square)
 
 A Helm chart for Curator in a Container in Kubernetes
 
@@ -105,11 +105,11 @@ A Helm chart for Curator in a Container in Kubernetes
 | extraVolumeMounts | list | `[]` | Extra volumeMounts appended to the Curator container in every pod that gets `extraVolumes`. |
 | extraVolumes | list | `[]` | Extra volumes appended to every pod that runs Curator code: the server Deployment, the `schedule:run` CronJob, and the install and upgrade `db-migrate` hook Jobs. Pair each with an `extraVolumeMounts` entry. |
 | fullnameOverride | string | `""` | Overrides the full name of the chart, default is the name of the release |
-| image | object | `{"pullPolicy":"IfNotPresent","registry":"ghcr.io/interworks","repository":"curator","tag":"latest@sha256:6a664746f21dd27c448f7909a6a0fb526f1448f103d65ee8d0cd1725f11579d0"}` | Image configuration |
+| image | object | `{"pullPolicy":"IfNotPresent","registry":"ghcr.io/interworks","repository":"curator","tag":"2026.10-04@sha256:9d520926aaad04cface06cd64e9cbd9bd616df62ee729ab4f36c38c4ab140a95"}` | Image configuration |
 | image.pullPolicy | string | `"IfNotPresent"` | Image Pull Policy |
 | image.registry | string | `"ghcr.io/interworks"` | Registry URL |
 | image.repository | string | `"curator"` | Repository name |
-| image.tag | string | `"latest@sha256:6a664746f21dd27c448f7909a6a0fb526f1448f103d65ee8d0cd1725f11579d0"` | Tag Name, overrides the default appVersion in Chart.yaml |
+| image.tag | string | `"2026.10-04@sha256:9d520926aaad04cface06cd64e9cbd9bd616df62ee729ab4f36c38c4ab140a95"` | Tag Name, overrides the default appVersion in Chart.yaml |
 | ingress.className | string | `nil` | Ingress Class Name |
 | ingress.enabled | bool | `true` | Control for ingress |
 | ingress.hosts | list | `[]` | Ingress hosts configuration |
