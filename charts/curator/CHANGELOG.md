@@ -11,6 +11,19 @@
 
 * **helm-chart:** add Sentry environment variables to deployments ([2a2d3d3](https://github.com/interworks/curator-helm/commit/2a2d3d3faa8eb1627c7f146063f6cdfc5e214e88))
 
+## [5.2.0](https://github.com/InterWorks/curator-helm/compare/v5.1.0...v5.2.0) (2026-10-31)
+
+
+### Features
+
+* label cron pods as exempt from the platform guardrails ([#142](https://github.com/InterWorks/curator-helm/issues/142)) ([97dcabe](https://github.com/InterWorks/curator-helm/commit/97dcabe2a9d981f785ece019dbf8c608731a7fcf))
+
+
+### Bug Fixes
+
+* default to Curator 2026.10-04, which seeds the first admin ([#146](https://github.com/InterWorks/curator-helm/issues/146)) ([62e960c](https://github.com/InterWorks/curator-helm/commit/62e960c262cf2589eb7a7b98f3e9da70a0e20e31))
+* seed the first admin during the install migration ([#139](https://github.com/InterWorks/curator-helm/issues/139)) ([1046904](https://github.com/InterWorks/curator-helm/commit/1046904e340d62474c816ad7b640ff0b89e674c7))
+
 ## [5.1.0](https://github.com/InterWorks/curator-helm/compare/v5.0.1...v5.1.0) (2026-10-13)
 
 
