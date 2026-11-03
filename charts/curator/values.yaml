@@ -165,6 +165,24 @@ autoscaling:
   # -- scaling behavior
   behavior: {}
 
+# Scale-to-zero for idle non-prod sites, via Sablier and its Traefik plugin. Both must be
+# installed in the cluster. While the site is down, the first request gets a "starting up"
+# page that reloads until the pod is ready. Cannot be combined with autoscaling (or prod,
+# which always autoscales).
+scaleToZero:
+  # -- Scale the site to zero replicas after `sessionDuration` without requests
+  enabled: false
+  # -- Sablier server URL, as reached from Traefik
+  sablierUrl: http://sablier-sablier.sablier:10000
+  # -- How long the site stays up after its last request
+  sessionDuration: 30m
+  # -- Waiting page theme, by name; it must be loaded by the Sablier server
+  theme: curator
+  # -- Name shown on the waiting page. Defaults to the first ingress host
+  displayName: ""
+  # -- How often the waiting page reloads to check whether the site is up
+  refreshFrequency: 5s
+
 ## -- Pod nodeselector
 nodeSelector: {}
 

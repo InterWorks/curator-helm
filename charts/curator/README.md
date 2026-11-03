@@ -137,6 +137,12 @@ A Helm chart for Curator in a Container in Kubernetes
 | podSecurityContext | object | `{}` |  |
 | replicaCount | string | `nil` | Number of replicas to deploy |
 | resources | object | `{}` | Resource configuration, environment will control resources if left blank but can be overridden |
+| scaleToZero.displayName | string | `""` | Name shown on the waiting page. Defaults to the first ingress host |
+| scaleToZero.enabled | bool | `false` | Scale the site to zero replicas after `sessionDuration` without requests |
+| scaleToZero.refreshFrequency | string | `"5s"` | How often the waiting page reloads to check whether the site is up |
+| scaleToZero.sablierUrl | string | `"http://sablier-sablier.sablier:10000"` | Sablier server URL, as reached from Traefik |
+| scaleToZero.sessionDuration | string | `"30m"` | How long the site stays up after its last request |
+| scaleToZero.theme | string | `"curator"` | Waiting page theme, by name; it must be loaded by the Sablier server |
 | securityContext | object | `{}` |  |
 | service.port | int | `8080` | Service Port |
 | service.type | string | `"ClusterIP"` | Service Type |

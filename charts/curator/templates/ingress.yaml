@@ -6,6 +6,12 @@
   {{- $_ := set .Values.ingress.annotations "kubernetes.io/ingress.class" .Values.ingress.className}}
   {{- end }}
 {{- end }}
+{{- $annotations := deepCopy (.Values.ingress.annotations | default dict) }}
+{{- if .Values.scaleToZero.enabled }}
+{{- $key := "traefik.ingress.kubernetes.io/router.middlewares" }}
+{{- $ref := include "curator.sablierMiddlewareRef" . }}
+{{- $_ := set $annotations $key (ternary (printf "%s,%s" (get $annotations $key) $ref) $ref (hasKey $annotations $key)) }}
+{{- end }}
 {{- if semverCompare ">=1.19-0" .Capabilities.KubeVersion.GitVersion -}}
 apiVersion: networking.k8s.io/v1
 {{- else if semverCompare ">=1.14-0" .Capabilities.KubeVersion.GitVersion -}}
@@ -18,7 +24,11 @@ metadata:
   name: {{ $fullName }}
   labels:
     {{- include "curator.labels" . | nindent 4 }}
-  {{- with .Values.ingress.annotations }}
+    {{- if .Values.scaleToZero.enabled }}
+    {{- /* Lets monitoring skip this site: a regular probe would keep it awake. */}}
+    sablier.enable: "true"
+    {{- end }}
+  {{- with $annotations }}
   annotations:
     {{- toYaml . | nindent 4 }}
   {{- end }}
