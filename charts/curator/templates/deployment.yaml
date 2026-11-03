@@ -6,8 +6,13 @@ metadata:
   name:  {{ include "curator.fullname" . }}-server
   labels:
     {{- include "curator.labels" . | nindent 4 }}
+    {{- if .Values.scaleToZero.enabled }}
+    sablier.enable: "true"
+    sablier.group: {{ include "curator.sablierGroup" . }}
+    {{- end }}
 spec:
-  {{- if not .Values.autoscaling.enabled }}
+  {{- /* Sablier owns the replica count when scaling to zero; setting it here would undo that on every upgrade. */}}
+  {{- if not (or .Values.autoscaling.enabled .Values.scaleToZero.enabled) }}
   replicas: {{ .Values.replicaCount | default 1}}
   {{- end }}
   selector:

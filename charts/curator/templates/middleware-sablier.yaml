@@ -1,0 +1,29 @@
+{{- if .Values.scaleToZero.enabled }}
+{{- if or (eq .Values.environment "prod") .Values.autoscaling.enabled }}
+{{- fail "scaleToZero cannot be combined with autoscaling: the HorizontalPodAutoscaler (always on in prod) would scale the site back up. Use it on dev or qa sites with autoscaling.enabled: false." }}
+{{- end }}
+{{- if not .Values.ingress.enabled }}
+{{- fail "scaleToZero needs ingress.enabled: the Ingress is what wakes the site up." }}
+{{- end }}
+{{- $displayName := .Values.scaleToZero.displayName }}
+{{- if and (not $displayName) .Values.ingress.hosts }}
+{{- $displayName = (first .Values.ingress.hosts).host }}
+{{- end }}
+apiVersion: traefik.io/v1alpha1
+kind: Middleware
+metadata:
+  name: {{ include "curator.fullname" . }}-sablier
+  labels:
+    {{- include "curator.labels" . | nindent 4 }}
+spec:
+  plugin:
+    sablier:
+      sablierUrl: {{ .Values.scaleToZero.sablierUrl | quote }}
+      group: {{ include "curator.sablierGroup" . }}
+      sessionDuration: {{ .Values.scaleToZero.sessionDuration | quote }}
+      dynamic:
+        displayName: {{ $displayName | default (include "curator.fullname" .) | quote }}
+        theme: {{ .Values.scaleToZero.theme | quote }}
+        showDetails: true
+        refreshFrequency: {{ .Values.scaleToZero.refreshFrequency | quote }}
+{{- end }}

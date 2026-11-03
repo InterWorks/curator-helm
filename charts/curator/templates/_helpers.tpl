@@ -127,3 +127,18 @@ DDL can bypass MaxScale and go straight to the primary; it defaults to host.
 {{- define "curator.dbDirectHost" -}}
 {{ .Values.curator.database.directHost | default (include "curator.dbHost" .) }}
 {{- end -}}
+
+{{/*
+Sablier group for scale-to-zero. Groups are shared across the whole cluster, so the
+namespace is part of the name. It is also a label value, hence the 63-character cap.
+*/}}
+{{- define "curator.sablierGroup" -}}
+{{- printf "%s-%s" .Release.Namespace (include "curator.fullname" .) | trunc 63 | trimSuffix "-" }}
+{{- end }}
+
+{{/*
+Traefik reference to the scale-to-zero Middleware, for the Ingress router.middlewares annotation.
+*/}}
+{{- define "curator.sablierMiddlewareRef" -}}
+{{- printf "%s-%s-sablier@kubernetescrd" .Release.Namespace (include "curator.fullname" .) }}
+{{- end }}

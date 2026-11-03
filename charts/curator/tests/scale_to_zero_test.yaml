@@ -1,0 +1,146 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/helm-unittest/helm-unittest/main/schema/helm-testsuite.json
+suite: test scale to zero
+templates:
+  - deployment.yaml
+  - ingress.yaml
+  - middleware-sablier.yaml
+values:
+  - values/database.yaml
+release:
+  name: curator
+  namespace: acme
+capabilities:
+  majorVersion: 1
+  minorVersion: 21
+set:
+  environment: dev
+  image.tag: latest
+  ingress.hosts:
+    - host: curator.acme.com
+      paths:
+        - path: /
+          pathType: Prefix
+tests:
+  - it: renders no Middleware when disabled
+    template: middleware-sablier.yaml
+    asserts:
+      - hasDocuments:
+          count: 0
+
+  - it: keeps replicas and adds no Sablier labels when disabled
+    template: deployment.yaml
+    asserts:
+      - equal:
+          path: spec.replicas
+          value: 1
+      - notExists:
+          path: metadata.labels["sablier.enable"]
+
+  - it: leaves replicas to Sablier and labels the Deployment
+    template: deployment.yaml
+    set:
+      scaleToZero.enabled: true
+      replicaCount: 2
+    asserts:
+      - notExists:
+          path: spec.replicas
+      - equal:
+          path: metadata.labels["sablier.enable"]
+          value: "true"
+      - equal:
+          path: metadata.labels["sablier.group"]
+          value: acme-curator
+
+  - it: renders the Sablier Middleware with the first host as display name
+    template: middleware-sablier.yaml
+    set:
+      scaleToZero.enabled: true
+    asserts:
+      - isKind:
+          of: Middleware
+      - equal:
+          path: metadata.name
+          value: curator-sablier
+      - equal:
+          path: spec.plugin.sablier
+          value:
+            sablierUrl: http://sablier-sablier.sablier:10000
+            group: acme-curator
+            sessionDuration: 30m
+            dynamic:
+              displayName: curator.acme.com
+              theme: curator
+              showDetails: true
+              refreshFrequency: 5s
+
+  - it: honours an explicit display name and session duration
+    template: middleware-sablier.yaml
+    set:
+      scaleToZero.enabled: true
+      scaleToZero.displayName: Acme Reports
+      scaleToZero.sessionDuration: 1h
+    asserts:
+      - equal:
+          path: spec.plugin.sablier.dynamic.displayName
+          value: Acme Reports
+      - equal:
+          path: spec.plugin.sablier.sessionDuration
+          value: 1h
+
+  - it: attaches the Middleware to the Ingress and labels it
+    template: ingress.yaml
+    set:
+      scaleToZero.enabled: true
+    asserts:
+      - equal:
+          path: metadata.annotations["traefik.ingress.kubernetes.io/router.middlewares"]
+          value: acme-curator-sablier@kubernetescrd
+      - equal:
+          path: metadata.labels["sablier.enable"]
+          value: "true"
+
+  - it: appends to existing Ingress middlewares
+    template: ingress.yaml
+    set:
+      scaleToZero.enabled: true
+      ingress.annotations:
+        traefik.ingress.kubernetes.io/router.middlewares: acme-auth@kubernetescrd
+    asserts:
+      - equal:
+          path: metadata.annotations["traefik.ingress.kubernetes.io/router.middlewares"]
+          value: acme-auth@kubernetescrd,acme-curator-sablier@kubernetescrd
+
+  - it: leaves Ingress annotations alone when disabled
+    template: ingress.yaml
+    asserts:
+      - notExists:
+          path: metadata.annotations
+      - notExists:
+          path: metadata.labels["sablier.enable"]
+
+  - it: fails in prod, where the HPA would scale the site back up
+    template: middleware-sablier.yaml
+    set:
+      environment: prod
+      scaleToZero.enabled: true
+    asserts:
+      - failedTemplate:
+          errorPattern: "scaleToZero cannot be combined with autoscaling"
+
+  - it: fails with autoscaling enabled
+    template: middleware-sablier.yaml
+    set:
+      autoscaling.enabled: true
+      scaleToZero.enabled: true
+    asserts:
+      - failedTemplate:
+          errorPattern: "scaleToZero cannot be combined with autoscaling"
+
+  - it: fails without an Ingress to wake the site
+    template: middleware-sablier.yaml
+    set:
+      ingress.enabled: false
+      scaleToZero.enabled: true
+    asserts:
+      - failedTemplate:
+          errorPattern: "scaleToZero needs ingress.enabled"
