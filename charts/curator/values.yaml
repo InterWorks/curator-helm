@@ -156,12 +156,6 @@ autoscaling:
     #     target:
     #       type: Utilization
     #       averageUtilization: 75
-    # - type: Resource
-    #   resource:
-    #     name: memory
-    #     target:
-    #       type: Utilization
-    #       averageUtilization: 75
   # -- scaling behavior
   behavior: {}
 
