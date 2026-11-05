@@ -18,6 +18,38 @@ tests:
           path: spec.maxReplicas
           value: 10
 
+  - it: scales on CPU only by default in prod
+    asserts:
+      - equal:
+          path: spec.metrics
+          value:
+            - type: Resource
+              resource:
+                name: cpu
+                target:
+                  type: Utilization
+                  averageUtilization: 75
+
+  - it: uses the metrics from values when they are set
+    set:
+      autoscaling.metrics:
+        - type: Resource
+          resource:
+            name: memory
+            target:
+              type: Utilization
+              averageUtilization: 80
+    asserts:
+      - equal:
+          path: spec.metrics
+          value:
+            - type: Resource
+              resource:
+                name: memory
+                target:
+                  type: Utilization
+                  averageUtilization: 80
+
   - it: is not rendered outside prod when autoscaling is disabled
     set:
       environment: dev
