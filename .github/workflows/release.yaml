@@ -119,6 +119,26 @@ jobs:
           git config user.name "$GITHUB_ACTOR"
           git config user.email "$GITHUB_ACTOR@users.noreply.github.com"
 
+      # chart-releaser uses the release-notes file verbatim as the curator-<version>
+      # release body, and Renovate shows that body in its upgrade PRs. Pointing it at
+      # the whole CHANGELOG.md made every release (and every Renovate PR) carry the
+      # entire history, so extract just this version's section. cr reads the file
+      # from inside the packaged chart, so it must live in the chart directory; it is
+      # written only in CI and never committed.
+      - name: Extract this version's release notes
+        run: |
+          chart_dir=charts/curator
+          version="$(awk '/^version:/ { gsub(/["'\'']/, "", $2); print $2 }' "$chart_dir/Chart.yaml")"
+          awk -v ver="$version" '
+            /^#+ \[/ { if (found) exit; if (index($0, "[" ver "]")) found = 1 }
+            found { print }
+          ' "$chart_dir/CHANGELOG.md" > "$chart_dir/RELEASE_NOTES.md"
+          if [[ ! -s "$chart_dir/RELEASE_NOTES.md" ]]; then
+            echo "::error::No CHANGELOG.md section found for version $version"
+            exit 1
+          fi
+          cat "$chart_dir/RELEASE_NOTES.md"
+
       - name: Run chart-releaser
         uses: helm/chart-releaser-action@df287104677278f869ca5480bd260358397cc3f9 # v1.8.0
         with:
@@ -126,7 +146,7 @@ jobs:
           skip_existing: true
         env:
           CR_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
-          CR_RELEASE_NOTES_FILE: "CHANGELOG.md"
+          CR_RELEASE_NOTES_FILE: "RELEASE_NOTES.md"
           # Only main's releases become GitHub's "Latest"; a 4.x maintenance release
           # must not take that badge from the newer 5.x line.
           CR_MAKE_RELEASE_LATEST: ${{ github.ref_name == 'main' && 'true' || 'false' }}
