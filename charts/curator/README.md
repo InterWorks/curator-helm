@@ -20,11 +20,19 @@ A Helm chart for Curator in a Container in Kubernetes
 | cronjob.successfulJobsHistoryLimit | int | `1` |  |
 | curator.app | object | `{"appKeySecret":{"key":null,"name":null},"debug":null}` | environment variables to pass into app.php |
 | curator.auth.existingSecret | string | `"curator-auth"` | secret to use for initial admin user |
-| curator.cache | object | `{"driver":null,"host":null,"port":null,"prefix":null}` | environment variables to pass into cache.php |
+| curator.cache | object | `{"driver":null,"host":null,"port":null,"prefix":null,"redis":{"enabled":false,"host":null,"passwordSecretRef":{"key":null,"name":null},"port":null,"tls":{"caFile":null,"enabled":false,"verifyPeer":null},"username":null}}` | environment variables to pass into cache.php |
 | curator.cache.driver | string | `nil` | cache type, possible values apc, array, database, file, memcached, redis |
 | curator.cache.host | string | `nil` | memcached host, only used when driver is memcached |
 | curator.cache.port | string | `nil` | memcached port, only used when driver is memcached |
 | curator.cache.prefix | string | `nil` | cache prefix, defaults to a value derived from APP_NAME if unset |
+| curator.cache.redis.enabled | bool | `false` | use a shared Redis/Valkey server as the cache instead of memcached |
+| curator.cache.redis.host | string | `nil` | Redis/Valkey host, required when enabled |
+| curator.cache.redis.passwordSecretRef | object | `{"key":null,"name":null}` | Secret holding the ACL user's password, required when enabled |
+| curator.cache.redis.port | string | `nil` | Redis/Valkey port, defaults to 6379 |
+| curator.cache.redis.tls.caFile | string | `nil` | path in the container to a CA bundle that signs the server certificate, defaults to the system bundle |
+| curator.cache.redis.tls.enabled | bool | `false` | connect with TLS |
+| curator.cache.redis.tls.verifyPeer | string | `nil` | verify the server certificate and its host name, defaults to true |
+| curator.cache.redis.username | string | `nil` | ACL username, required when enabled |
 | curator.cms | object | `{"assetCache":null,"assetMinify":null,"enableCSRF":null,"filesystemDriver":null,"filesystemMediaPath":null,"filesystemUploadsPath":null,"routesCache":null}` | environment variables to pass into cms.php |
 | curator.cms.filesystemDriver | string | `nil` | disk used for CMS media/uploads storage, defaults to "s3" if persistence.s3.enabled else "local" |
 | curator.config | object | `{}` | If one of these is defined the above config section will no longer be applicable if the new config doesn't utilze environment variables |

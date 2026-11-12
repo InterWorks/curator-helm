@@ -95,6 +95,95 @@
               }
             }
           }
+        },
+        "cache": {
+          "type": "object",
+          "properties": {
+            "redis": {
+              "description": "Shared Redis/Valkey cache (opt-in). Strict, so a misspelled key fails the render instead of leaving the site on a cache it should not use.",
+              "type": [
+                "object",
+                "null"
+              ],
+              "additionalProperties": false,
+              "properties": {
+                "enabled": {
+                  "type": [
+                    "boolean",
+                    "null"
+                  ]
+                },
+                "host": {
+                  "type": [
+                    "string",
+                    "null"
+                  ],
+                  "pattern": "^([a-z0-9]([-a-z0-9.]*[a-z0-9])?)?$"
+                },
+                "port": {
+                  "type": [
+                    "integer",
+                    "string",
+                    "null"
+                  ]
+                },
+                "username": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "passwordSecretRef": {
+                  "type": [
+                    "object",
+                    "null"
+                  ],
+                  "additionalProperties": false,
+                  "properties": {
+                    "name": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "key": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    }
+                  }
+                },
+                "tls": {
+                  "type": [
+                    "object",
+                    "null"
+                  ],
+                  "additionalProperties": false,
+                  "properties": {
+                    "enabled": {
+                      "type": [
+                        "boolean",
+                        "null"
+                      ]
+                    },
+                    "caFile": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "verifyPeer": {
+                      "type": [
+                        "boolean",
+                        "null"
+                      ]
+                    }
+                  }
+                }
+              }
+            }
+          }
         }
       }
     }

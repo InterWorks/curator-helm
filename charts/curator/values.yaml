@@ -250,6 +250,30 @@ curator:
     port: ~
     # -- cache prefix, defaults to a value derived from APP_NAME if unset
     prefix: ~
+    # Shared Redis/Valkey cache (opt-in). When enabled, the site uses Curator's "redis-scoped" cache store instead of
+    # memcached: it signs in as its own ACL user, every key it writes starts with "<cache.prefix>:", and a cache flush
+    # clears only this site's items. cache.driver, cache.host and cache.port are ignored, and cache.prefix is required
+    # and must match the ACL user's key pattern (~<prefix>:*). Needs a Curator image that ships the redis-scoped store.
+    redis:
+      # -- use a shared Redis/Valkey server as the cache instead of memcached
+      enabled: false
+      # -- Redis/Valkey host, required when enabled
+      host: ~
+      # -- Redis/Valkey port, defaults to 6379
+      port: ~
+      # -- ACL username, required when enabled
+      username: ~
+      # -- Secret holding the ACL user's password, required when enabled
+      passwordSecretRef:
+        name: ~
+        key: ~
+      tls:
+        # -- connect with TLS
+        enabled: false
+        # -- path in the container to a CA bundle that signs the server certificate, defaults to the system bundle
+        caFile: ~
+        # -- verify the server certificate and its host name, defaults to true
+        verifyPeer: ~
   # -- environment variables to pass into cms.php
   cms:
     routesCache: ~
