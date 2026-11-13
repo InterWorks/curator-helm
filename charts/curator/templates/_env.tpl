@@ -22,12 +22,55 @@
       key: {{ .Values.curator.app.appKeySecret.key | default "app-key"}}
 {{ end }}
 # cache.php
+{{- $redisCache := .Values.curator.cache.redis | default dict }}
+{{- if $redisCache.enabled }}
+{{- $redisPassword := $redisCache.passwordSecretRef | default dict }}
+{{- $redisTLS := $redisCache.tls | default dict }}
+{{- if not .Values.curator.cache.prefix }}
+{{- fail "curator.cache.prefix is required when curator.cache.redis.enabled is true: it scopes the site's keys and must match its ACL user's key pattern" }}
+{{- end }}
+{{- if not $redisCache.host }}
+{{- fail "curator.cache.redis.host is required when curator.cache.redis.enabled is true" }}
+{{- end }}
+{{- if not $redisCache.username }}
+{{- fail "curator.cache.redis.username is required when curator.cache.redis.enabled is true" }}
+{{- end }}
+{{- if not (and $redisPassword.name $redisPassword.key) }}
+{{- fail "curator.cache.redis.passwordSecretRef.name and .key are required when curator.cache.redis.enabled is true" }}
+{{- end }}
+- name: CACHE_DRIVER
+  value: redis-scoped
+- name: CACHE_REDIS_HOST
+  value: {{ $redisCache.host }}
+- name: CACHE_REDIS_PORT
+  value: {{ $redisCache.port | default "6379" | quote }}
+- name: CACHE_REDIS_USERNAME
+  value: {{ $redisCache.username }}
+- name: CACHE_REDIS_PASSWORD
+  valueFrom:
+    secretKeyRef:
+      name: {{ $redisPassword.name }}
+      key: {{ $redisPassword.key }}
+{{- if $redisTLS.enabled }}
+- name: CACHE_REDIS_TLS
+  value: "true"
+{{- if $redisTLS.caFile }}
+- name: CACHE_REDIS_TLS_CA_FILE
+  value: {{ $redisTLS.caFile }}
+{{- end }}
+{{- if not (kindIs "invalid" $redisTLS.verifyPeer) }}
+- name: CACHE_REDIS_TLS_VERIFY_PEER
+  value: {{ $redisTLS.verifyPeer | quote }}
+{{- end }}
+{{- end }}
+{{- else }}
 - name: CACHE_DRIVER
   value: {{ .Values.curator.cache.driver | default "memcached" }}
 - name: MEMCACHED_HOST
   value: {{ .Values.curator.cache.host | default "memcached" }}
 - name: MEMCACHED_PORT
   value: {{ .Values.curator.cache.port | default "11211" | quote }}
+{{- end }}
 {{ if .Values.curator.cache.prefix }}
 - name: CACHE_PREFIX
   value: {{ .Values.curator.cache.prefix }}

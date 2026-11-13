@@ -293,3 +293,127 @@ tests:
           content:
             name: LOG_LEVEL
             value: warning
+
+  - it: switches the cache to the shared Redis/Valkey store when curator.cache.redis is enabled
+    set:
+      ingress.hosts:
+        - host: curator.example.com
+      curator.cache.prefix: prod-example
+      curator.cache.redis.enabled: true
+      curator.cache.redis.host: valkey.cache.svc
+      curator.cache.redis.username: prod-example
+      curator.cache.redis.passwordSecretRef.name: prod-example-cache
+      curator.cache.redis.passwordSecretRef.key: password
+    asserts:
+      - contains:
+          path: spec.template.spec.containers[0].env
+          content:
+            name: CACHE_DRIVER
+            value: redis-scoped
+      - contains:
+          path: spec.template.spec.containers[0].env
+          content:
+            name: CACHE_PREFIX
+            value: prod-example
+      - contains:
+          path: spec.template.spec.containers[0].env
+          content:
+            name: CACHE_REDIS_HOST
+            value: valkey.cache.svc
+      - contains:
+          path: spec.template.spec.containers[0].env
+          content:
+            name: CACHE_REDIS_PORT
+            value: "6379"
+      - contains:
+          path: spec.template.spec.containers[0].env
+          content:
+            name: CACHE_REDIS_USERNAME
+            value: prod-example
+      - contains:
+          path: spec.template.spec.containers[0].env
+          content:
+            name: CACHE_REDIS_PASSWORD
+            valueFrom:
+              secretKeyRef:
+                name: prod-example-cache
+                key: password
+      - notContains:
+          path: spec.template.spec.containers[0].env
+          content:
+            name: MEMCACHED_HOST
+          any: true
+      - notContains:
+          path: spec.template.spec.containers[0].env
+          content:
+            name: CACHE_REDIS_TLS
+          any: true
+
+  - it: passes the Redis/Valkey TLS settings when curator.cache.redis.tls is enabled
+    set:
+      ingress.hosts:
+        - host: curator.example.com
+      curator.cache.prefix: prod-example
+      curator.cache.redis.enabled: true
+      curator.cache.redis.host: valkey.cache.svc
+      curator.cache.redis.port: 6380
+      curator.cache.redis.username: prod-example
+      curator.cache.redis.passwordSecretRef.name: prod-example-cache
+      curator.cache.redis.passwordSecretRef.key: password
+      curator.cache.redis.tls.enabled: true
+      curator.cache.redis.tls.caFile: /etc/cache-ca/ca.crt
+      curator.cache.redis.tls.verifyPeer: false
+    asserts:
+      - contains:
+          path: spec.template.spec.containers[0].env
+          content:
+            name: CACHE_REDIS_PORT
+            value: "6380"
+      - contains:
+          path: spec.template.spec.containers[0].env
+          content:
+            name: CACHE_REDIS_TLS
+            value: "true"
+      - contains:
+          path: spec.template.spec.containers[0].env
+          content:
+            name: CACHE_REDIS_TLS_CA_FILE
+            value: /etc/cache-ca/ca.crt
+      - contains:
+          path: spec.template.spec.containers[0].env
+          content:
+            name: CACHE_REDIS_TLS_VERIFY_PEER
+            value: "false"
+
+  - it: fails the render when the Redis/Valkey cache is enabled without a cache prefix
+    set:
+      ingress.hosts:
+        - host: curator.example.com
+      curator.cache.redis.enabled: true
+      curator.cache.redis.host: valkey.cache.svc
+      curator.cache.redis.username: prod-example
+      curator.cache.redis.passwordSecretRef.name: prod-example-cache
+      curator.cache.redis.passwordSecretRef.key: password
+    asserts:
+      - failedTemplate:
+          errorPattern: "curator.cache.prefix is required"
+
+  - it: fails the render when the Redis/Valkey cache is enabled without a password Secret
+    set:
+      ingress.hosts:
+        - host: curator.example.com
+      curator.cache.prefix: prod-example
+      curator.cache.redis.enabled: true
+      curator.cache.redis.host: valkey.cache.svc
+      curator.cache.redis.username: prod-example
+    asserts:
+      - failedTemplate:
+          errorPattern: "passwordSecretRef.name and .key are required"
+
+  - it: rejects an unknown key under curator.cache.redis
+    set:
+      ingress.hosts:
+        - host: curator.example.com
+      curator.cache.redis.enabledd: true
+    asserts:
+      - failedTemplate: {}
