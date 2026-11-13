@@ -11,6 +11,18 @@
 
 * **helm-chart:** add Sentry environment variables to deployments ([2a2d3d3](https://github.com/interworks/curator-helm/commit/2a2d3d3faa8eb1627c7f146063f6cdfc5e214e88))
 
+## [5.3.0](https://github.com/InterWorks/curator-helm/compare/v5.2.0...v5.3.0) (2026-11-13)
+
+
+### Features
+
+* **cache:** add opt-in shared Redis/Valkey cache values ([#168](https://github.com/InterWorks/curator-helm/issues/168)) ([063073b](https://github.com/InterWorks/curator-helm/commit/063073b104e18a8a2c4d760c7d9efa0372450f1b))
+
+
+### Bug Fixes
+
+* **hpa:** scale prod sites on CPU only by default ([#159](https://github.com/InterWorks/curator-helm/issues/159)) ([ee62375](https://github.com/InterWorks/curator-helm/commit/ee62375d9085235f1a3a8adac752467c15ed0729))
+
 ## [5.2.0](https://github.com/InterWorks/curator-helm/compare/v5.1.0...v5.2.0) (2026-11-03)
 
 
