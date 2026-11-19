@@ -14,7 +14,7 @@ jobs:
       # Installs the tools pinned in mise.toml (notably helm) so CI matches
       # what developers run locally.
       - name: Set up tools via mise
-        uses: jdx/mise-action@b44d12e7d0d8ee7461bb893e1b1993500433185b # v5.2.7
+        uses: jdx/mise-action@d5574b52816a478f9d4e6529a3f6ff17a8a36785 # v5.2.8
 
       - name: Install helm-unittest plugin
         run: helm plugin install --verify=false https://github.com/helm-unittest/helm-unittest --version v1.1.1
