@@ -856,7 +856,7 @@ jobs:
           # Used by post_claude_review.sh to render the Author rationale
           # footer that gets appended to REQUEST_CHANGES bodies.
           AGENT_NAME: Themis
-        uses: anthropics/claude-code-action@f3b070c88125d33dbae5653df5f143101d4ea9dc # v1.0.276
+        uses: anthropics/claude-code-action@d1f58ad5e6f4d2b79547e63e37c2116064135896 # v1.0.277
         with:
           anthropic_api_key: ${{ secrets.THEMIS_ANTHROPIC_API_KEY }}
           github_token: ${{ steps.app-token.outputs.token }}
