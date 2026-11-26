@@ -1,0 +1,133 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/helm-unittest/helm-unittest/main/schema/helm-testsuite.json
+# The client admin (a second, limited-permission backend admin, distinct from the superadmin the install
+# migration seeds) is opt-in via curator.clientAdmin.enabled. Its ExternalSecret is a post-install hook at a
+# lower weight than the creation Job, mirroring externalsecrets-admin.yaml's pre-install pairing with
+# job-db-migrate-install.yaml. --if-not-exists makes the Job's backenduser:create idempotent on a reinstall.
+suite: test the client admin ExternalSecret and creation job
+templates:
+  - externalsecrets-client-admin.yaml
+  - job-create-client-admin.yaml
+values:
+  - values/database.yaml
+release:
+  name: curator
+tests:
+  - it: renders nothing when disabled
+    asserts:
+      - hasDocuments:
+          count: 0
+
+  - it: renders nothing for the job when disabled even if the ExternalSecret is somehow asked for alone
+    template: job-create-client-admin.yaml
+    asserts:
+      - hasDocuments:
+          count: 0
+
+  - it: makes the ExternalSecret a post-install hook ahead of the creation job, deleted once it succeeds
+    set:
+      curator.clientAdmin.enabled: true
+    template: externalsecrets-client-admin.yaml
+    asserts:
+      - hasDocuments:
+          count: 1
+      - isKind:
+          of: ExternalSecret
+      - equal:
+          path: metadata.name
+          value: curator-client-admin
+      - equal:
+          path: metadata.annotations["helm.sh/hook"]
+          value: post-install
+      - equal:
+          path: metadata.annotations["helm.sh/hook-weight"]
+          value: "-10"
+      - equal:
+          path: metadata.annotations["helm.sh/hook-delete-policy"]
+          value: before-hook-creation,hook-succeeded
+      - equal:
+          path: spec.data[0]
+          value:
+            secretKey: client-admin-user
+            remoteRef:
+              key: curator-client-admin
+              property: username
+      - equal:
+          path: spec.data[1]
+          value:
+            secretKey: client-admin-password
+            remoteRef:
+              key: curator-client-admin
+              property: password
+      - equal:
+          path: spec.data[2]
+          value:
+            secretKey: client-admin-email
+            remoteRef:
+              key: curator-client-admin
+              property: email
+
+  - it: runs the creation job as a post-install hook at a higher weight than the ExternalSecret
+    set:
+      curator.clientAdmin.enabled: true
+    template: job-create-client-admin.yaml
+    asserts:
+      - hasDocuments:
+          count: 1
+      - equal:
+          path: metadata.name
+          value: curator-client-admin-creation
+      - equal:
+          path: metadata.annotations["helm.sh/hook"]
+          value: post-install
+      - equal:
+          path: metadata.annotations["helm.sh/hook-weight"]
+          value: "50"
+
+  - it: calls backenduser:create --if-not-exists with the permission list and secret-backed credentials
+    set:
+      curator.clientAdmin.enabled: true
+      curator.clientAdmin.permissions:
+        - interworks.content.manage_pages
+        - interworks.content.manage_navigation
+    template: job-create-client-admin.yaml
+    asserts:
+      - equal:
+          path: spec.template.spec.containers[0].command
+          value:
+            - php
+            - artisan
+            - backenduser:create
+            - --if-not-exists
+            - --permissions=$(CLIENT_ADMIN_PERMISSIONS)
+            - $(CLIENT_ADMIN_USER)
+            - $(CLIENT_ADMIN_PASSWORD)
+            - $(CLIENT_ADMIN_EMAIL)
+      - contains:
+          path: spec.template.spec.containers[0].env
+          content:
+            name: CLIENT_ADMIN_PERMISSIONS
+            value: interworks.content.manage_pages,interworks.content.manage_navigation
+      - contains:
+          path: spec.template.spec.containers[0].env
+          content:
+            name: CLIENT_ADMIN_USER
+            valueFrom:
+              secretKeyRef:
+                name: curator-client-admin
+                key: client-admin-user
+      - contains:
+          path: spec.template.spec.containers[0].env
+          content:
+            name: CLIENT_ADMIN_PASSWORD
+            valueFrom:
+              secretKeyRef:
+                name: curator-client-admin
+                key: client-admin-password
+      - contains:
+          path: spec.template.spec.containers[0].env
+          content:
+            name: CLIENT_ADMIN_EMAIL
+            valueFrom:
+              secretKeyRef:
+                name: curator-client-admin
+                key: client-admin-email
