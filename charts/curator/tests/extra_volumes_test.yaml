@@ -5,6 +5,7 @@ templates:
   - cronjob.yaml
   - job-db-migrate-install.yaml
   - job-db-migrate-upgrade.yaml
+  - job-create-client-admin.yaml
 values:
   - values/database.yaml
 release:
@@ -76,6 +77,19 @@ tests:
           path: spec.template.spec.containers[0].volumeMounts
           content: *mount
 
+  - it: adds the volume and mount to the client-admin-creation hook Job
+    template: job-create-client-admin.yaml
+    set:
+      <<: *imageVolume
+      curator.clientAdmin.enabled: true
+    asserts:
+      - contains:
+          path: spec.template.spec.volumes
+          content: *volume
+      - contains:
+          path: spec.template.spec.containers[0].volumeMounts
+          content: *mount
+
   - it: renders no extra volumes or mounts by default
     asserts:
       - notContains:
@@ -100,10 +114,11 @@ tests:
           path: spec.template.spec.imagePullSecrets
         template: job-db-migrate-upgrade.yaml
 
-  - it: passes imagePullSecrets to both hook Jobs, matching the Deployment and CronJob
+  - it: passes imagePullSecrets to every hook Job, matching the Deployment and CronJob
     set:
       imagePullSecrets:
         - name: ghcr-pull
+      curator.clientAdmin.enabled: true
     asserts:
       - equal:
           path: spec.template.spec.imagePullSecrets
@@ -113,6 +128,10 @@ tests:
           path: spec.template.spec.imagePullSecrets
           value: [{name: ghcr-pull}]
         template: job-db-migrate-upgrade.yaml
+      - equal:
+          path: spec.template.spec.imagePullSecrets
+          value: [{name: ghcr-pull}]
+        template: job-create-client-admin.yaml
       - equal:
           path: spec.template.spec.imagePullSecrets
           value: [{name: ghcr-pull}]
